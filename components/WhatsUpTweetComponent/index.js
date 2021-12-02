@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function WhatsUpTweetComponent() {
+export function WhatsUpTweetComponent(props) {
     const [textContent, setTextContent] = useState([]);
 
     function handlerTweetClick(e) {
@@ -15,12 +15,17 @@ export function WhatsUpTweetComponent() {
             })
             .then(function (response) {
                 console.log(response.data);
+                props.onAddPost(response.data.data);
+                //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
+                setTextContent("");
             })
             .catch(function (error) {
                 console.log(error);
             });
+
+        /* props.onAddPost(response.data);
         //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
-        setTextContent("");
+        setTextContent(""); */
     }
 
     function handleTextChange(e) {
