@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState /* useEffect */ } from "react";
 import axios from "axios";
-import { PostComponet } from "../components/PostComponent";
+import { PostListComponent } from "../components/PostListComponent";
 import { WhatsUpTweetComponent } from "../components/WhatsUpTweetComponent";
+import { EditPostForm } from "../components/EditPostForm"; //! На майбутнє
 
-export default function Index({ posts_data }) {
-    const [posts, setPosts] = useState(posts_data.data);
+export default function Index({ postsList }) {
+    const [posts, setPosts] = useState(postsList);
 
     // useEffect(()=>{
     //     async function load(){
@@ -17,29 +18,22 @@ export default function Index({ posts_data }) {
     // console.log(posts[0], "posts");
 
     function handleAddPost(post) {
-        // alert(post);
         setPosts([...posts, post]);
     }
 
     function handleDeletePost(post) {
         const newPosts = posts.filter((item) => item.id !== post.id);
-        // alert(findedPost);
-        // const newPosts = posts.splice(findedPost, 1);
         setPosts(newPosts);
     }
 
     return (
         <>
+            <EditPostForm onSave={handleAddPost} />
             <WhatsUpTweetComponent onAddPost={handleAddPost} />
-            {posts.map((item) => {
-                return (
-                    <PostComponet
-                        post={item}
-                        key={item.id}
-                        onDeletePost={handleDeletePost}
-                    />
-                );
-            })}
+            <PostListComponent
+                postsList={posts}
+                onDeletePost={handleDeletePost}
+            />
             {/* <pre>{posts}</pre> */}
         </>
     );
@@ -56,6 +50,6 @@ Index.getInitialProps = async () => {
     const res = await axios.get("http://127.0.0.1:8000/api/posts");
 
     return {
-        posts_data: res.data,
+        postsList: res.data.data,
     };
 };

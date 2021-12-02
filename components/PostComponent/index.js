@@ -1,89 +1,124 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-export function PostComponet(props) {
+
+import { EditPostForm } from "../EditPostForm"; //! на майбутнє
+
+// import { DropdownEditDeliteComponent } from "../DropdownEditDeliteComponent";
+
+export function PostComponent({ post, onDeletePost }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
-    const [textContent, setTextContent] = useState(props.post.text);
+    const [textContent, setTextContent] = useState(post.text);
 
-    /*   useEffect(() => {
-        // alert();
-        setTextContent(props.post.text);
-    }); */
+    // function handleTextChange(e) {
+    //     // ? Деструктуризація
+    //     setTextContent(e.target.value);
+    // }
 
-    function handleTextChange(e) {
-        // TODO Деструктуризація
-        setTextContent(e.target.value);
-    }
-
-    function handleEditClick() {
+    function handleEdit() {
         setComponentEditCondition(true);
     }
 
-    function handleDeliteClick() {
-        //!
-        // TODO Переделать в async/awaite
-        // TODO Перенести в батьківську компоненту
+    async function handleDelite() {
+        // ? Перенести в батьківську компоненту
         // TODO Організувати адреси
-        axios
-            .delete(`http://127.0.0.1:8000/api/posts/${props.post.id}`, {})
-            .then(function (response) {
-                console.log(response.data);
+        const response = await axios.delete(
+            `http://127.0.0.1:8000/api/posts/${post.id}`
+        );
 
-                props.onDeletePost(props.post);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
-        // setTextContent("");
+        console.log(response);
+        if (response.status === 204) {
+            onDeletePost(post);
+        }
     }
 
-    function handleSaveClick() {
+    async function handleSave(content) {
         setComponentEditCondition(false);
 
-        //!
-        // TODO Переделать в async/awaite
-        // TODO Перенести в батьківську компоненту
+        // ? Перенести в батьківську компоненту
         // TODO Організувати адреси
-        axios
-            .put(`http://127.0.0.1:8000/api/posts/${props.post.id}`, {
-                text: textContent,
-            })
-            .then(function (response) {
-                console.log(response.data);
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-        //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
-        // setTextContent("");
+        const response = await axios.put(
+            `http://127.0.0.1:8000/api/posts/${post.id}`,
+            {
+                text: content,
+            }
+        );
+        setTextContent(content);
     }
 
-    function handleCancelClick() {
+    function handleCancel() {
         setComponentEditCondition(false);
+    }
+
+    const displayContent = componentEditCondition ? (
+        // <textarea value={textContent} onChange={handleTextChange} />
+        <EditPostForm
+            editContent={textContent}
+            // onChange={handleTextChange}
+            onSave={handleSave}
+            onCancel={handleCancel}
+        />
+    ) : (
+        <div>{textContent}</div>
+    );
+
+    return (
+        <>
+            <DropdownEditDeliteComponent
+                onDelite={handleDelite}
+                onEdit={handleEdit}
+            />
+            <div>{post.created_at}</div>
+            {displayContent}
+            {/* <div>
+                <button onClick={handleSaveClick}>Save</button>
+                <button onClick={handleCancelClick}>Cancel</button>
+            </div> */}
+        </>
+    );
+}
+
+function DropdownEditDeliteComponent(/* props */ { onEdit, onDelite }) {
+    const [componentCondition, setComponentCondition] = useState(false);
+
+    function handlDropdownClick() {
+        setComponentCondition(!componentCondition);
     }
 
     return (
         <>
+            <button onClick={handlDropdownClick}>...</button>
             <div>
-                <button onClick={handleEditClick}>Edit</button>
-                <button onClick={handleDeliteClick}>Delite</button>
-            </div>
-            <div>{props.post.created_at}</div>
-            {componentEditCondition ? (
-                <textarea
-                    rows="5"
-                    name="text"
-                    //defaultValue={props.post.text}
-                    value={textContent}
-                    onChange={handleTextChange}
-                />
-            ) : (
-                <div>{textContent}</div>
-            )}
-            <div>
-                <button onClick={handleSaveClick}>Save</button>
-                <button onClick={handleCancelClick}>Cancel</button>
+                <button onClick={onEdit}>Edit</button>
+                <button onClick={onDelite}>Delite</button>
             </div>
         </>
     );
 }
+
+// function EditPostForm({ editContent, onChange, onSave, onCancel }) {
+//     const [Content, setTextContent] = useState(editContent);
+//     const buttonCancel = Content ? (
+//         <button onClick={onCancel}>Cancel</button>
+//     ) : (
+//         <></>
+//     );
+
+//     function handleSave() {
+//         onSave(Content);
+//     }
+
+//     function handleChange(e) {
+//         // ? Деструктуризація
+//         setTextContent(e.target.value);
+//     }
+
+//     return (
+//         <>
+//             <textarea value={Content} onChange={handleChange} />
+//             <div>
+//                 <button onClick={handleSave}>Save</button>
+//                 {buttonCancel}
+//             </div>
+//         </>
+//     );
+// }

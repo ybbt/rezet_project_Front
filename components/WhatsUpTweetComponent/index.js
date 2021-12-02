@@ -1,35 +1,27 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export function WhatsUpTweetComponent(props) {
+export function WhatsUpTweetComponent({ onAddPost }) {
     const [textContent, setTextContent] = useState([]);
 
-    function handlerTweetClick(e) {
-        //!
-        // TODO Переделать в async/awaite
-        // TODO Перенести в батьківську компоненту
-        // TODO Організувати адреси
-        axios
-            .post("http://127.0.0.1:8000/api/posts", {
-                text: textContent,
-            })
-            .then(function (response) {
-                console.log(response.data);
-                props.onAddPost(response.data.data);
-                //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
-                setTextContent("");
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+    async function handlerTweetClick(e) {
+        const response = await axios.post("http://127.0.0.1:8000/api/posts", {
+            text: textContent,
+        });
 
-        /* props.onAddPost(response.data);
-        //TODO Прописати умову, що тільки якщо позитивна відповідь від серверу
-        setTextContent(""); */
+        onAddPost(response.data.data);
+
+        if (response.status === 201) {
+            setTextContent("");
+        }
+
+        //
+        // ? Перенести в батьківську компоненту?
+        // TODO Організувати адреси
     }
 
     function handleTextChange(e) {
-        // TODO Деструктуризація
+        // ? Деструктуризація
         setTextContent(e.target.value);
     }
 
