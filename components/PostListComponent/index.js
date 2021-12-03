@@ -1,16 +1,14 @@
+import { useState, useEffect } from "react";
 import { PostComponent } from "../PostComponent/index";
 
-export function PostListComponent({ postsList, onDeletePost }) {
-    function handleDeletePost(post) {
-        onDeletePost(post);
-    }
-
-    const postComponent = postsList.map((item) => {
+export function PostListComponent({ postsList, onDeletePost, onUpdatePost }) {
+    const postComponent = postsList.map((postItem) => {
         return (
             <PostComponent
-                post={item}
-                key={item.id}
-                onDeletePost={handleDeletePost}
+                post={postItem}
+                key={postItem.id}
+                onDeletePost={onDeletePost}
+                onUpdatePost={onUpdatePost}
             />
         );
     });

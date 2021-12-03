@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export function EditPostForm({ editContent, onSave, onCancel }) {
-    const [Content, setTextContent] = useState(editContent);
-    const buttonCancel = Content ? (
+export function EditPostForm({ editContent, onUpdate, onCancel }) {
+    const [content, setTextContent] = useState(editContent);
+
+    const buttonCancel = editContent ? (
         <button onClick={onCancel}>Cancel</button>
-    ) : (
-        <></>
-    );
+    ) : null;
+
+    const nameSaveButton = editContent ? "Save" : "Tweet";
 
     function handleSave() {
-        onSave(Content);
+        onUpdate(content);
+        setTextContent("");
     }
 
     function handleChange(e) {
@@ -19,9 +21,9 @@ export function EditPostForm({ editContent, onSave, onCancel }) {
 
     return (
         <>
-            <textarea value={Content} onChange={handleChange} />
+            <textarea value={content} rows="5" onChange={handleChange} />
             <div>
-                <button onClick={handleSave}>Save</button>
+                <button onClick={handleSave}>{nameSaveButton}</button>
                 {buttonCancel}
             </div>
         </>
