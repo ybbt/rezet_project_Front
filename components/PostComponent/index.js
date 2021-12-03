@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-import { EditPostForm } from "../EditPostForm";
+import { EditPostComponent } from "../EditPostComponent";
 
 export function PostComponent({ post, onDeletePost, onUpdatePost }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
@@ -30,7 +30,7 @@ export function PostComponent({ post, onDeletePost, onUpdatePost }) {
     }
 
     const displayContent = componentEditCondition ? (
-        <EditPostForm
+        <EditPostComponent
             editContent={textContent}
             onUpdate={handleUdate}
             onCancel={handleCancel}
@@ -42,7 +42,7 @@ export function PostComponent({ post, onDeletePost, onUpdatePost }) {
     return (
         <>
             <DropdownEditDeliteComponent
-                onDelite={() => {
+                onDelete={() => {
                     onDeletePost(post);
                 }}
                 onEdit={handleEdit}
@@ -53,20 +53,36 @@ export function PostComponent({ post, onDeletePost, onUpdatePost }) {
     );
 }
 
-function DropdownEditDeliteComponent({ onEdit, onDelite }) {
+function DropdownEditDeliteComponent({ onEdit, onDelete }) {
     const [componentCondition, setComponentCondition] = useState(false);
 
-    function handlDropdownClick() {
+    function handleDropdownClick() {
         setComponentCondition(!componentCondition);
     }
 
+    function handleEditClick() {
+        onEdit();
+        handleDropdownClick();
+    }
+
+    function handleDeleteClick() {
+        onDelete();
+        handleDropdownClick();
+    }
+
+    const dropdownMenu = componentCondition ? (
+        <>
+            <div>
+                <button onClick={handleEditClick}>Edit</button>
+                <button onClick={handleDeleteClick}>Delite</button>
+            </div>
+        </>
+    ) : null;
+
     return (
         <>
-            <button onClick={handlDropdownClick}>...</button>
-            <div>
-                <button onClick={onEdit}>Edit</button>
-                <button onClick={onDelite}>Delite</button>
-            </div>
+            <button onClick={handleDropdownClick}>...</button>
+            {dropdownMenu}
         </>
     );
 }

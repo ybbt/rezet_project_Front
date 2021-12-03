@@ -1,23 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import { PostListComponent } from "../components/PostListComponent";
-import { EditPostForm } from "../components/EditPostForm";
+import { EditPostComponent } from "../components/EditPostComponent";
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
-
-    // useEffect(()=>{
-    //     async function load(){
-    //         const response = await fetch("http://127.0.0.1:8000/api/posts");
-    //         const json = await response.json();
-    //     setPosts(json);
-    //     }
-    //   load();
-    // }, [])
-    // console.log(posts[0], "posts");
-
-    // function handleAddPost(post) {
-    //     setPosts([...posts, post]);
-    // }
 
     async function handleAddPost(postContent) {
         const response = await axios.post("http://127.0.0.1:8000/api/posts", {
@@ -25,10 +11,6 @@ export default function Index({ postsList }) {
         });
 
         setPosts([...posts, response.data.data]);
-
-        // if (response.status === 201) {
-        //     setTextContent("");
-        // }
     }
 
     async function handleDeletePost(post) {
@@ -65,26 +47,17 @@ export default function Index({ postsList }) {
     return (
         <>
             <h1>Whats up?</h1>
-            <EditPostForm onUpdate={handleAddPost} />
+            <EditPostComponent onUpdate={handleAddPost} />
             <PostListComponent
                 postsList={posts}
                 onDeletePost={handleDeletePost}
                 onUpdatePost={handleUpdatePost}
             />
-            {/* <pre>{posts}</pre> */}
         </>
     );
 }
 
-// Index.getInitialProps = async () => {
 export async function getStaticProps() {
-    // const response = await fetch("http://127.0.0.1:8000/api/posts");
-    // const posts = await response.json();
-
-    // return {
-    //     posts,
-    // };
-
     const res = await axios.get("http://127.0.0.1:8000/api/posts");
 
     return {

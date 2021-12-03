@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function EditPostForm({ editContent, onUpdate, onCancel }) {
+export function EditPostComponent({ editContent, onUpdate, onCancel }) {
     const [content, setTextContent] = useState(editContent);
 
     const buttonCancel = editContent ? (
@@ -10,12 +10,16 @@ export function EditPostForm({ editContent, onUpdate, onCancel }) {
     const nameSaveButton = editContent ? "Save" : "Tweet";
 
     function handleSave() {
+        if (!content) {
+            //! Тимчасово, щоб не отримувати помилки з серверу
+            alert("Empty field!");
+            return;
+        }
         onUpdate(content);
         setTextContent("");
     }
 
     function handleChange(e) {
-        // ? Деструктуризація
         setTextContent(e.target.value);
     }
 
