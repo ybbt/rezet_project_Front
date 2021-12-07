@@ -18,9 +18,11 @@ export function PostComponent({ post, onDeletePost, onUpdatePost }) {
     async function handleUdate(content) {
         setComponentEditCondition(false);
 
-        post.text = content;
+        const newPost = { ...post };
 
-        onUpdatePost(post);
+        newPost.text = content;
+
+        onUpdatePost(newPost);
 
         // setTextContent(content);
     }
