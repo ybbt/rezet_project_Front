@@ -6,7 +6,7 @@ import { EditPostComponent } from "../components/EditPostComponent";
 
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
-
+    console.log(process.env.NEXT_PUBLIC_SERV_URL);
     async function handleAddPost(postContent) {
         const response = await axiosInstance.post("/posts", {
             text: postContent,
@@ -55,7 +55,7 @@ export default function Index({ postsList }) {
 }
 
 export async function getStaticProps() {
-    console.log(process.env.REACT_APP_SERV_URL);
+    console.log(process.env.NEXT_PUBLIC_SERV_URL);
     const res = await axiosInstance.get("/posts");
     return {
         props: { postsList: res.data.data },
