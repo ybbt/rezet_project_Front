@@ -1,12 +1,14 @@
 import { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import axiosInstance from "../libs/axiosInstance";
 import { PostListComponent } from "../components/PostListComponent";
 import { EditPostComponent } from "../components/EditPostComponent";
+
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
 
     async function handleAddPost(postContent) {
-        const response = await axios.post("http://127.0.0.1:8000/api/posts", {
+        const response = await axiosInstance.post("/posts", {
             text: postContent,
         });
 
@@ -15,9 +17,7 @@ export default function Index({ postsList }) {
 
     async function handleDeletePost(post) {
         // TODO Організувати адреси
-        const response = await axios.delete(
-            `http://127.0.0.1:8000/api/posts/${post.id}`
-        );
+        const response = await axiosInstance.delete(`/posts/${post.id}`);
 
         if (response.status === 204) {
             const newPosts = posts.filter(
@@ -28,12 +28,9 @@ export default function Index({ postsList }) {
     }
 
     async function handleUpdatePost(post) {
-        const response = await axios.put(
-            `http://127.0.0.1:8000/api/posts/${post.id}`,
-            {
-                text: post.text,
-            }
-        );
+        const response = await axiosInstance.put(`/posts/${post.id}`, {
+            text: post.text,
+        });
 
         const postIndex = posts.findIndex(
             (postItem) => postItem.id === post.id
@@ -58,8 +55,8 @@ export default function Index({ postsList }) {
 }
 
 export async function getStaticProps() {
-    const res = await axios.get("http://127.0.0.1:8000/api/posts");
-
+    console.log(process.env.REACT_APP_SERV_URL);
+    const res = await axiosInstance.get("/posts");
     return {
         props: { postsList: res.data.data },
     };
