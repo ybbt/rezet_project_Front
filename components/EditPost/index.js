@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+
+import { message } from "antd";
 
 export function EditPost({ editContent, onSave, onCancel }) {
     const [content, setTextContent] = useState(editContent);
@@ -12,7 +14,8 @@ export function EditPost({ editContent, onSave, onCancel }) {
     function handleSave() {
         if (!content) {
             //! Тимчасово, щоб не отримувати помилки з серверу
-            alert("Empty field!");
+            // alert("Empty field!");
+            message.error(`Empty field!`, 5);
             return;
         }
         onSave(content);

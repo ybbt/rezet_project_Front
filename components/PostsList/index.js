@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Post } from "../Post/index";
 
 export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
