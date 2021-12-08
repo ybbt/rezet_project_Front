@@ -16,15 +16,10 @@ export default function Index({ postsList }) {
     }
 
     async function handleDeletePost(post) {
-        // TODO Організувати адреси
         const response = await axiosInstance.delete(`/posts/${post.id}`);
 
-        if (response.status === 204) {
-            const newPosts = posts.filter(
-                (postItem) => postItem.id !== post.id
-            );
-            setPosts(newPosts);
-        }
+        const newPosts = posts.filter((postItem) => postItem.id !== post.id);
+        setPosts(newPosts);
     }
 
     async function handleUpdatePost(post) {
