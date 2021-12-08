@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { message } from "antd";
+import { Alert } from "antd";
 
 // *********************** Formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -30,7 +30,7 @@ export function EditPost({ editContent, onSave, onCancel }) {
 
     function madeForm({ errors, touched }) {
         const errorField = errors.postContent ? (
-            <div>{errors.postContent}</div>
+            <Alert message={errors.postContent} type="error" showIcon />
         ) : null;
 
         return (
