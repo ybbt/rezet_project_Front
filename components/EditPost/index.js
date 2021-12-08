@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function EditPostComponent({ editContent, onUpdate, onCancel }) {
+export function EditPost({ editContent, onSave, onCancel }) {
     const [content, setTextContent] = useState(editContent);
 
     const buttonCancel = editContent ? (
@@ -15,7 +15,7 @@ export function EditPostComponent({ editContent, onUpdate, onCancel }) {
             alert("Empty field!");
             return;
         }
-        onUpdate(content);
+        onSave(content);
         setTextContent("");
     }
 

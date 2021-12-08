@@ -1,8 +1,8 @@
 import { useState } from "react";
 // import axios from "axios";
 import axiosInstance from "../libs/axiosInstance";
-import { PostListComponent } from "../components/PostListComponent";
-import { EditPostComponent } from "../components/EditPostComponent";
+import { PostsList } from "../components/PostsList";
+import { EditPost } from "../components/EditPost";
 
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
@@ -23,7 +23,7 @@ export default function Index({ postsList }) {
             const newPosts = posts.filter(
                 (postItem) => postItem.id !== post.id
             );
-            setPosts([...newPosts]);
+            setPosts(newPosts);
         }
     }
 
@@ -38,14 +38,14 @@ export default function Index({ postsList }) {
         const newPostList = [...posts];
         newPostList[postIndex].text = post.text;
 
-        setPosts([...newPostList]);
+        setPosts(newPostList);
     }
 
     return (
         <>
             <h1>Whats up?</h1>
-            <EditPostComponent onUpdate={handleAddPost} />
-            <PostListComponent
+            <EditPost onSave={handleAddPost} />
+            <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
                 onUpdatePost={handleUpdatePost}
