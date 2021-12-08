@@ -29,12 +29,10 @@ export default function Index({ postsList }) {
         try {
             const response = await axiosInstance.delete(`/posts/${post.id}`);
 
-            if (response.status === 204) {
-                const newPosts = posts.filter(
-                    (postItem) => postItem.id !== post.id
-                );
-                setPosts(newPosts);
-            }
+            const newPosts = posts.filter(
+                (postItem) => postItem.id !== post.id
+            );
+            setPosts(newPosts);
         } catch {
             message.error(
                 `${error.response.data.message} - ${error.response.data.errors.text[0]}`
