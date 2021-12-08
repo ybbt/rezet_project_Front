@@ -32,11 +32,13 @@ export default function Index({ postsList }) {
             text: post.text,
         });
 
-        const postIndex = posts.findIndex(
-            (postItem) => postItem.id === post.id
-        );
         const newPostList = [...posts];
-        newPostList[postIndex].text = post.text;
+
+        newPostList.map(function (postItem, index) {
+            if (postItem.id === post.id) {
+                postItem.text = post.text;
+            }
+        });
 
         setPosts(newPostList);
     }
