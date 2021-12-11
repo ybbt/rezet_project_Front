@@ -11,15 +11,21 @@ const SignupSchema = Yup.object().shape({
         .min(2, "Too Short!")
         .max(50, "Too Long!")
         .required("Required"),
+    email: Yup.string()
+        .email("Invalid email")
+        .required("Required")
+        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Failed!"),
     password: Yup.string()
-        .min(8, "Too Short!")
-        .max(50, "Too Long!")
-        .required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
+        .required("No password provided.")
+        .min(8, "Password is too short - should be 8 chars minimum.")
+        .matches(/^\d+$/, "Password can only contain numbers from 1 to 9."),
 });
 
 export default function ValidationSchemaExample() {
-    async function handleSubmitData({ firstName, email, password }) {
+    async function handleSubmitData(
+        { firstName, email, password },
+        { resetForm }
+    ) {
         // console.log(values, "values");
 
         try {
@@ -29,7 +35,7 @@ export default function ValidationSchemaExample() {
                 password,
             });
 
-            // setPosts([...posts, response.data.data]);
+            resetForm();
         } catch (error) {
             message.error(
                 `${error.response.data.message} - ${error.response.data.errors.text[0]}`
@@ -40,7 +46,7 @@ export default function ValidationSchemaExample() {
 
     return (
         <div>
-            <h1>Signup</h1>
+            <h1>Sign Up</h1>
             <Formik
                 initialValues={{
                     firstName: "",
@@ -54,15 +60,27 @@ export default function ValidationSchemaExample() {
                     <Form>
                         <Field name="firstName" />
                         {errors.firstName && touched.firstName ? (
-                            <div>{errors.firstName}</div>
+                            <Alert
+                                message={errors.firstName}
+                                type="error"
+                                showIcon
+                            />
                         ) : null}
                         <Field name="email" type="email" />
                         {errors.email && touched.email ? (
-                            <div>{errors.email}</div>
+                            <Alert
+                                message={errors.email}
+                                type="error"
+                                showIcon
+                            />
                         ) : null}
                         <Field type="password" name="password" />
                         {errors.password && touched.password ? (
-                            <div>{errors.password}</div>
+                            <Alert
+                                message={errors.password}
+                                type="error"
+                                showIcon
+                            />
                         ) : null}
                         <button type="submit">Submit</button>
                     </Form>
