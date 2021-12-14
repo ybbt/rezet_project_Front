@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Post } from "../Post/index";
 
-export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
+export function PostsList({
+    postsList,
+    onDeletePost,
+    onUpdatePost,
+    signedUser,
+}) {
     return postsList.map((postItem) => {
         return (
             <Post
@@ -9,6 +14,7 @@ export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
                 key={postItem.id}
                 onDeletePost={onDeletePost}
                 onUpdatePost={onUpdatePost}
+                signedUserId={signedUser.id}
             />
         );
     });

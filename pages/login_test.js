@@ -26,7 +26,7 @@ export default function Login() {
 
         let result = await axiosInstance({
             method: "post",
-            url: "login-verify",
+            url: "login",
             // baseURL: API_URL,
             data: data,
             headers: headers,
@@ -45,28 +45,28 @@ export default function Login() {
     };
 
     // ******************************
-    function setCookie(name, value, options) {
-        options = options || {};
-        var expires = options.expires;
-        if (typeof expires == "number" && expires) {
-            var d = new Date();
-            d.setTime(d.getTime() + expires * 1000);
-            expires = options.expires = d;
-        }
-        if (expires && expires.toUTCString) {
-            options.expires = expires.toUTCString();
-        }
-        value = encodeURIComponent(value);
-        var updatedCookie = name + "=" + value;
-        for (var propName in options) {
-            updatedCookie += "; " + propName;
-            var propValue = options[propName];
-            if (propValue !== true) {
-                updatedCookie += "=" + propValue;
-            }
-        }
-        document.cookie = updatedCookie;
-    }
+    // function setCookie(name, value, options) {
+    //     options = options || {};
+    //     var expires = options.expires;
+    //     if (typeof expires == "number" && expires) {
+    //         var d = new Date();
+    //         d.setTime(d.getTime() + expires * 1000);
+    //         expires = options.expires = d;
+    //     }
+    //     if (expires && expires.toUTCString) {
+    //         options.expires = expires.toUTCString();
+    //     }
+    //     value = encodeURIComponent(value);
+    //     var updatedCookie = name + "=" + value;
+    //     for (var propName in options) {
+    //         updatedCookie += "; " + propName;
+    //         var propValue = options[propName];
+    //         if (propValue !== true) {
+    //             updatedCookie += "=" + propValue;
+    //         }
+    //     }
+    //     document.cookie = updatedCookie;
+    // }
 
     // ******************************
 
@@ -134,3 +134,47 @@ export default function Login() {
         // </div>
     );
 }
+
+function parseCookie(str) {
+    return str
+        .split(";")
+        .map((v) => v.split("="))
+        .reduce((acc, v) => {
+            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+                v[1].trim()
+            );
+            return acc;
+        }, {});
+}
+
+// export async function getServerSideProps(ctx) {
+//     const { req, res } = ctx;
+//     const cookies = parseCookie(req.headers.cookie ?? "");
+//     // const mycookie = cookies[MY_COOKIE]; // mycookie exists and is set correctly
+
+//     console.log(cookies.token_mytweeter);
+
+//     return {
+//         props: { cook: cookies.token_mytweeter },
+//     };
+// }
+
+// export async function getServerSideProps /* getStaticProps */({ req }) {
+//     const cookies = parseCookie(req.headers.cookie ?? "");
+//     console.log(cookies.token_mytweeter, "getServerSideProps");
+
+//     axiosInstance.interceptors.request.use((config) => {
+//         config.headers.Authorization = cookies.token_mytweeter
+//             ? `Bearer ${cookies.token_mytweeter}`
+//             : "";
+//         return config;
+//     });
+
+//     const res = await axiosInstance.get("/auth-user");
+
+//     console.log(res, "res");
+
+//     return {
+//         props: {},
+//     };
+// }

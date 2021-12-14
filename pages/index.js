@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 
 import { message } from "antd";
 import "antd/dist/antd.css";
 
 import axiosInstance from "../libs/axiosInstance";
+import Cookies from "js-cookie";
+
 import { PostsList } from "../components/PostsList";
 import { EditPost } from "../components/EditPost";
 
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
+    const [signedUser, setSignedUser] = useState({});
+
+    // console.log(posts);
+
+    useEffect(async () => {
+        const login_token = Cookies.get("token_mytweeter");
+        console.log(login_token);
+        if (login_token) {
+            axiosInstance.interceptors.request.use((config) => {
+                config.headers.Authorization = login_token
+                    ? `Bearer ${login_token}`
+                    : "";
+                return config;
+            });
+
+            try {
+                const result = await axiosInstance.get("/auth-user");
+
+                let response = result.data;
+
+                console.log(response);
+
+                setSignedUser(result.data.data);
+            } catch (error) {
+                console.log("Token wrong, user don`t signed");
+            }
+        } else {
+            console.log("Login Token is empty");
+        }
+    }, []);
 
     async function handleAddPost(postContent) {
         try {
             const response = await axiosInstance.post("/posts", {
                 text: postContent,
+                user_id: signedUser.id,
             });
 
             setPosts([...posts, response.data.data]);
@@ -63,21 +97,38 @@ export default function Index({ postsList }) {
         }
     }
 
-    return (
+    const addPostComponent = Object.keys(signedUser).length ? (
         <>
             <h1>Whats up?</h1>
             <EditPost onSave={handleAddPost} />
+        </>
+    ) : null;
+
+    return (
+        <>
+            {/* <h1>Whats up?</h1>
+            <EditPost onSave={handleAddPost} /> */}
+            {addPostComponent}
             <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
                 onUpdatePost={handleUpdatePost}
+                signedUser={signedUser}
             />
+            <Link href="/login_test">
+                <a>Sign In</a>
+            </Link>
+            <Link href="/register">
+                <a>Sign Up</a>
+            </Link>
         </>
     );
 }
 
 export async function getStaticProps() {
     const res = await axiosInstance.get("/posts");
+
+    console.log(res.data, "posts");
 
     return {
         props: { postsList: res.data.data },

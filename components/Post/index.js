@@ -6,7 +6,7 @@ import { EditPost } from "../EditPost";
 import { Menu, Dropdown, Button, Space } from "antd";
 import "antd/dist/antd.css";
 
-export function Post({ post, onDeletePost, onUpdatePost }) {
+export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
     const menuKey = {
@@ -60,13 +60,24 @@ export function Post({ post, onDeletePost, onUpdatePost }) {
         </Menu>
     );
 
-    return (
-        <>
+    const dropdownMenu =
+        signedUserId !== post.user_id ? null : (
             <Space wrap>
                 <Dropdown overlay={menu}>
                     <Button>...</Button>
                 </Dropdown>
             </Space>
+        );
+
+    return (
+        <>
+            {/* <Space wrap>
+                <Dropdown overlay={menu}>
+                    <Button>...</Button>
+                </Dropdown>
+            </Space> */}
+            {dropdownMenu}
+            <div>{post.user.name}</div>
             <div>{post.created_at}</div>
             {displayContent}
         </>
