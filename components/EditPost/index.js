@@ -40,7 +40,12 @@ export function EditPost({ editContent, onSave, onCancel }) {
 
         return (
             <Form>
-                <Field as="textarea" id="postContent" name="postContent" />
+                <Field
+                    as="textarea"
+                    id="postContent"
+                    name="postContent"
+                    className="w-full"
+                />
                 {errorField}
                 <div>
                     <button

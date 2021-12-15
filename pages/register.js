@@ -4,10 +4,14 @@ import "antd/dist/antd.css";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
+import Cookies from "js-cookie";
+
+import Router from "next/router";
+
 import axiosInstance from "../libs/axiosInstance";
 
 const SignupSchema = Yup.object().shape({
-    firstName: Yup.string()
+    userName: Yup.string()
         .min(2, "Too Short!")
         .max(50, "Too Long!")
         .required("Required"),
@@ -21,21 +25,33 @@ const SignupSchema = Yup.object().shape({
         .matches(/^\d+$/, "Password can only contain numbers from 1 to 9."),
 });
 
-export default function ValidationSchemaExample() {
+export default function Register() {
     async function handleSubmitData(
-        { firstName, email, password },
+        { userName, email, password },
         { resetForm }
     ) {
         // console.log(values, "values");
 
         try {
-            const response = await axiosInstance.post("/register", {
-                name: firstName,
+            const result = await axiosInstance.post("/register", {
+                name: userName,
                 email,
                 password,
             });
 
-            resetForm();
+            const response = result.data;
+
+            console.log(response.token); // *****************************************
+
+            if (response.error) {
+                console.log(response.error);
+            } else {
+                Cookies.set("token_mytweeter", response.token, {
+                    secure: true,
+                });
+                // resetForm();
+                Router.push("/");
+            }
         } catch (error) {
             message.error(
                 `${error.response.data.message} - ${error.response.data.errors.text[0]}`
@@ -45,11 +61,11 @@ export default function ValidationSchemaExample() {
     }
 
     return (
-        <div>
+        <div className="w-full h-screen flex justify-center items-center flex-col">
             <h1>Sign Up</h1>
             <Formik
                 initialValues={{
-                    firstName: "",
+                    userName: "",
                     email: "",
                     password: "",
                 }}
@@ -58,31 +74,49 @@ export default function ValidationSchemaExample() {
             >
                 {({ errors, touched }) => (
                     <Form>
-                        <Field name="firstName" />
-                        {errors.firstName && touched.firstName ? (
-                            <Alert
-                                message={errors.firstName}
-                                type="error"
-                                showIcon
+                        <div className="flex flex-col">
+                            <Field
+                                name="userName"
+                                className="border-[#949494] border-2"
                             />
-                        ) : null}
-                        <Field name="email" type="email" />
-                        {errors.email && touched.email ? (
-                            <Alert
-                                message={errors.email}
-                                type="error"
-                                showIcon
+                            {errors.userName && touched.userName ? (
+                                <Alert
+                                    message={errors.userName}
+                                    type="error"
+                                    showIcon
+                                />
+                            ) : null}
+                            <Field
+                                name="email"
+                                type="email"
+                                className="border-[#949494] border-2"
                             />
-                        ) : null}
-                        <Field type="password" name="password" />
-                        {errors.password && touched.password ? (
-                            <Alert
-                                message={errors.password}
-                                type="error"
-                                showIcon
+                            {errors.email && touched.email ? (
+                                <Alert
+                                    message={errors.email}
+                                    type="error"
+                                    showIcon
+                                />
+                            ) : null}
+                            <Field
+                                type="password"
+                                name="password"
+                                className="border-[#949494] border-2"
                             />
-                        ) : null}
-                        <button type="submit">Submit</button>
+                            {errors.password && touched.password ? (
+                                <Alert
+                                    message={errors.password}
+                                    type="error"
+                                    showIcon
+                                />
+                            ) : null}
+                            <button
+                                type="submit"
+                                className="bg-[#54C1FF] text-white"
+                            >
+                                Submit
+                            </button>
+                        </div>
                     </Form>
                 )}
             </Formik>

@@ -4,7 +4,7 @@ import axios from "axios";
 import { EditPost } from "../EditPost";
 
 import { Menu, Dropdown, Button, Space } from "antd";
-import "antd/dist/antd.css";
+// import "antd/dist/antd.css";
 
 export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
@@ -34,12 +34,12 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
     const displayContent = componentEditCondition ? (
         <EditPost
-            editContent={/* textContent */ post.text}
+            editContent={post.text}
             onSave={handleUdate}
             onCancel={handleCancel}
         />
     ) : (
-        <div>{/* textContent */ post.text}</div>
+        <div className="max-w-2xl min-w-[32rem]">{post.text}</div>
     );
 
     function handleMenuClick({ key }) {
@@ -70,13 +70,10 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         );
 
     return (
-        <div className="border-2 border-black border-t-0 p-2">
-            {/* <Space wrap>
-                <Dropdown overlay={menu}>
-                    <Button>...</Button>
-                </Dropdown>
-            </Space> */}
-            {dropdownMenu}
+        <div className="border-2 border-black border-t-0 p-2 h-full min-h-[7rem] max-h-48 w-full">
+            <div className="w-full flex justify-end items-center">
+                {dropdownMenu}
+            </div>
             <div>{post.user.name}</div>
             <div>{post.created_at}</div>
             {displayContent}

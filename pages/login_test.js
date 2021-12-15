@@ -20,11 +20,11 @@ export default function Login() {
             "Content-Type": `multipart/form-data`,
         };
 
-        let data = new FormData();
+        const data = new FormData();
         data.append("username", username);
         data.append("password", password);
 
-        let result = await axiosInstance({
+        const result = await axiosInstance({
             method: "post",
             url: "login",
             // baseURL: API_URL,
@@ -32,10 +32,11 @@ export default function Login() {
             headers: headers,
         });
 
-        let response = result.data;
+        const response = result.data;
 
         if (response["success"]) {
-            console.log("Login Successful");
+            console.log("Login Successful"); // *************************************
+
             const login_token = response["token"];
             Cookies.set("token_mytweeter", login_token, { secure: true });
         } else {
@@ -43,32 +44,6 @@ export default function Login() {
         }
         // alert(document.cookie);
     };
-
-    // ******************************
-    // function setCookie(name, value, options) {
-    //     options = options || {};
-    //     var expires = options.expires;
-    //     if (typeof expires == "number" && expires) {
-    //         var d = new Date();
-    //         d.setTime(d.getTime() + expires * 1000);
-    //         expires = options.expires = d;
-    //     }
-    //     if (expires && expires.toUTCString) {
-    //         options.expires = expires.toUTCString();
-    //     }
-    //     value = encodeURIComponent(value);
-    //     var updatedCookie = name + "=" + value;
-    //     for (var propName in options) {
-    //         updatedCookie += "; " + propName;
-    //         var propValue = options[propName];
-    //         if (propValue !== true) {
-    //             updatedCookie += "=" + propValue;
-    //         }
-    //     }
-    //     document.cookie = updatedCookie;
-    // }
-
-    // ******************************
 
     const get_user = async () => {
         // alert(document.cookie);
@@ -81,7 +56,7 @@ export default function Login() {
                 Authorization: `Bearer ${login_token}`,
             };
 
-            let result = await axiosInstance({
+            const result = await axiosInstance({
                 method: "get",
                 url: "auth-user",
                 // baseURL: API_URL,
@@ -89,7 +64,7 @@ export default function Login() {
                 headers: headers,
             });
 
-            let response = result.data;
+            const response = result.data;
 
             console.log("get_user", response);
 
@@ -100,8 +75,6 @@ export default function Login() {
     };
 
     return (
-        // <div className={styles.container}>
-        //     <div className={styles['m-inner']}>
         <form onSubmit={(e) => handleSubmit(e)} action="" method="post">
             <div>
                 <label htmlFor="">Username</label>
@@ -130,22 +103,20 @@ export default function Login() {
                 </button>
             </div>
         </form>
-        //     </div>
-        // </div>
     );
 }
 
-function parseCookie(str) {
-    return str
-        .split(";")
-        .map((v) => v.split("="))
-        .reduce((acc, v) => {
-            acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
-                v[1].trim()
-            );
-            return acc;
-        }, {});
-}
+// function parseCookie(str) {
+//     return str
+//         .split(";")
+//         .map((v) => v.split("="))
+//         .reduce((acc, v) => {
+//             acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(
+//                 v[1].trim()
+//             );
+//             return acc;
+//         }, {});
+// }
 
 // export async function getServerSideProps(ctx) {
 //     const { req, res } = ctx;
