@@ -14,7 +14,12 @@ export function EditPost({ editContent, onSave, onCancel }) {
     const initValue = editContent || "";
 
     const buttonCancel = editContent ? (
-        <button onClick={onCancel}>Cancel</button>
+        <button
+            onClick={onCancel}
+            className="text-blue-400 border-blue-400 border p-1 m-1 w-14"
+        >
+            Cancel
+        </button>
     ) : null;
 
     const nameSaveButton = editContent ? "Save" : "Tweet";
@@ -38,7 +43,12 @@ export function EditPost({ editContent, onSave, onCancel }) {
                 <Field as="textarea" id="postContent" name="postContent" />
                 {errorField}
                 <div>
-                    <button type="submit">{nameSaveButton}</button>
+                    <button
+                        type="submit"
+                        className="bg-blue-400 text-white border p-1 m-1 w-14"
+                    >
+                        {nameSaveButton}
+                    </button>
                     {buttonCancel}
                 </div>
             </Form>

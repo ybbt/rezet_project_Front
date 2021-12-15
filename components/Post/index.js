@@ -70,7 +70,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         );
 
     return (
-        <>
+        <div className="border-2 border-black border-t-0 p-2">
             {/* <Space wrap>
                 <Dropdown overlay={menu}>
                     <Button>...</Button>
@@ -80,6 +80,6 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
             <div>{post.user.name}</div>
             <div>{post.created_at}</div>
             {displayContent}
-        </>
+        </div>
     );
 }

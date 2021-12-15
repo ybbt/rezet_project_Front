@@ -98,30 +98,32 @@ export default function Index({ postsList }) {
     }
 
     const addPostComponent = Object.keys(signedUser).length ? (
-        <>
-            <h1>Whats up?</h1>
+        <div className="border-2 border-black border-t-0 p-2">
+            <h1 className="text-xs">Whats up?</h1>
             <EditPost onSave={handleAddPost} />
-        </>
+        </div>
     ) : null;
 
     return (
-        <>
-            {/* <h1>Whats up?</h1>
+        <div className="flex justify-center">
+            <div className="">
+                {/* <h1>Whats up?</h1>
             <EditPost onSave={handleAddPost} /> */}
-            {addPostComponent}
-            <PostsList
-                postsList={posts}
-                onDeletePost={handleDeletePost}
-                onUpdatePost={handleUpdatePost}
-                signedUser={signedUser}
-            />
-            <Link href="/login_test">
-                <a>Sign In</a>
-            </Link>
-            <Link href="/register">
-                <a>Sign Up</a>
-            </Link>
-        </>
+                {addPostComponent}
+                <PostsList
+                    postsList={posts}
+                    onDeletePost={handleDeletePost}
+                    onUpdatePost={handleUpdatePost}
+                    signedUser={signedUser}
+                />
+                <Link href="/login_test">
+                    <a>Sign In</a>
+                </Link>
+                <Link href="/register">
+                    <a>Sign Up</a>
+                </Link>
+            </div>
+        </div>
     );
 }
 
