@@ -2,12 +2,16 @@ import { useState } from "react";
 
 import { message } from "antd";
 
-export function EditPost({ editContent, onSave, onCancel }) {
+export function EditPostForm({ editContent, onSave, onCancel }) {
     const [content, setTextContent] = useState(editContent);
 
-    const buttonCancel = editContent ? (
+    // const buttonCancel = editContent ? (
+    //     <button onClick={onCancel}>Cancel</button>
+    // ) : null;
+
+    const buttonCancel = editContent && (
         <button onClick={onCancel}>Cancel</button>
-    ) : null;
+    );
 
     const nameSaveButton = editContent ? "Save" : "Tweet";
 

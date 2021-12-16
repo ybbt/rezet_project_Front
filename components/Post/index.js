@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-import { EditPost } from "../EditPost";
+import { EditPostForm } from "../EditPostForm";
 
 import { Menu, Dropdown, Button, Space } from "antd";
 import "antd/dist/antd.css";
@@ -33,13 +33,13 @@ export function Post({ post, onDeletePost, onUpdatePost }) {
     }
 
     const displayContent = componentEditCondition ? (
-        <EditPost
-            editContent={/* textContent */ post.text}
+        <EditPostForm
+            editContent={post.text}
             onSave={handleUdate}
             onCancel={handleCancel}
         />
     ) : (
-        <div>{/* textContent */ post.text}</div>
+        <div>{post.text}</div>
     );
 
     function handleMenuClick({ key }) {

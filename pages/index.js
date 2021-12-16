@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import axiosInstance from "../libs/axiosInstance";
 import { PostsList } from "../components/PostsList";
-import { EditPost } from "../components/EditPost";
+import { EditPostForm } from "../components/EditPostForm";
 
 export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
@@ -16,32 +16,26 @@ export default function Index({ postsList }) {
     }
 
     async function handleDeletePost(post) {
-        const response = await axiosInstance.delete(`/posts/${post.id}`);
+        await axiosInstance.delete(`/posts/${post.id}`);
 
         const newPosts = posts.filter((postItem) => postItem.id !== post.id);
         setPosts(newPosts);
     }
 
-    async function handleUpdatePost(post) {
-        const response = await axiosInstance.put(`/posts/${post.id}`, {
-            text: post.text,
-        });
-
-        const newPostList = [...posts];
-
-        newPostList.map(function (postItem, index) {
-            if (postItem.id === post.id) {
-                postItem.text = post.text;
-            }
-        });
-
+    async function handleUpdatePost(updatedData) {
+        await axiosInstance.put(`/posts/${updatedData.id}`, updatedData);
+        const newPostList = posts.map((postItem) =>
+            postItem.id === updatedData.id
+                ? { ...postItem, ...updatedData }
+                : postItem
+        );
         setPosts(newPostList);
     }
 
     return (
         <>
             <h1>Whats up?</h1>
-            <EditPost onSave={handleAddPost} />
+            <EditPostForm onSave={handleAddPost} />
             <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
