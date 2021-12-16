@@ -80,6 +80,14 @@ export default function Index({ postsList, error }) {
 
     async function handleUpdatePost(post) {
         try {
+            const login_token = Cookies.get("token_mytweeter");
+            axiosInstance.interceptors.request.use((config) => {
+                config.headers.Authorization = login_token
+                    ? `Bearer ${login_token}`
+                    : "";
+                return config;
+            });
+
             const response = await axiosInstance.put(`/posts/${post.id}`, {
                 text: post.text,
             });
@@ -100,14 +108,37 @@ export default function Index({ postsList, error }) {
         }
     }
 
-    const addPostComponent = Object.keys(signedUser).length ? (
+    async function handlerLogout() {
+        try {
+            const login_token = Cookies.get("token_mytweeter");
+            axiosInstance.interceptors.request.use((config) => {
+                config.headers.Authorization = login_token
+                    ? `Bearer ${login_token}`
+                    : "";
+                return config;
+            });
+
+            await axiosInstance.post(`/logout`);
+
+            Cookies.remove("token_mytweeter");
+
+            setSignedUser({});
+        } catch (error) {
+            console.log(error, "error");
+            message.error(
+                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
+            );
+        }
+    }
+
+    const addPostComponent = !!Object.keys(signedUser).length && (
         <div className="border-2 border-black border-t-0 p-2">
             <h1 className="text-xs">Whats up?</h1>
             <EditPost onSave={handleAddPost} />
         </div>
-    ) : null;
+    );
 
-    const signBanner = !Object.keys(signedUser).length ? (
+    const signBanner = !Object.keys(signedUser).length && (
         <div className="w-full bg-blue-400 sticky bottom-0 h-14 flex justify-center items-center">
             <Link href="/login_test">
                 <a className="bg-blue-400 border-white border-2 flex h-7 w-20 justify-center items-center text-white">
@@ -120,32 +151,39 @@ export default function Index({ postsList, error }) {
                 </a>
             </Link>
         </div>
-    ) : null;
+    );
 
-    const postList = posts ? (
-        <PostsList
-            postsList={posts}
-            onDeletePost={handleDeletePost}
-            onUpdatePost={handleUpdatePost}
-            signedUser={signedUser}
-        />
-    ) : null;
+    // const postList = posts && (
+    //     <PostsList
+    //         postsList={posts}
+    //         onDeletePost={handleDeletePost}
+    //         onUpdatePost={handleUpdatePost}
+    //         signedUser={signedUser}
+    //     />
+    // );
+
+    const userBanner = !!Object.keys(signedUser).length && (
+        <div className="sticky bottom-0 w-10">
+            <div>{signedUser.name}</div>
+            <button onClick={handlerLogout}>Logout</button>
+        </div>
+    );
 
     return (
         <>
             <div className="flex flex-col items-center">
                 <div className="max-w-3xl min-w-[45rem] flex flex-col">
                     {addPostComponent}
-                    {/* <PostsList
+                    <PostsList
                         postsList={posts}
                         onDeletePost={handleDeletePost}
                         onUpdatePost={handleUpdatePost}
                         signedUser={signedUser}
-                    /> */}
-                    {postList}
+                    />
+                    {/* {postList} */}
                 </div>
             </div>
-
+            {userBanner}
             {signBanner}
         </>
     );
@@ -165,7 +203,7 @@ export async function getStaticProps() {
         return {
             props: {
                 error: true,
-                postsList: "",
+                // postsList: "",
             },
         };
     }

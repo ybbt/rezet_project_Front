@@ -55,8 +55,18 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
     const menu = (
         <Menu onClick={handleMenuClick}>
-            <Menu.Item key={menuKey.edit}>Edit</Menu.Item>
-            <Menu.Item key={menuKey.delete}>Delete</Menu.Item>
+            <Menu.Item
+                key={menuKey.edit}
+                style={{ "border-width": "1px", "border-color": "black" }}
+            >
+                Edit
+            </Menu.Item>
+            <Menu.Item
+                key={menuKey.delete}
+                style={{ "border-width": "1px", "border-color": "black" }}
+            >
+                Delete
+            </Menu.Item>
         </Menu>
     );
 
@@ -64,7 +74,12 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         signedUserId !== post.user_id ? null : (
             <Space wrap>
                 <Dropdown overlay={menu}>
-                    <Button>...</Button>
+                    <Button
+                        style={{ "border-width": "0" }}
+                        // className="border-0"
+                    >
+                        ...
+                    </Button>
                 </Dropdown>
             </Space>
         );
@@ -77,6 +92,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
             <div>{post.user.name}</div>
             <div>{post.created_at}</div>
             {displayContent}
+            {/* style={{ "border-width": "0" }} */}
         </div>
     );
 }
