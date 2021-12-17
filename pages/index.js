@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect /* useContext */ } from "react";
 import Link from "next/link";
+
+import classNames from "classnames";
+
+// import AppContext from "../AppContext";
 
 import { message } from "antd";
 import "antd/dist/antd.css";
@@ -14,36 +18,46 @@ export default function Index({ postsList, error }) {
     const [posts, setPosts] = useState(postsList);
     const [signedUser, setSignedUser] = useState({});
 
-    // console.log(posts);
+    // console.log(postsList, "postList");
+    // console.log(posts, "posts");
 
     useEffect(async () => {
-        const login_token = Cookies.get("token_mytweeter");
+        // const login_token = Cookies.get("token_mytweeter");
 
-        console.log(login_token); // **********
-        console.log(error, "error"); // ***************
+        // alert(login_token);
 
-        if (login_token) {
-            axiosInstance.interceptors.request.use((config) => {
-                config.headers.Authorization = login_token
-                    ? `Bearer ${login_token}`
-                    : "";
-                return config;
-            });
+        // if (login_token) {
+        // axiosInstance.interceptors.request.use((config) => {
+        //     // config.headers.Authorization = login_token
+        //     //     ? `Bearer ${login_token}`
+        //     //     : "";
+        //     // return config;
+        //     config.headers.common = {
+        //         ...config.headers.common,
+        //         Authorization: `Bearer ${login_token}`,
+        //     };
+        //     return config;
+        // });
 
-            try {
-                const result = await axiosInstance.get("/auth-user");
+        // axiosInstance.defaults.headers.authorization = `Bearer ${login_token}`;
 
-                let response = result.data;
+        try {
+            const result = await axiosInstance.get("/auth-user");
 
-                console.log(response);
+            const response = result.data;
 
-                setSignedUser(result.data.data);
-            } catch (error) {
-                console.log("Token wrong, user don`t signed");
-            }
-        } else {
-            console.log("Login Token is empty");
+            console.log(response);
+
+            setSignedUser(result.data.data);
+            // setSignUserContext(result.data.data);
+        } catch (error) {
+            console.log(error);
+            console.log("Token wrong, user don`t signed");
+            Cookies.remove("token_mytweeter");
         }
+        // } else {
+        //     console.log("Login Token is empty");
+        // }
     }, []);
 
     async function handleAddPost(postContent) {
@@ -153,38 +167,43 @@ export default function Index({ postsList, error }) {
         </div>
     );
 
-    // const postList = posts && (
-    //     <PostsList
-    //         postsList={posts}
-    //         onDeletePost={handleDeletePost}
-    //         onUpdatePost={handleUpdatePost}
-    //         signedUser={signedUser}
-    //     />
-    // );
-
     const userBanner = !!Object.keys(signedUser).length && (
-        <div className="sticky bottom-0 w-10">
+        <div className="sticky bottom-0 w-32">
             <div>{signedUser.name}</div>
             <button onClick={handlerLogout}>Logout</button>
         </div>
     );
 
+    const leftSizeHeight = !!Object.keys(signedUser).length ? "h-full" : "";
+
+    const leftPanel = classNames(
+        "w-1/5 min-w-40 sticky top-0 flex-grow flex flex-col justify-between items-end pt-10 pr-8 pb-4",
+        { "h-[calc(100vh_-_3.5rem)]": !Object.keys(signedUser).length },
+        { "h-screen": !!Object.keys(signedUser).length }
+    );
+
     return (
         <>
-            <div className="flex flex-col items-center">
-                <div className="max-w-3xl min-w-[45rem] flex flex-col">
-                    {addPostComponent}
-                    <PostsList
-                        postsList={posts}
-                        onDeletePost={handleDeletePost}
-                        onUpdatePost={handleUpdatePost}
-                        signedUser={signedUser}
-                    />
-                    {/* {postList} */}
+            <div className="w-full flex flex-col items-center">
+                <div className="w-full flex justify-center after:w-1/5 after:min-w-40 after:sticky after:top-0 after:flex-grow">
+                    <div className={leftPanel}>
+                        <div className="w-32 h-40">MENU</div>
+                        {userBanner}
+                    </div>
+                    <div className="max-w-[50rem] min-w-[40rem] w-3/5 h-full flex flex-col grow-[2]">
+                        {addPostComponent}
+                        <PostsList
+                            postsList={posts}
+                            onDeletePost={handleDeletePost}
+                            onUpdatePost={handleUpdatePost}
+                            signedUser={signedUser}
+                        />
+                        {/* {postList} */}
+                    </div>
                 </div>
+
+                {signBanner}
             </div>
-            {userBanner}
-            {signBanner}
         </>
     );
 }
@@ -193,7 +212,7 @@ export async function getStaticProps() {
     try {
         const res = await axiosInstance.get("/posts");
 
-        console.log(res.data, "posts");
+        // console.log(res.data, "posts");
 
         return {
             props: { postsList: res.data.data, error: false },

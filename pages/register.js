@@ -37,6 +37,9 @@ export default function Register() {
                 name: userName,
                 email,
                 password,
+                headers: {
+                    Authorization: "",
+                },
             });
 
             const response = result.data;

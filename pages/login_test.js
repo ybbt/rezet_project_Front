@@ -1,16 +1,17 @@
 // import styles from "../styles/Home.module.css";
-import { useState } from "react";
+import React, { useState } from "react";
+
 // import axios from "axios";
 import axiosInstance from "../libs/axiosInstance";
 import Cookies from "js-cookie";
 
+import Router from "next/router";
+
 // const API_URL = "http://localhost:8000/api/";
 
 export default function Login() {
-    let [username, setUsername] = useState("");
-    let [password, setPassword] = useState("");
-
-    // let login_token = null;
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleSubmit = async (e) => {
         // alert(document.cookie);
@@ -39,6 +40,7 @@ export default function Login() {
 
             const login_token = response["token"];
             Cookies.set("token_mytweeter", login_token, { secure: true });
+            Router.push("/");
         } else {
             console.log("Failed to Login");
         }
@@ -77,7 +79,7 @@ export default function Login() {
     return (
         <form onSubmit={(e) => handleSubmit(e)} action="" method="post">
             <div>
-                <label htmlFor="">Username</label>
+                <label htmlFor="">User Name</label>
                 <br />
                 <input
                     onInput={(e) => setUsername(e.target.value)}
