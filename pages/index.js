@@ -167,9 +167,11 @@ export default function Index({ postsList, error }) {
     );
 
     const userBanner = !!Object.keys(signedUser).length && (
-        <div className="sticky bottom-0 w-32">
-            <div>{signedUser.name}</div>
-            <button onClick={handlerLogout}>Logout</button>
+        <div className="fixed bottom-0 invisible">
+            <div className="w-32 ml-[calc(-100%_-_2rem)] mb-4  visible border border-black">
+                <div>{signedUser.name}</div>
+                <button onClick={handlerLogout}>Logout</button>
+            </div>
         </div>
     );
 
@@ -184,12 +186,14 @@ export default function Index({ postsList, error }) {
     return (
         <>
             <div className="w-full flex flex-col items-center">
-                <div className="w-full flex justify-center after:w-1/5 after:min-w-40 after:sticky after:top-0 after:flex-grow">
-                    <div className={leftPanel}>
-                        <div className="w-32 h-40">MENU</div>
-                        {userBanner}
-                    </div>
+                <div className="w-full flex justify-center ">
                     <div className="max-w-[50rem] min-w-[40rem] w-3/5 h-full flex flex-col grow-[2]">
+                        <menu className="fixed top-0 invisible">
+                            <div className="w-32 h-40 ml-[calc(-100%_-_2rem)] mt-11 visible border border-black">
+                                MENU
+                            </div>
+                        </menu>
+                        {userBanner}
                         {addPostComponent}
                         <PostsList
                             postsList={posts}
@@ -200,7 +204,6 @@ export default function Index({ postsList, error }) {
                         {/* {postList} */}
                     </div>
                 </div>
-
                 {signBanner}
             </div>
         </>
