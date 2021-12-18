@@ -147,7 +147,6 @@ export default function Index({ postsList, error }) {
 
     const addPostComponent = !!Object.keys(signedUser).length && (
         <div className="border-2 border-black border-t-0 p-2">
-            <h1 className="text-xs">Whats up?</h1>
             <EditPost onSave={handleAddPost} />
         </div>
     );
@@ -177,8 +176,8 @@ export default function Index({ postsList, error }) {
     const leftSizeHeight = !!Object.keys(signedUser).length ? "h-full" : "";
 
     const leftPanel = classNames(
-        "w-1/5 min-w-40 sticky top-0 flex-grow flex flex-col justify-between items-end pt-10 pr-8 pb-4",
-        { "h-[calc(100vh_-_3.5rem)]": !Object.keys(signedUser).length },
+        "w-1/5 min-w-40 sticky top-0 flex-grow flex flex-col justify-between items-end pt-10 pr-8 pb-4 self-start",
+        // { "h-[calc(100vh_-_3.5rem)]": !Object.keys(signedUser).length },
         { "h-screen": !!Object.keys(signedUser).length }
     );
 

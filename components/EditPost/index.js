@@ -34,19 +34,21 @@ export function EditPost({ editContent, onSave, onCancel }) {
     });
 
     function madeForm({ errors, touched }) {
-        const errorField = errors.postContent ? (
-            <Alert message={errors.postContent} type="error" showIcon />
-        ) : null;
-
         return (
             <Form>
                 <Field
                     as="textarea"
                     id="postContent"
                     name="postContent"
-                    className="w-full"
+                    placeholder="Whats up?"
+                    className="w-full resize-none focus-visible:outline-none focus:border focus:border-[#949494]"
                 />
-                {errorField}
+                <ErrorMessage
+                    render={(msg) => (
+                        <Alert message={msg} type="error" showIcon></Alert>
+                    )}
+                    name="postContent"
+                />
                 <div>
                     <button
                         type="submit"

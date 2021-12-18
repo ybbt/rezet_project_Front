@@ -21,9 +21,9 @@ a {
     display: flex;
 }
 
-.ant-btn {
-    border-width: 0px;
-}
+/* *:focus-visible {
+    outline: none;
+} */
 
 @tailwind base;
 @tailwind components;

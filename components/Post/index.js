@@ -74,12 +74,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         signedUserId !== post.user_id ? null : (
             <Space wrap>
                 <Dropdown overlay={menu}>
-                    <Button
-                        style={{ "border-width": "0" }}
-                        // className="border-0"
-                    >
-                        ...
-                    </Button>
+                    <Button style={{ "border-width": "0" }}>...</Button>
                 </Dropdown>
             </Space>
         );
