@@ -3,16 +3,12 @@ import axios from "axios";
 
 import { EditPost } from "../EditPost";
 
-import { Menu, Dropdown, Button, Space } from "antd";
-// import "antd/dist/antd.css";
+import moment from "moment";
+
+import { DropdownPostMenu } from "../DropdownPostMenu";
 
 export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
-
-    const menuKey = {
-        edit: "1",
-        delete: "2",
-    };
 
     function handleEdit() {
         setComponentEditCondition(true);
@@ -42,42 +38,11 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         <div className="max-w-2xl min-w-[32rem]">{post.text}</div>
     );
 
-    function handleMenuClick({ key }) {
-        switch (key) {
-            case menuKey.edit:
-                handleEdit();
-                break;
-            case menuKey.delete:
-                onDeletePost(post);
-                break;
-        }
-    }
-
-    const menu = (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item
-                key={menuKey.edit}
-                style={{ borderWidth: "1px", borderColor: "black" }}
-            >
-                Edit
-            </Menu.Item>
-            <Menu.Item
-                key={menuKey.delete}
-                style={{ borderWidth: "1px", borderColor: "black" }}
-            >
-                Delete
-            </Menu.Item>
-        </Menu>
+    const dropdownMenu = signedUserId === post.user_id && (
+        <DropdownPostMenu onDeletePost={onDeletePost} onEditPost={handleEdit} />
     );
 
-    const dropdownMenu =
-        signedUserId !== post.user_id ? null : (
-            <Space wrap>
-                <Dropdown overlay={menu}>
-                    <Button style={{ borderWidth: "0" }}>...</Button>
-                </Dropdown>
-            </Space>
-        );
+    const createdAt = moment(post.created_at).format("D MMM YYYY");
 
     return (
         <div className="border-2 border-black border-t-0 px-4 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
@@ -87,8 +52,10 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
                     <div className="flex">
-                        <div>{post.user.name}</div>
-                        <div>{post.created_at}</div>
+                        <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494]">
+                            <span>{`@${post.user.name}`}</span>
+                        </div>
+                        <div className="text-[#949494]">{createdAt}</div>
                     </div>
                     {dropdownMenu}
                 </div>

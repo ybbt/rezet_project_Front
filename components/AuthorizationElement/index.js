@@ -20,7 +20,7 @@ export default function AuthorizationElement({ formName, title, type = "" }) {
                         message={msg}
                         type="error"
                         showIcon
-                        style={{ height: "25px" }}
+                        style={{ height: "auto", fontSize: "12px" }}
                     ></Alert>
                 )}
             />
