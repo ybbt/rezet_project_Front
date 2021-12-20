@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 
 import { PostsList } from "../components/PostsList";
 import { EditPost } from "../components/EditPost";
+import { MainMenu } from "../components/MainMenu";
 
 export default function Index({ postsList, error }) {
     const [posts, setPosts] = useState(postsList);
@@ -22,25 +23,6 @@ export default function Index({ postsList, error }) {
     // console.log(posts, "posts");
 
     useEffect(async () => {
-        // const login_token = Cookies.get("token_mytweeter");
-
-        // alert(login_token);
-
-        // if (login_token) {
-        // axiosInstance.interceptors.request.use((config) => {
-        //     // config.headers.Authorization = login_token
-        //     //     ? `Bearer ${login_token}`
-        //     //     : "";
-        //     // return config;
-        //     config.headers.common = {
-        //         ...config.headers.common,
-        //         Authorization: `Bearer ${login_token}`,
-        //     };
-        //     return config;
-        // });
-
-        // axiosInstance.defaults.headers.authorization = `Bearer ${login_token}`;
-
         try {
             const result = await axiosInstance.get("/auth-user");
 
@@ -55,9 +37,6 @@ export default function Index({ postsList, error }) {
             console.log("Token wrong, user don`t signed");
             Cookies.remove("token_mytweeter");
         }
-        // } else {
-        //     console.log("Login Token is empty");
-        // }
     }, []);
 
     async function handleAddPost(postContent) {
@@ -152,17 +131,30 @@ export default function Index({ postsList, error }) {
     );
 
     const signBanner = !Object.keys(signedUser).length && (
-        <div className="w-full bg-blue-400 sticky bottom-0 h-14 flex justify-center items-center">
-            <Link href="/login">
-                <a className="bg-blue-400 border-white border-2 flex h-7 w-20 justify-center items-center text-white">
-                    Sign In
-                </a>
-            </Link>
-            <Link href="/register">
-                <a className="bg-white  text-blue-400 border-white border-2 flex h-7 w-20 justify-center items-center">
-                    Sign Up
-                </a>
-            </Link>
+        <div className="w-full bg-[#54C1FF] sticky bottom-0 h-14 flex justify-center items-center">
+            <div className="flex justify-between max-w-[800px] min-w-[600px] w-3/5 h-full ">
+                <div className="flex flex-col">
+                    <div className="text-xl text-white text-bold">
+                        Stay tuned!
+                    </div>
+                    <div className="text-sm text-white ">
+                        Sing up for Twitty! Or sign in if you already have an
+                        account.
+                    </div>
+                </div>
+                <div className="flex justify-between items-center w-[175px]">
+                    <Link href="/login">
+                        <a className="bg-[#54C1FF] border-white border-2 flex h-7 w-20 justify-center items-center text-white">
+                            Sign In
+                        </a>
+                    </Link>
+                    <Link href="/register">
+                        <a className="bg-white  text-[#54C1FF] border-white border-2 flex h-7 w-20 justify-center items-center">
+                            Sign Up
+                        </a>
+                    </Link>
+                </div>
+            </div>
         </div>
     );
 
@@ -175,18 +167,13 @@ export default function Index({ postsList, error }) {
 
     const leftSizeHeight = !!Object.keys(signedUser).length ? "h-full" : "";
 
-    const leftPanel = classNames(
-        "w-1/5 min-w-40 sticky top-0 flex-grow flex flex-col justify-between items-end pt-10 pr-8 pb-4 self-start",
-        // { "h-[calc(100vh_-_3.5rem)]": !Object.keys(signedUser).length },
-        { "h-screen": !!Object.keys(signedUser).length }
-    );
     return (
         <>
             <div className="w-full flex flex-col items-center">
-                <div className="w-full flex xl:justify-center before:w-40 before:min-w-[10rem] before:ml-4 before:content-[''] xl:before:w-0 xl:before:min-w-0">
-                    <div className="max-w-[50rem] min-w-[40rem] w-3/5 h-full flex flex-col grow-[2]">
-                        <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray">
-                            MENU
+                <div className="w-full flex xl:justify-center before:w-40 before:min-w-[10rem] before:ml-4 xl:before:ml-0 before:content-[''] xl:before:w-0 xl:before:min-w-0">
+                    <div className="max-w-[800px] min-w-[600px] w-3/5 h-full flex flex-col ">
+                        <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
+                            <MainMenu />
                         </div>
                         {userBanner}
                         {addPostComponent}

@@ -10,6 +10,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 // ***************************
 
+import classNames from "classnames";
+
 export function EditPost({ editContent, onSave, onCancel }) {
     const initValue = editContent || "";
 
@@ -33,6 +35,11 @@ export function EditPost({ editContent, onSave, onCancel }) {
         postContent: Yup.string().required("Required Field!"),
     });
 
+    const textAreaStyle = classNames(
+        "w-full resize-none focus-visible:outline-none  focus:border focus:border-[#949494]",
+        { "border border-[#949494]": !!editContent }
+    );
+
     function madeForm({ errors, touched }) {
         return (
             <Form>
@@ -41,7 +48,7 @@ export function EditPost({ editContent, onSave, onCancel }) {
                     id="postContent"
                     name="postContent"
                     placeholder="Whats up?"
-                    className="w-full resize-none focus-visible:outline-none focus:border focus:border-[#949494]"
+                    className={textAreaStyle}
                 />
                 <ErrorMessage
                     render={(msg) => (
