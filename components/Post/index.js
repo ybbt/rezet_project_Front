@@ -57,13 +57,13 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         <Menu onClick={handleMenuClick}>
             <Menu.Item
                 key={menuKey.edit}
-                style={{ "border-width": "1px", "border-color": "black" }}
+                style={{ borderWidth: "1px", borderColor: "black" }}
             >
                 Edit
             </Menu.Item>
             <Menu.Item
                 key={menuKey.delete}
-                style={{ "border-width": "1px", "border-color": "black" }}
+                style={{ borderWidth: "1px", borderColor: "black" }}
             >
                 Delete
             </Menu.Item>
@@ -74,20 +74,26 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
         signedUserId !== post.user_id ? null : (
             <Space wrap>
                 <Dropdown overlay={menu}>
-                    <Button style={{ "border-width": "0" }}>...</Button>
+                    <Button style={{ borderWidth: "0" }}>...</Button>
                 </Dropdown>
             </Space>
         );
 
     return (
-        <div className="border-2 border-black border-t-0 p-2 h-full min-h-[7rem] max-h-48 w-full">
-            <div className="w-full flex justify-end items-center">
-                {dropdownMenu}
+        <div className="border-2 border-black border-t-0 px-4 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
+            <div className="pr-4 ">
+                <img src="avatar.png" className="w-16 "></img>
             </div>
-            <div>{post.user.name}</div>
-            <div>{post.created_at}</div>
-            {displayContent}
-            {/* style={{ "border-width": "0" }} */}
+            <div className="w-full">
+                <div className="w-full flex justify-between items-center">
+                    <div className="flex">
+                        <div>{post.user.name}</div>
+                        <div>{post.created_at}</div>
+                    </div>
+                    {dropdownMenu}
+                </div>
+                {displayContent}
+            </div>
         </div>
     );
 }

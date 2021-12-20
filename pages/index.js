@@ -153,7 +153,7 @@ export default function Index({ postsList, error }) {
 
     const signBanner = !Object.keys(signedUser).length && (
         <div className="w-full bg-blue-400 sticky bottom-0 h-14 flex justify-center items-center">
-            <Link href="/login_test">
+            <Link href="/login">
                 <a className="bg-blue-400 border-white border-2 flex h-7 w-20 justify-center items-center text-white">
                     Sign In
                 </a>
@@ -167,11 +167,9 @@ export default function Index({ postsList, error }) {
     );
 
     const userBanner = !!Object.keys(signedUser).length && (
-        <div className="fixed bottom-0 invisible">
-            <div className="w-32 ml-[calc(-100%_-_2rem)] mb-4  visible border border-black">
-                <div>{signedUser.name}</div>
-                <button onClick={handlerLogout}>Logout</button>
-            </div>
+        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
+            <div>{signedUser.name}</div>
+            <button onClick={handlerLogout}>Logout</button>
         </div>
     );
 
@@ -182,17 +180,14 @@ export default function Index({ postsList, error }) {
         // { "h-[calc(100vh_-_3.5rem)]": !Object.keys(signedUser).length },
         { "h-screen": !!Object.keys(signedUser).length }
     );
-
     return (
         <>
             <div className="w-full flex flex-col items-center">
-                <div className="w-full flex justify-center ">
+                <div className="w-full flex xl:justify-center before:w-40 before:min-w-[10rem] before:ml-4 before:content-[''] xl:before:w-0 xl:before:min-w-0">
                     <div className="max-w-[50rem] min-w-[40rem] w-3/5 h-full flex flex-col grow-[2]">
-                        <menu className="fixed top-0 invisible">
-                            <div className="w-32 h-40 ml-[calc(-100%_-_2rem)] mt-11 visible border border-black">
-                                MENU
-                            </div>
-                        </menu>
+                        <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray">
+                            MENU
+                        </div>
                         {userBanner}
                         {addPostComponent}
                         <PostsList
@@ -201,7 +196,6 @@ export default function Index({ postsList, error }) {
                             onUpdatePost={handleUpdatePost}
                             signedUser={signedUser}
                         />
-                        {/* {postList} */}
                     </div>
                 </div>
                 {signBanner}

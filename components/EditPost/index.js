@@ -16,7 +16,7 @@ export function EditPost({ editContent, onSave, onCancel }) {
     const buttonCancel = editContent ? (
         <button
             onClick={onCancel}
-            className="text-blue-400 border-blue-400 border p-1 m-1 w-14"
+            className="text-blue-400 border-[#54C1FF] border p-1 m-1 w-24 h-7 text-xs"
         >
             Cancel
         </button>
@@ -49,10 +49,10 @@ export function EditPost({ editContent, onSave, onCancel }) {
                     )}
                     name="postContent"
                 />
-                <div>
+                <div className="flex justify-end">
                     <button
                         type="submit"
-                        className="bg-blue-400 text-white border p-1 m-1 w-14"
+                        className="bg-[#54C1FF] text-white border-[#54C1FF] border p-1 m-1 w-24 h-7 text-xs"
                     >
                         {nameSaveButton}
                     </button>
