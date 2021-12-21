@@ -45,7 +45,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const createdAt = moment(post.created_at).format("D MMM YYYY");
 
     return (
-        <div className="border-2 border-black border-t-0 px-4 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
+        <div className="border-2 border-black border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
             <div className="pr-4 ">
                 <img src="avatar.png" className="w-16 "></img>
             </div>

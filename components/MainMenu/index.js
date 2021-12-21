@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { useContext } from "react";
+
+import signedUserContext from "../../context/signedUserContext";
 
 export function MainMenu() {
+    const [signedUserAppContext, setSignedUserAppContext] =
+        useContext(signedUserContext);
+
     return (
         <>
             <Link href="#">
@@ -12,7 +18,7 @@ export function MainMenu() {
             <Link href="#">
                 <a className="text-black">Users</a>
             </Link>
-            <Link href="#">
+            <Link href={`/user/${signedUserAppContext.id}`}>
                 <a className="text-black">Profile</a>
             </Link>
             <Link href="#">
