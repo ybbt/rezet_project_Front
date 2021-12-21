@@ -1,4 +1,4 @@
-import { useState, useEffect /* useContext */ } from "react";
+import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 
 import classNames from "classnames";
@@ -17,12 +17,19 @@ import { MainMenu } from "../components/MainMenu";
 // import { UserBanner } from "../components/UserBanner";
 import { DropdownUserMenu } from "../components/DropdownUserMenu";
 
+import signedUserContext from "../context/signedUserContext";
+
 export default function Index({ postsList, error }) {
     const [posts, setPosts] = useState(postsList);
     const [signedUser, setSignedUser] = useState({});
 
+    const [signedUserAppContext, setSignedUserAppContext] =
+        useContext(signedUserContext);
+
     // console.log(postsList, "postList");
     // console.log(posts, "posts");
+
+    // console.log(signedUser1, "contextData");
 
     useEffect(async () => {
         try {
@@ -33,7 +40,7 @@ export default function Index({ postsList, error }) {
             console.log(response);
 
             setSignedUser(result.data.data);
-            // setSignUserContext(result.data.data);
+            setSignedUserAppContext(result.data.data);
         } catch (error) {
             console.log(error);
             console.log("Token wrong, user don`t signed");
@@ -118,6 +125,7 @@ export default function Index({ postsList, error }) {
             Cookies.remove("token_mytweeter");
 
             setSignedUser({});
+            setSignedUserAppContext({});
         } catch (error) {
             console.log(error, "error");
             message.error(
