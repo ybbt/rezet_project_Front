@@ -4,11 +4,9 @@ import { Alert } from "antd";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-import * as Yup from "yup";
+import { postSaveSchema } from "../../schemas/postSaveSchema";
 
 export function EditPostForm({ editContent, onSave, onCancel }) {
-    const initValue = editContent || "";
-
     const buttonCancel = editContent ? (
         <button onClick={onCancel}>Cancel</button>
     ) : null;
@@ -20,46 +18,30 @@ export function EditPostForm({ editContent, onSave, onCancel }) {
         resetForm();
     }
 
-    const PostSaveSchema = Yup.object().shape({
-        postContent: Yup.string()
-            .required("Required Field!")
-            .max(255, "Must be at most 255 characters"),
-    });
-
-    function madeForm({ errors, touched }) {
-        const errorField = errors.postContent ? (
-            <Alert message={errors.postContent} type="error" showIcon />
-        ) : null;
-
-        return (
-            <Form>
-                <Field as="textarea" id="postContent" name="postContent" />
-                <ErrorMessage
-                    name="postContent"
-                    render={(msg) => (
-                        <Alert message={msg} type="error" showIcon />
-                    )}
-                />
-                <div>
-                    <button type="submit">{nameSaveButton}</button>
-                    {buttonCancel}
-                </div>
-            </Form>
-        );
-    }
-
     return (
         <>
             <Formik
                 initialValues={{
-                    postContent: initValue,
+                    postContent: editContent || "",
                 }}
                 validateOnChange={!!editContent}
                 validateOnBlur={!!editContent}
-                validationSchema={PostSaveSchema}
+                validationSchema={postSaveSchema}
                 onSubmit={handleSave}
             >
-                {madeForm}
+                <Form>
+                    <Field as="textarea" id="postContent" name="postContent" />
+                    <ErrorMessage
+                        name="postContent"
+                        render={(msg) => (
+                            <Alert message={msg} type="error" showIcon />
+                        )}
+                    />
+                    <div>
+                        <button type="submit">{nameSaveButton}</button>
+                        {buttonCancel}
+                    </div>
+                </Form>
             </Formik>
         </>
     );

@@ -37,19 +37,20 @@ export default function Index({ postsList }) {
         }
     }
 
-    async function handleUpdatePost(post) {
+    async function handleUpdatePost(updatedData) {
         try {
-            const response = await axiosInstance.put(`/posts/${post.id}`, {
-                text: post.text,
-            });
-
-            const newPostList = [...posts];
-
-            newPostList.map(function (postItem, index) {
-                if (postItem.id === post.id) {
-                    postItem.text = post.text;
+            const response = await axiosInstance.put(
+                `/posts/${updatedData.id}`,
+                {
+                    text: updatedData.text,
                 }
-            });
+            );
+
+            const newPostList = posts.map((postItem) =>
+                postItem.id === updatedData.id
+                    ? { ...postItem, ...updatedData }
+                    : postItem
+            );
             setPosts(newPostList);
         } catch (error) {
             console.log(error, "error");
