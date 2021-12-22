@@ -2,15 +2,11 @@ import { useState } from "react";
 
 import { Alert } from "antd";
 
-// *********************** Formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
-// ***********************
 
-// *********************** yup
 import * as Yup from "yup";
-// ***************************
 
-export function EditPost({ editContent, onSave, onCancel }) {
+export function EditPostForm({ editContent, onSave, onCancel }) {
     const initValue = editContent || "";
 
     const buttonCancel = editContent ? (
@@ -25,7 +21,9 @@ export function EditPost({ editContent, onSave, onCancel }) {
     }
 
     const PostSaveSchema = Yup.object().shape({
-        postContent: Yup.string().required("Required Field!"),
+        postContent: Yup.string()
+            .required("Required Field!")
+            .max(255, "Must be at most 255 characters"),
     });
 
     function madeForm({ errors, touched }) {
@@ -36,7 +34,12 @@ export function EditPost({ editContent, onSave, onCancel }) {
         return (
             <Form>
                 <Field as="textarea" id="postContent" name="postContent" />
-                {errorField}
+                <ErrorMessage
+                    name="postContent"
+                    render={(msg) => (
+                        <Alert message={msg} type="error" showIcon />
+                    )}
+                />
                 <div>
                     <button type="submit">{nameSaveButton}</button>
                     {buttonCancel}

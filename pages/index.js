@@ -18,10 +18,8 @@ export default function Index({ postsList }) {
 
             setPosts([...posts, response.data.data]);
         } catch (error) {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response);
+            message.error(`${error.response.data.errors.text[0] || error}`);
+            console.log(error.response.data.errors.text[0]);
         }
     }
 
@@ -34,10 +32,8 @@ export default function Index({ postsList }) {
             );
             setPosts(newPosts);
         } catch {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response);
+            message.error(`${error.response.data.errors.text[0] || error}`);
+            console.log(error);
         }
     }
 
@@ -57,9 +53,7 @@ export default function Index({ postsList }) {
             setPosts(newPostList);
         } catch (error) {
             console.log(error, "error");
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
+            message.error(`${error.response.data.errors.text[0] || error}`);
         }
     }
 
