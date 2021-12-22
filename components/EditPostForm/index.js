@@ -1,42 +1,63 @@
 import { useState } from "react";
 
-import { message } from "antd";
+import { Alert } from "antd";
 
-export function EditPostForm({ editContent, onSave, onCancel }) {
-    const [content, setTextContent] = useState(editContent);
+// *********************** Formik
+import { Formik, Form, Field, ErrorMessage } from "formik";
+// ***********************
 
-    // const buttonCancel = editContent ? (
-    //     <button onClick={onCancel}>Cancel</button>
-    // ) : null;
+// *********************** yup
+import * as Yup from "yup";
+// ***************************
 
-    const buttonCancel = editContent && (
+export function EditPost({ editContent, onSave, onCancel }) {
+    const initValue = editContent || "";
+
+    const buttonCancel = editContent ? (
         <button onClick={onCancel}>Cancel</button>
-    );
+    ) : null;
 
     const nameSaveButton = editContent ? "Save" : "Tweet";
 
-    function handleSave() {
-        if (!content) {
-            //! Тимчасово, щоб не отримувати помилки з серверу
-            // alert("Empty field!");
-            message.error(`Empty field!`, 5);
-            return;
-        }
-        onSave(content);
-        setTextContent("");
+    function handleSave({ postContent }, { resetForm }) {
+        onSave(postContent);
+        resetForm();
     }
 
-    function handleChange(e) {
-        setTextContent(e.target.value);
+    const PostSaveSchema = Yup.object().shape({
+        postContent: Yup.string().required("Required Field!"),
+    });
+
+    function madeForm({ errors, touched }) {
+        const errorField = errors.postContent ? (
+            <Alert message={errors.postContent} type="error" showIcon />
+        ) : null;
+
+        return (
+            <Form>
+                <Field as="textarea" id="postContent" name="postContent" />
+                {errorField}
+                <div>
+                    <button type="submit">{nameSaveButton}</button>
+                    {buttonCancel}
+                </div>
+            </Form>
+        );
     }
 
     return (
         <>
-            <textarea value={content} rows="5" onChange={handleChange} />
-            <div>
-                <button onClick={handleSave}>{nameSaveButton}</button>
-                {buttonCancel}
-            </div>
+            <Formik
+                initialValues={{
+                    postContent: initValue,
+                }}
+                validateOnChange={!!editContent}
+                validateOnBlur={!!editContent}
+                validationSchema={PostSaveSchema}
+                onSubmit={handleSave}
+            >
+                {madeForm}
+            </Formik>
         </>
     );
 }

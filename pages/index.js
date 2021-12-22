@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+import { message } from "antd";
+import "antd/dist/antd.css";
+
 import axiosInstance from "../libs/axiosInstance";
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
@@ -8,28 +11,56 @@ export default function Index({ postsList }) {
     const [posts, setPosts] = useState(postsList);
 
     async function handleAddPost(postContent) {
-        const response = await axiosInstance.post("/posts", {
-            text: postContent,
-        });
+        try {
+            const response = await axiosInstance.post("/posts", {
+                text: postContent,
+            });
 
-        setPosts([...posts, response.data.data]);
+            setPosts([...posts, response.data.data]);
+        } catch (error) {
+            message.error(
+                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
+            );
+            console.log(error.response);
+        }
     }
 
     async function handleDeletePost(post) {
-        await axiosInstance.delete(`/posts/${post.id}`);
+        try {
+            const response = await axiosInstance.delete(`/posts/${post.id}`);
 
-        const newPosts = posts.filter((postItem) => postItem.id !== post.id);
-        setPosts(newPosts);
+            const newPosts = posts.filter(
+                (postItem) => postItem.id !== post.id
+            );
+            setPosts(newPosts);
+        } catch {
+            message.error(
+                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
+            );
+            console.log(error.response);
+        }
     }
 
-    async function handleUpdatePost(updatedData) {
-        await axiosInstance.put(`/posts/${updatedData.id}`, updatedData);
-        const newPostList = posts.map((postItem) =>
-            postItem.id === updatedData.id
-                ? { ...postItem, ...updatedData }
-                : postItem
-        );
-        setPosts(newPostList);
+    async function handleUpdatePost(post) {
+        try {
+            const response = await axiosInstance.put(`/posts/${post.id}`, {
+                text: post.text,
+            });
+
+            const newPostList = [...posts];
+
+            newPostList.map(function (postItem, index) {
+                if (postItem.id === post.id) {
+                    postItem.text = post.text;
+                }
+            });
+            setPosts(newPostList);
+        } catch (error) {
+            console.log(error, "error");
+            message.error(
+                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
+            );
+        }
     }
 
     return (
