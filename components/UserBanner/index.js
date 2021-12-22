@@ -1,8 +1,15 @@
+import Image from "next/image";
+
 export function UserBanner({ user /* , onLogout */ }) {
     return (
         <div className="flex w-full">
             <div className="pr-4 ">
-                <img src="avatar.png" className="w-10 "></img>
+                <Image
+                    src="/avatar.png"
+                    width="40px"
+                    height="40px"
+                    // className="w-10 "
+                />
             </div>
             <div className="">
                 <div>XXXXX</div>

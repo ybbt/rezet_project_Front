@@ -58,10 +58,8 @@ export default function Register() {
                 Router.push("/");
             }
         } catch (error) {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response, "catch error");
+            message.error(`${error}`);
+            console.log(error);
         }
     }
 

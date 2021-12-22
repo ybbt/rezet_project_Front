@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 
+import Image from "next/image";
+
 import { EditPost } from "../EditPost";
 
 import moment from "moment";
@@ -48,9 +50,14 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const createdAt = moment(post.created_at).format("D MMM YYYY");
 
     return (
-        <div className="border-2 border-black border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
+        <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
             <div className="pr-4 ">
-                <img src="avatar.png" className="w-16 "></img>
+                <Image
+                    src="/avatar.png"
+                    width="60px"
+                    height="60px"
+                    // className="w-10 "
+                />
             </div>
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">

@@ -3,8 +3,6 @@ import Link from "next/link";
 
 import classNames from "classnames";
 
-// import AppContext from "../AppContext";
-
 import { message } from "antd";
 import "antd/dist/antd.css";
 
@@ -14,7 +12,8 @@ import Cookies from "js-cookie";
 import { PostsList } from "../components/PostsList";
 import { EditPost } from "../components/EditPost";
 import { MainMenu } from "../components/MainMenu";
-// import { UserBanner } from "../components/UserBanner";
+import { PageTemplate } from "../components/PageTemplate";
+import { SignBanner } from "../components/SignBanner";
 import { DropdownUserMenu } from "../components/DropdownUserMenu";
 
 import signedUserContext from "../context/signedUserContext";
@@ -25,11 +24,6 @@ export default function Index({ postsList, error }) {
 
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
-
-    // console.log(postsList, "postList");
-    // console.log(posts, "posts");
-
-    // console.log(signedUser1, "contextData");
 
     useEffect(async () => {
         try {
@@ -132,72 +126,36 @@ export default function Index({ postsList, error }) {
     }
 
     const addPostComponent = !!Object.keys(signedUser).length && (
-        <div className="border-2 border-black border-t-0 p-2">
+        <div className="border border-t-0 border-[#949494] p-2">
             <EditPost onSave={handleAddPost} />
         </div>
     );
 
-    const signBanner = !Object.keys(signedUser).length && (
-        <div className="w-full bg-[#54C1FF] sticky bottom-0 h-14 flex items-center xl:justify-center before:w-40 before:min-w-[10rem] before:ml-4 xl:before:ml-0 before:content-[''] xl:before:w-0 xl:before:min-w-0">
-            <div className="flex justify-between max-w-[800px] min-w-[600px] w-3/5 h-full ">
-                <div className="flex flex-col">
-                    <div className="text-xl text-white text-bold">
-                        Stay tuned!
-                    </div>
-                    <div className="text-sm text-white ">
-                        Sing up for Twitty! Or sign in if you already have an
-                        account.
-                    </div>
-                </div>
-                <div className="flex justify-between items-center w-[175px]">
-                    <Link href="/login">
-                        <a className="bg-[#54C1FF] border-white border-2 flex h-7 w-20 justify-center items-center text-white">
-                            Sign In
-                        </a>
-                    </Link>
-                    <Link href="/register">
-                        <a className="bg-white  text-[#54C1FF] border-white border-2 flex h-7 w-20 justify-center items-center">
-                            Sign Up
-                        </a>
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
+    const signBanner = !Object.keys(signedUser).length && <SignBanner />;
 
-    const userBanner = !!Object.keys(signedUser).length && (
+    const userBannerDropdown = !!Object.keys(signedUser).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            {/* <UserBanner user={signedUser} onLogout={handlerLogout} /> */}
-            <DropdownUserMenu
-                user={signedUser}
-                onLogout={handlerLogout} /* onProfile={handlerProfiler} */
-            />
+            <DropdownUserMenu user={signedUser} onLogout={handlerLogout} />
         </div>
     );
-
-    const leftSizeHeight = !!Object.keys(signedUser).length ? "h-full" : "";
 
     return (
-        <>
-            <div className="w-full flex flex-col items-center">
-                <div className="w-full flex xl:justify-center before:w-40 before:min-w-[10rem] before:ml-4 xl:before:ml-0 before:content-[''] xl:before:w-0 xl:before:min-w-0">
-                    <div className="max-w-[800px] min-w-[600px] w-3/5 h-full flex flex-col ">
-                        <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                            <MainMenu />
-                        </div>
-                        {userBanner}
-                        {addPostComponent}
-                        <PostsList
-                            postsList={posts}
-                            onDeletePost={handleDeletePost}
-                            onUpdatePost={handleUpdatePost}
-                            signedUser={signedUser}
-                        />
-                    </div>
-                </div>
-                {signBanner}
+        <PageTemplate signBanner={signBanner}>
+            <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
+                <MainMenu />
             </div>
-        </>
+            {userBannerDropdown}
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
+                Explore
+            </header>
+            {addPostComponent}
+            <PostsList
+                postsList={posts}
+                onDeletePost={handleDeletePost}
+                onUpdatePost={handleUpdatePost}
+                signedUser={signedUser}
+            />
+        </PageTemplate>
     );
 }
 
