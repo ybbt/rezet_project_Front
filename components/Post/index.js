@@ -39,7 +39,10 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     );
 
     const dropdownMenu = signedUserId === post.user_id && (
-        <DropdownPostMenu onDeletePost={onDeletePost} onEditPost={handleEdit} />
+        <DropdownPostMenu
+            onDeletePost={() => onDeletePost(post)}
+            onEditPost={handleEdit}
+        />
     );
 
     const createdAt = moment(post.created_at).format("D MMM YYYY");

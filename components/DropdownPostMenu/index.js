@@ -12,7 +12,7 @@ export function DropdownPostMenu({ onDeletePost, onEditPost }) {
                 onEditPost();
                 break;
             case menuKey.delete:
-                onDeletePost(post);
+                onDeletePost();
                 break;
         }
     }

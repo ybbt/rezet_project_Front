@@ -37,7 +37,7 @@ export default function Index({ postsList, error }) {
 
             const response = result.data;
 
-            console.log(response);
+            console.log(response, "reponse");
 
             setSignedUser(result.data.data);
             setSignedUserAppContext(result.data.data);
@@ -49,6 +49,7 @@ export default function Index({ postsList, error }) {
     }, []);
 
     async function handleAddPost(postContent) {
+        console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
                 text: postContent,
@@ -57,10 +58,8 @@ export default function Index({ postsList, error }) {
 
             setPosts([...posts, response.data.data]);
         } catch (error) {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response);
+            message.error(`${error}`);
+            console.log(error, "error addpost");
         }
     }
 
@@ -72,11 +71,9 @@ export default function Index({ postsList, error }) {
                 (postItem) => postItem.id !== post.id
             );
             setPosts(newPosts);
-        } catch {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response);
+        } catch (error) {
+            message.error(`${error.response}`);
+            console.log(error);
         }
     }
 

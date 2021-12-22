@@ -45,8 +45,11 @@ export default function Register() {
 
             const response = result.data;
 
+            console.log(result, "response result");
+
             if (response.error) {
-                console.log(response.error);
+                console.log(response.error, "response error");
+                message.error(`${response.error}`);
             } else {
                 Cookies.set("token_mytweeter", response.token, {
                     secure: true,
@@ -58,7 +61,7 @@ export default function Register() {
             message.error(
                 `${error.response.data.message} - ${error.response.data.errors.text[0]}`
             );
-            console.log(error.response);
+            console.log(error.response, "catch error");
         }
     }
 
