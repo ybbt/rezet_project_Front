@@ -71,7 +71,7 @@ export default function Index({ postsList, error }) {
         }
     }
 
-    async function handleUpdatePost(post) {
+    async function handleUpdatePost(updatedData) {
         try {
             const login_token = Cookies.get("token_mytweeter");
             axiosInstance.interceptors.request.use((config) => {
@@ -81,23 +81,31 @@ export default function Index({ postsList, error }) {
                 return config;
             });
 
-            const response = await axiosInstance.put(`/posts/${post.id}`, {
-                text: post.text,
-            });
-
-            const newPostList = [...posts];
-
-            newPostList.map(function (postItem, index) {
-                if (postItem.id === post.id) {
-                    postItem.text = post.text;
+            const response = await axiosInstance.put(
+                `/posts/${updatedData.id}`,
+                {
+                    text: updatedData.text,
                 }
-            });
+            );
+
+            // const newPostList = [...posts];
+
+            // newPostList.map(function (postItem, index) {
+            //     if (postItem.id === post.id) {
+            //         postItem.text = post.text;
+            //     }
+            // });
+            // setPosts(newPostList);
+
+            const newPostList = posts.map((postItem) =>
+                postItem.id === updatedData.id
+                    ? { ...postItem, ...updatedData }
+                    : postItem
+            );
             setPosts(newPostList);
         } catch (error) {
             console.log(error, "error");
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
+            message.error(`${error}`);
         }
     }
 
@@ -125,17 +133,22 @@ export default function Index({ postsList, error }) {
         }
     }
 
-    const addPostComponent = !!Object.keys(signedUser).length && (
+    const addPostComponent = !!Object.keys(signedUserAppContext).length && (
         <div className="border border-t-0 border-[#949494] p-2">
             <EditPost onSave={handleAddPost} />
         </div>
     );
 
-    const signBanner = !Object.keys(signedUser).length && <SignBanner />;
+    const signBanner = !Object.keys(signedUserAppContext).length && (
+        <SignBanner />
+    );
 
-    const userBannerDropdown = !!Object.keys(signedUser).length && (
+    const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <DropdownUserMenu user={signedUser} onLogout={handlerLogout} />
+            <DropdownUserMenu
+                user={signedUserAppContext}
+                onLogout={handlerLogout}
+            />
         </div>
     );
 
@@ -153,7 +166,7 @@ export default function Index({ postsList, error }) {
                 postsList={posts}
                 onDeletePost={handleDeletePost}
                 onUpdatePost={handleUpdatePost}
-                signedUser={signedUser}
+                signedUser={signedUserAppContext}
             />
         </PageTemplate>
     );

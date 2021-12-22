@@ -7,6 +7,7 @@ export function PostsList({
     onUpdatePost,
     signedUser,
 }) {
+    console.log(postsList, "postsList ->");
     return postsList.map((postItem) => {
         return (
             <Post

@@ -2,7 +2,7 @@ import { Alert } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
-import * as Yup from "yup";
+import { signupSchema } from "../../schemas/signupSchema";
 
 import Cookies from "js-cookie";
 
@@ -14,39 +14,16 @@ import axiosInstance from "../../libs/axiosInstance";
 import SignInUp from "../../components/SignInUp";
 import AuthorizationElement from "../../components/AuthorizationElement";
 
-const SignupSchema = Yup.object().shape({
-    userName: Yup.string()
-        .min(2, "Too Short!")
-        .max(20, "Too Long!")
-        .required("Required")
-        .matches(/^\d*[a-zA-Z][a-zA-Z\d]*$/, "Letters and numbers only"),
-    email: Yup.string()
-        .email("Invalid email")
-        .required("Required")
-        .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid email"),
-
-    password: Yup.string()
-        .required("No password provided.")
-        .min(8, "Password is too short - should be 8 chars minimum.")
-        .matches(
-            /^\d*[a-zA-Z][a-zA-Z\d]*$/,
-            "Password can only contain numbers from 1 to 9."
-        ),
-});
-
-export default function Register() {
+export default function Register({ errors, touched }) {
     async function handleSubmitData(
-        { userName, email, password },
-        { resetForm }
+        { userName, email, password } /* ,
+        { resetForm } */
     ) {
         try {
             const result = await axiosInstance.post("/register", {
                 name: userName,
                 email,
                 password,
-                // headers: {
-                //     Authorization: "",
-                // },
             });
 
             const response = result.data;
@@ -70,40 +47,6 @@ export default function Register() {
         }
     }
 
-    function madeForm({ errors, touched }) {
-        return (
-            <>
-                <Form>
-                    <div className="flex flex-col">
-                        <AuthorizationElement
-                            formName="userName"
-                            title="User name"
-                        />
-                        <AuthorizationElement formName="email" title="Email" />
-                        <AuthorizationElement
-                            formName="password"
-                            title="Password"
-                            type="password"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-[#54C1FF] text-white mt-11 h-7"
-                        >
-                            Sign up
-                        </button>
-                        <div className="flex justify-center">
-                            <Link href="/login">
-                                <a className="text-xs text-[#54C1FF] mb-3 mt-3">
-                                    Sign in
-                                </a>
-                            </Link>
-                        </div>
-                    </div>
-                </Form>
-            </>
-        );
-    }
-
     return (
         <div className="w-full h-screen flex justify-center items-center ">
             <SignInUp title="Sign up">
@@ -113,10 +56,39 @@ export default function Register() {
                         email: "",
                         password: "",
                     }}
-                    validationSchema={SignupSchema}
+                    validationSchema={signupSchema}
                     onSubmit={handleSubmitData}
                 >
-                    {madeForm}
+                    <Form>
+                        <div className="flex flex-col">
+                            <AuthorizationElement
+                                formName="userName"
+                                title="User name"
+                            />
+                            <AuthorizationElement
+                                formName="email"
+                                title="Email"
+                            />
+                            <AuthorizationElement
+                                formName="password"
+                                title="Password"
+                                type="password"
+                            />
+                            <button
+                                type="submit"
+                                className="bg-[#54C1FF] text-white mt-11 h-7"
+                            >
+                                Sign up
+                            </button>
+                            <div className="flex justify-center">
+                                <Link href="/login">
+                                    <a className="text-xs text-[#54C1FF] mb-3 mt-3">
+                                        Sign in
+                                    </a>
+                                </Link>
+                            </div>
+                        </div>
+                    </Form>
                 </Formik>
             </SignInUp>
         </div>

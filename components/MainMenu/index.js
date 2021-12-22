@@ -9,7 +9,7 @@ export function MainMenu() {
 
     return (
         <>
-            <Link href="#">
+            <Link href="/">
                 <a className="text-black">Home</a>
             </Link>
             <Link href="#">

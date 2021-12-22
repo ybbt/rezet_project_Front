@@ -2,18 +2,13 @@ import { useState } from "react";
 
 import { Alert } from "antd";
 
-// *********************** Formik
 import { Formik, Form, Field, ErrorMessage } from "formik";
-// ***********************
-
-// *********************** yup
-import * as Yup from "yup";
-// ***************************
+import { postSaveSchema } from "../../schemas/postSaveSchema";
 
 import classNames from "classnames";
 
-export function EditPost({ editContent, onSave, onCancel }) {
-    const initValue = editContent || "";
+export function EditPost({ editContent, onSave, onCancel, errors, touched }) {
+    // const initValue = editContent || "";
 
     const buttonCancel = editContent ? (
         <button
@@ -31,17 +26,26 @@ export function EditPost({ editContent, onSave, onCancel }) {
         resetForm();
     }
 
-    const PostSaveSchema = Yup.object().shape({
-        postContent: Yup.string().required("Required Field!"),
-    });
+    // const PostSaveSchema = Yup.object().shape({
+    //     postContent: Yup.string().required("Required Field!"),
+    // });
 
     const textAreaStyle = classNames(
         "w-full resize-none focus-visible:outline-none  focus:border focus:border-[#949494]",
         { "border border-[#949494]": !!editContent }
     );
 
-    function madeForm({ errors, touched }) {
-        return (
+    return (
+        <Formik
+            initialValues={{
+                postContent: editContent || "",
+            }}
+            validateOnChange={!!editContent}
+            validateOnBlur={!!editContent}
+            validationSchema={postSaveSchema}
+            onSubmit={handleSave}
+        >
+            {/* {AutorizationForm} */}
             <Form>
                 <Field
                     as="textarea"
@@ -66,22 +70,6 @@ export function EditPost({ editContent, onSave, onCancel }) {
                     {buttonCancel}
                 </div>
             </Form>
-        );
-    }
-
-    return (
-        <>
-            <Formik
-                initialValues={{
-                    postContent: initValue,
-                }}
-                validateOnChange={!!editContent}
-                validateOnBlur={!!editContent}
-                validationSchema={PostSaveSchema}
-                onSubmit={handleSave}
-            >
-                {madeForm}
-            </Formik>
-        </>
+        </Formik>
     );
 }

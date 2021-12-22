@@ -1,10 +1,11 @@
 import { useRouter } from "next/router";
-import { useState, /* useEffect, */ useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import axiosInstance from "../../libs/axiosInstance";
 import Cookies from "js-cookie";
 
 import { message } from "antd";
+import "antd/dist/antd.css";
 
 import signedUserContext from "../../context/signedUserContext";
 
@@ -14,11 +15,29 @@ import { MainMenu } from "../../components/MainMenu";
 import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 import { PostsList } from "../../components/PostsList";
 
-export default ({ user, posts }) => {
+export default ({ user, postsList }) => {
+    const [posts, setPosts] = useState(postsList);
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
 
     const router = useRouter();
+
+    useEffect(async () => {
+        try {
+            const result = await axiosInstance.get("/authme");
+
+            const response = result.data;
+
+            console.log(response, "reponse");
+
+            // setSignedUser(result.data.data);
+            setSignedUserAppContext(result.data.data);
+        } catch (error) {
+            console.log(error);
+            console.log("Token wrong, user don`t signed");
+            Cookies.remove("token_mytweeter");
+        }
+    }, []);
 
     async function handleDeletePost(post) {
         try {
@@ -29,12 +48,12 @@ export default ({ user, posts }) => {
             );
             setPosts(newPosts);
         } catch (error) {
-            message.error(`${error.response}`);
+            message.error(`${error}`);
             console.log(error);
         }
     }
 
-    async function handleUpdatePost(post) {
+    async function handleUpdatePost(updatedData) {
         try {
             const login_token = Cookies.get("token_mytweeter");
             axiosInstance.interceptors.request.use((config) => {
@@ -48,19 +67,24 @@ export default ({ user, posts }) => {
                 text: post.text,
             });
 
-            const newPostList = [...posts];
+            // const newPostList = [...posts];
 
-            newPostList.map(function (postItem, index) {
-                if (postItem.id === post.id) {
-                    postItem.text = post.text;
-                }
-            });
+            // newPostList.map(function (postItem, index) {
+            //     if (postItem.id === post.id) {
+            //         postItem.text = post.text;
+            //     }
+            // });
+            // setPosts(newPostList);
+
+            const newPostList = posts.map((postItem) =>
+                postItem.id === updatedData.id
+                    ? { ...postItem, ...updatedData }
+                    : postItem
+            );
             setPosts(newPostList);
         } catch (error) {
             console.log(error, "error");
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
+            message.error(`${error}`);
         }
     }
 
@@ -134,7 +158,7 @@ export async function getServerSideProps /* getStaticProps */({ params }) {
     return {
         props: {
             user: resultUser.data,
-            posts: resultUserPosts.data,
+            postsList: resultUserPosts.data,
         },
     };
 }
