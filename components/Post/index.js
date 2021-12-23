@@ -5,7 +5,7 @@ import axios from "axios";
 
 import Image from "next/image";
 
-import { EditPost } from "../EditPost";
+import { EditPostForm } from "../EditPostForm";
 
 import moment from "moment";
 
@@ -33,7 +33,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     }
 
     const displayContent = componentEditCondition ? (
-        <EditPost
+        <EditPostForm
             editContent={post.text}
             onSave={handleUdate}
             onCancel={handleCancel}

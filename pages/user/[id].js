@@ -14,6 +14,7 @@ import { SignBanner } from "../../components/SignBanner";
 import { MainMenu } from "../../components/MainMenu";
 import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 import { PostsList } from "../../components/PostsList";
+import { EditPostForm } from "../../components/EditPostForm";
 
 export default ({ user, postsList }) => {
     const [posts, setPosts] = useState(postsList);
@@ -22,13 +23,15 @@ export default ({ user, postsList }) => {
 
     const router = useRouter();
 
+    console.log(postsList, "postsList in page [id]");
+
     useEffect(async () => {
         try {
             const result = await axiosInstance.get("/authme");
 
             const response = result.data;
 
-            console.log(response, "reponse");
+            // console.log(response, "reponse");
 
             // setSignedUser(result.data.data);
             setSignedUserAppContext(result.data.data);
@@ -38,6 +41,25 @@ export default ({ user, postsList }) => {
             Cookies.remove("token_mytweeter");
         }
     }, []);
+
+    useEffect(() => {
+        setPosts(postsList);
+    }, [postsList]);
+
+    async function handleAddPost(postContent) {
+        // console.log(postContent);
+        try {
+            const response = await axiosInstance.post("/posts", {
+                text: postContent,
+                // user_id: signedUser.id,
+            });
+
+            setPosts([...posts, response.data.data]);
+        } catch (error) {
+            message.error(`${error}`);
+            console.log(error, "error addpost");
+        }
+    }
 
     async function handleDeletePost(post) {
         try {
@@ -66,15 +88,6 @@ export default ({ user, postsList }) => {
             const response = await axiosInstance.put(`/posts/${post.id}`, {
                 text: post.text,
             });
-
-            // const newPostList = [...posts];
-
-            // newPostList.map(function (postItem, index) {
-            //     if (postItem.id === post.id) {
-            //         postItem.text = post.text;
-            //     }
-            // });
-            // setPosts(newPostList);
 
             const newPostList = posts.map((postItem) =>
                 postItem.id === updatedData.id
@@ -125,6 +138,10 @@ export default ({ user, postsList }) => {
         </div>
     );
 
+    const addPostComponent = user.id === signedUserAppContext.id && (
+        <EditPostForm onSave={handleAddPost} />
+    );
+
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
@@ -134,6 +151,8 @@ export default ({ user, postsList }) => {
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
                 Explore
             </header>
+            <div>{user.name}</div>
+            {addPostComponent}
             <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
@@ -145,7 +164,7 @@ export default ({ user, postsList }) => {
 };
 
 export async function getServerSideProps /* getStaticProps */({ params }) {
-    console.log(params.id, "serverSideProps new");
+    // console.log(params.id, "serverSideProps new");
 
     const resultUser = await axiosInstance.get(`/users/${params.id}`);
     const resultUserPosts = await axiosInstance.get(
@@ -154,6 +173,8 @@ export async function getServerSideProps /* getStaticProps */({ params }) {
 
     // console.log(resultUser.data, "resultUser");
     // console.log(resultUserPosts.data, "resultUserPosts");
+
+    // console.log("page [id] getServerSideProps");
 
     return {
         props: {

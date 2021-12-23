@@ -10,7 +10,7 @@ import axiosInstance from "../libs/axiosInstance";
 import Cookies from "js-cookie";
 
 import { PostsList } from "../components/PostsList";
-import { EditPost } from "../components/EditPost";
+import { EditPostForm } from "../components/EditPostForm";
 import { MainMenu } from "../components/MainMenu";
 import { PageTemplate } from "../components/PageTemplate";
 import { SignBanner } from "../components/SignBanner";
@@ -31,7 +31,7 @@ export default function Index({ postsList, error }) {
 
             const response = result.data;
 
-            console.log(response, "reponse");
+            // console.log(response, "reponse");
 
             setSignedUser(result.data.data);
             setSignedUserAppContext(result.data.data);
@@ -43,7 +43,7 @@ export default function Index({ postsList, error }) {
     }, []);
 
     async function handleAddPost(postContent) {
-        console.log(postContent);
+        // console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
                 text: postContent,
@@ -88,15 +88,6 @@ export default function Index({ postsList, error }) {
                 }
             );
 
-            // const newPostList = [...posts];
-
-            // newPostList.map(function (postItem, index) {
-            //     if (postItem.id === post.id) {
-            //         postItem.text = post.text;
-            //     }
-            // });
-            // setPosts(newPostList);
-
             const newPostList = posts.map((postItem) =>
                 postItem.id === updatedData.id
                     ? { ...postItem, ...updatedData }
@@ -134,9 +125,7 @@ export default function Index({ postsList, error }) {
     }
 
     const addPostComponent = !!Object.keys(signedUserAppContext).length && (
-        <div className="border border-t-0 border-[#949494] p-2">
-            <EditPost onSave={handleAddPost} />
-        </div>
+        <EditPostForm onSave={handleAddPost} />
     );
 
     const signBanner = !Object.keys(signedUserAppContext).length && (
