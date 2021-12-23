@@ -152,8 +152,8 @@ export async function getServerSideProps /* getStaticProps */({ params }) {
         `/users/${params.id}/posts`
     );
 
-    console.log(resultUser.data, "resultUser");
-    console.log(resultUserPosts.data, "resultUserPosts");
+    // console.log(resultUser.data, "resultUser");
+    // console.log(resultUserPosts.data, "resultUserPosts");
 
     return {
         props: {

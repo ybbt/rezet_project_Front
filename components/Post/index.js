@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Link from "next/link";
+
 import axios from "axios";
 
 import Image from "next/image";
@@ -52,18 +54,26 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
             <div className="pr-4 ">
-                <Image
-                    src="/avatar.png"
-                    width="60px"
-                    height="60px"
-                    // className="w-10 "
-                />
+                <Link href={`/user/${post.user.id}`}>
+                    <a>
+                        <Image
+                            src="/avatar.png"
+                            width="60px"
+                            height="60px"
+                            // className="w-10 "
+                        />
+                    </a>
+                </Link>
             </div>
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
                     <div className="flex">
-                        <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494]">
-                            <span>{`@${post.user.name}`}</span>
+                        <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
+                            <Link href={`/user/${post.user.id}`}>
+                                <a className="text-inherit">
+                                    <span className="text-inherit">{`@${post.user.name}`}</span>
+                                </a>
+                            </Link>
                         </div>
                         <div className="text-[#949494]">{createdAt}</div>
                     </div>
