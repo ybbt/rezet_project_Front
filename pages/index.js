@@ -26,6 +26,8 @@ export default function Index({ postsList, error }) {
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
 
+    // console.log(posts, "posts in index");
+
     useEffect(async () => {
         try {
             const result = await axiosInstance.get("/authme");
@@ -121,9 +123,7 @@ export default function Index({ postsList, error }) {
             setSignedUserAppContext({});
         } catch (error) {
             console.log(error, "error");
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
+            message.error(`${error}`);
         }
     }
 
@@ -146,7 +146,7 @@ export default function Index({ postsList, error }) {
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu />
+                <MainMenu isAuth={!!Object.keys(signedUserAppContext).length} />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">

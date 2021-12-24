@@ -13,6 +13,8 @@ import { DropdownPostMenu } from "../DropdownPostMenu";
 export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
+    // console.log(post, "post in Post");
+
     function handleEdit() {
         setComponentEditCondition(true);
     }
@@ -66,7 +68,14 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
             {/* </div> */}
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
-                    <div className="flex">
+                    <div className="flex ">
+                        <Link href={`/user/${post.user.id}`}>
+                            <a className="text-black no-underline">
+                                <div className="font-bold text-base pr-2">{`${
+                                    post.user.first_name
+                                } ${post.user.last_name || ""}`}</div>
+                            </a>
+                        </Link>
                         <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
                             <Link href={`/user/${post.user.id}`}>
                                 <a className="text-inherit">

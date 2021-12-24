@@ -24,7 +24,7 @@ export default ({ user, postsList }) => {
 
     const router = useRouter();
 
-    console.log(postsList, "postsList in page [id]");
+    // console.log(postsList, "postsList in page [id]");
 
     useEffect(async () => {
         try {
@@ -86,9 +86,12 @@ export default ({ user, postsList }) => {
                 return config;
             });
 
-            const response = await axiosInstance.put(`/posts/${post.id}`, {
-                text: post.text,
-            });
+            const response = await axiosInstance.put(
+                `/posts/${updatedData.id}`,
+                {
+                    text: updatedData.text,
+                }
+            );
 
             const newPostList = posts.map((postItem) =>
                 postItem.id === updatedData.id
@@ -146,11 +149,13 @@ export default ({ user, postsList }) => {
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu />
+                <MainMenu isAuth={!!Object.keys(signedUserAppContext).length} />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
-                <div className="font-bold text-lg">{user.name}</div>
+                <div className="font-bold text-lg">{`${user.first_name} ${
+                    user.last_name || ""
+                }`}</div>
                 <div className="text-xs text-[#949494]">{`${postsList.length} posts`}</div>
             </header>
             <div className="h-64 w-full border border-[#949494] border-t-0">
@@ -168,7 +173,7 @@ export default ({ user, postsList }) => {
 };
 
 export async function getServerSideProps /* getStaticProps */({ params }) {
-    // console.log(params.id, "serverSideProps new");
+    // console.log(params, "serverSideProps new");
 
     const resultUser = await axiosInstance.get(`/users/${params.id}`);
     const resultUserPosts = await axiosInstance.get(

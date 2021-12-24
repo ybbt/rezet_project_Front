@@ -16,6 +16,7 @@ import AuthorizationElement from "../../components/AuthorizationElement";
 
 export default function Login(errors, touched) {
     async function handleSubmitData({ login, password } /* , { resetForm } */) {
+        // console.log("in login");
         try {
             const result = await axiosInstance.post("/login", {
                 login: login,
@@ -28,7 +29,7 @@ export default function Login(errors, touched) {
 
             const response = result.data;
 
-            console.log(result, "response result");
+            // console.log(result, "response result");
 
             if (response.error) {
                 console.log(response.error, "response error");

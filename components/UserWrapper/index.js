@@ -11,7 +11,9 @@ export function UserWrapper({ user }) {
             />
             <div className="flex justify-between px-4 py-3">
                 <div className="flex flex-col">
-                    <div className="font-bold text-lg">Name</div>
+                    <div className="font-bold text-lg">{`${user.first_name} ${
+                        user.last_name || ""
+                    }`}</div>
                     <div className="text-xs text-[#949494]">
                         <Link href="#">
                             <a className="text-inherit">{`@${user.name}`}</a>

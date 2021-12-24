@@ -3,15 +3,12 @@ import { useContext } from "react";
 
 import signedUserContext from "../../context/signedUserContext";
 
-export function MainMenu() {
+export function MainMenu({ isAuth }) {
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
 
-    return (
+    const authUserMenu = isAuth && (
         <>
-            <Link href="/">
-                <a className="text-black">Home</a>
-            </Link>
             <Link href="#">
                 <a className="text-black">Messages</a>
             </Link>
@@ -24,6 +21,15 @@ export function MainMenu() {
             <Link href="#">
                 <a className="text-black">Settings</a>
             </Link>
+        </>
+    );
+
+    return (
+        <>
+            <Link href="/">
+                <a className="text-black">Home</a>
+            </Link>
+            {authUserMenu}
         </>
     );
 }

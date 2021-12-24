@@ -1,4 +1,4 @@
-import { Alert } from "antd";
+import { Alert, message } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
@@ -16,14 +16,24 @@ import AuthorizationElement from "../../components/AuthorizationElement";
 
 export default function Register({ errors, touched }) {
     async function handleSubmitData(
-        { userName, email, password } /* ,
+        {
+            firstName,
+            lastName,
+            userName,
+            email,
+            password,
+            passwordConfirmation,
+        } /* ,
         { resetForm } */
     ) {
         try {
             const result = await axiosInstance.post("/register", {
+                first_name: firstName,
+                last_name: lastName,
                 name: userName,
                 email,
                 password,
+                password_confirmation: passwordConfirmation,
             });
 
             const response = result.data;
@@ -40,10 +50,8 @@ export default function Register({ errors, touched }) {
                 Router.push("/");
             }
         } catch (error) {
-            message.error(
-                `${error.response.data.message} - ${error.response.data.errors.text[0]}`
-            );
-            console.log(error.response);
+            message.error(`${error}`);
+            console.log(error, "error");
         }
     }
 
@@ -52,15 +60,26 @@ export default function Register({ errors, touched }) {
             <SignInUp title="Sign up">
                 <Formik
                     initialValues={{
+                        firstName: "",
+                        lastName: "",
                         userName: "",
                         email: "",
                         password: "",
+                        passwordConfirmation: "",
                     }}
                     validationSchema={signupSchema}
                     onSubmit={handleSubmitData}
                 >
                     <Form>
                         <div className="flex flex-col">
+                            <AuthorizationElement
+                                formName="firstName"
+                                title="First name"
+                            />
+                            <AuthorizationElement
+                                formName="lastName"
+                                title="Last name"
+                            />
                             <AuthorizationElement
                                 formName="userName"
                                 title="User name"
@@ -72,6 +91,11 @@ export default function Register({ errors, touched }) {
                             <AuthorizationElement
                                 formName="password"
                                 title="Password"
+                                type="password"
+                            />
+                            <AuthorizationElement
+                                formName="passwordConfirmation"
+                                title="Password confirmation"
                                 type="password"
                             />
                             <button
