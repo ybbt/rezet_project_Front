@@ -20,7 +20,8 @@ import signedUserContext from "../context/signedUserContext";
 
 export default function Index({ postsList, error }) {
     const [posts, setPosts] = useState(postsList);
-    const [signedUser, setSignedUser] = useState({});
+    // const [signedUser, setSignedUser] = useState({});
+    const [isLoaded, setIsLoaded] = useState(false);
 
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
@@ -33,12 +34,14 @@ export default function Index({ postsList, error }) {
 
             // console.log(response, "reponse");
 
-            setSignedUser(result.data.data);
+            // setSignedUser(result.data.data);
             setSignedUserAppContext(result.data.data);
         } catch (error) {
             console.log(error);
             console.log("Token wrong, user don`t signed");
             Cookies.remove("token_mytweeter");
+        } finally {
+            setIsLoaded(true);
         }
     }, []);
 
@@ -114,7 +117,7 @@ export default function Index({ postsList, error }) {
 
             Cookies.remove("token_mytweeter");
 
-            setSignedUser({});
+            // setSignedUser({});
             setSignedUserAppContext({});
         } catch (error) {
             console.log(error, "error");
@@ -128,9 +131,8 @@ export default function Index({ postsList, error }) {
         <EditPostForm onSave={handleAddPost} />
     );
 
-    const signBanner = !Object.keys(signedUserAppContext).length && (
-        <SignBanner />
-    );
+    const signBanner = !Object.keys(signedUserAppContext).length &&
+        isLoaded && <SignBanner />;
 
     const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">

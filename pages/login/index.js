@@ -14,14 +14,11 @@ import axiosInstance from "../../libs/axiosInstance";
 import SignInUp from "../../components/SignInUp";
 import AuthorizationElement from "../../components/AuthorizationElement";
 
-export default function Register(errors, touched) {
-    async function handleSubmitData(
-        { userName, /*email, */ password },
-        { resetForm }
-    ) {
+export default function Login(errors, touched) {
+    async function handleSubmitData({ login, password } /* , { resetForm } */) {
         try {
             const result = await axiosInstance.post("/login", {
-                name: userName,
+                login: login,
                 // email,
                 password,
                 // headers: {
@@ -54,7 +51,7 @@ export default function Register(errors, touched) {
             <SignInUp title="Sign in">
                 <Formik
                     initialValues={{
-                        userName: "",
+                        login: "",
                         // email: "",
                         password: "",
                     }}
@@ -64,8 +61,8 @@ export default function Register(errors, touched) {
                     <Form>
                         <div className="flex flex-col">
                             <AuthorizationElement
-                                formName="userName"
-                                title="User name"
+                                formName="login"
+                                title="User name (email)"
                             />
                             {/* <AuthorizationElement formName="email" title="Email" /> */}
                             <AuthorizationElement
