@@ -1,9 +1,8 @@
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import axios from "axios";
-
-import Image from "next/image";
 
 import { EditPostForm } from "../EditPostForm";
 
@@ -53,18 +52,18 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
-            <div className="pr-4 ">
-                <Link href={`/user/${post.user.id}`}>
-                    <a>
-                        <Image
-                            src="/avatar.png"
-                            width="60px"
-                            height="60px"
-                            // className="w-10 "
-                        />
-                    </a>
-                </Link>
-            </div>
+            {/* <div className=""> */}
+            <Link href={`/user/${post.user.id}`}>
+                <a className="block min-w-[60px] mx-4">
+                    <Image
+                        src="/avatar.png"
+                        width="60"
+                        height="60"
+                        // className="w-10 "
+                    />
+                </a>
+            </Link>
+            {/* </div> */}
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
                     <div className="flex">

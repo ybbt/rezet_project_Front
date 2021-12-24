@@ -15,6 +15,7 @@ import { MainMenu } from "../../components/MainMenu";
 import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 import { PostsList } from "../../components/PostsList";
 import { EditPostForm } from "../../components/EditPostForm";
+import { UserWrapper } from "../../components/UserWrapper";
 
 export default ({ user, postsList }) => {
     const [posts, setPosts] = useState(postsList);
@@ -148,10 +149,13 @@ export default ({ user, postsList }) => {
                 <MainMenu />
             </div>
             {userBannerDropdown}
-            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
-                Explore
+            <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
+                <div className="font-bold text-lg">{user.name}</div>
+                <div className="text-xs text-[#949494]">{`${postsList.length} posts`}</div>
             </header>
-            <div>{user.name}</div>
+            <div className="h-64 w-full border border-[#949494] border-t-0">
+                <UserWrapper user={user} />
+            </div>
             {addPostComponent}
             <PostsList
                 postsList={posts}
