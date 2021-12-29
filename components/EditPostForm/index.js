@@ -1,42 +1,48 @@
 import { useState } from "react";
 
-import { message } from "antd";
+import { Alert } from "antd";
+
+import { Formik, Form, Field, ErrorMessage } from "formik";
+
+import { postSaveSchema } from "../../schemas/postSaveSchema";
 
 export function EditPostForm({ editContent, onSave, onCancel }) {
-    const [content, setTextContent] = useState(editContent);
-
-    // const buttonCancel = editContent ? (
-    //     <button onClick={onCancel}>Cancel</button>
-    // ) : null;
-
-    const buttonCancel = editContent && (
+    const buttonCancel = editContent ? (
         <button onClick={onCancel}>Cancel</button>
-    );
+    ) : null;
 
     const nameSaveButton = editContent ? "Save" : "Tweet";
 
-    function handleSave() {
-        if (!content) {
-            //! Тимчасово, щоб не отримувати помилки з серверу
-            // alert("Empty field!");
-            message.error(`Empty field!`, 5);
-            return;
-        }
-        onSave(content);
-        setTextContent("");
-    }
-
-    function handleChange(e) {
-        setTextContent(e.target.value);
+    function handleSave({ postContent }, { resetForm }) {
+        onSave(postContent);
+        resetForm();
     }
 
     return (
         <>
-            <textarea value={content} rows="5" onChange={handleChange} />
-            <div>
-                <button onClick={handleSave}>{nameSaveButton}</button>
-                {buttonCancel}
-            </div>
+            <Formik
+                initialValues={{
+                    postContent: editContent || "",
+                }}
+                validateOnChange={!!editContent}
+                validateOnBlur={!!editContent}
+                validationSchema={postSaveSchema}
+                onSubmit={handleSave}
+            >
+                <Form>
+                    <Field as="textarea" id="postContent" name="postContent" />
+                    <ErrorMessage
+                        name="postContent"
+                        render={(msg) => (
+                            <Alert message={msg} type="error" showIcon />
+                        )}
+                    />
+                    <div>
+                        <button type="submit">{nameSaveButton}</button>
+                        {buttonCancel}
+                    </div>
+                </Form>
+            </Formik>
         </>
     );
 }
