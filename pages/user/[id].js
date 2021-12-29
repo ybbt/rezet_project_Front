@@ -187,8 +187,8 @@ export async function getServerSideProps /* getStaticProps */({ params }) {
 
     return {
         props: {
-            user: resultUser.data,
-            postsList: resultUserPosts.data,
+            user: resultUser.data.data,
+            postsList: resultUserPosts.data.data,
         },
     };
 }

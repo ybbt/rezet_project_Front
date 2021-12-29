@@ -26,7 +26,7 @@ export default function Index({ postsList, error }) {
     const [signedUserAppContext, setSignedUserAppContext] =
         useContext(signedUserContext);
 
-    // console.log(posts, "posts in index");
+    console.log(posts, "posts in index");
 
     useEffect(async () => {
         try {
@@ -167,7 +167,7 @@ export async function getStaticProps() {
     try {
         const res = await axiosInstance.get("/posts");
 
-        // console.log(res.data, "posts");
+        // console.log(res, "posts");
 
         return {
             props: { postsList: res.data.data, error: false },
