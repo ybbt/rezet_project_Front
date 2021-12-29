@@ -15,7 +15,7 @@ export function PostsList({
                 key={postItem.id}
                 onDeletePost={onDeletePost}
                 onUpdatePost={onUpdatePost}
-                signedUserId={signedUser.id}
+                signedUserName={signedUser.name}
             />
         );
     });

@@ -1,21 +1,22 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 
-import axiosInstance from "../../libs/axiosInstance";
+import axiosInstance from "../libs/axiosInstance";
 import Cookies from "js-cookie";
 
 import { message } from "antd";
 import "antd/dist/antd.css";
 
-import signedUserContext from "../../context/signedUserContext";
+import signedUserContext from "../context/signedUserContext";
 
-import { PageTemplate } from "../../components/PageTemplate";
-import { SignBanner } from "../../components/SignBanner";
-import { MainMenu } from "../../components/MainMenu";
-import { DropdownUserMenu } from "../../components/DropdownUserMenu";
-import { PostsList } from "../../components/PostsList";
-import { EditPostForm } from "../../components/EditPostForm";
-import { UserWrapper } from "../../components/UserWrapper";
+import { PageTemplate } from "../components/PageTemplate";
+import { SignBanner } from "../components/SignBanner";
+import { MainMenu } from "../components/MainMenu";
+import { DropdownUserMenu } from "../components/DropdownUserMenu";
+import { PostsList } from "../components/PostsList";
+import { EditPostForm } from "../components/EditPostForm";
+import { UserWrapper } from "../components/UserWrapper";
+import { UserBanner } from "../components/UserBanner";
 
 export default ({ user, postsList }) => {
     const [posts, setPosts] = useState(postsList);
@@ -28,7 +29,7 @@ export default ({ user, postsList }) => {
 
     useEffect(async () => {
         try {
-            const result = await axiosInstance.get("/authme");
+            const result = await axiosInstance.get("/me");
 
             const response = result.data;
 
@@ -51,7 +52,7 @@ export default ({ user, postsList }) => {
         // console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
-                text: postContent,
+                content: postContent,
                 // user_id: signedUser.id,
             });
 
@@ -89,7 +90,7 @@ export default ({ user, postsList }) => {
             const response = await axiosInstance.put(
                 `/posts/${updatedData.id}`,
                 {
-                    text: updatedData.text,
+                    content: updatedData.content,
                 }
             );
 
@@ -135,15 +136,14 @@ export default ({ user, postsList }) => {
 
     const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <DropdownUserMenu
-                user={signedUserAppContext}
-                onLogout={handlerLogout}
-            />
+            <UserBanner user={signedUserAppContext} onLogout={handlerLogout} />
         </div>
     );
 
-    const addPostComponent = user.id === signedUserAppContext.id && (
-        <EditPostForm onSave={handleAddPost} />
+    const addPostComponent = user.name === signedUserAppContext.name && (
+        <div className="border border-t-0 border-[#949494] p-2">
+            <EditPostForm onSave={handleAddPost} />
+        </div>
     );
 
     return (
@@ -173,22 +173,32 @@ export default ({ user, postsList }) => {
 };
 
 export async function getServerSideProps /* getStaticProps */({ params }) {
-    // console.log(params, "serverSideProps new");
+    try {
+        // const resultUser = await axiosInstance.get(`/users/${params.id}`);
+        // const resultUserPosts = await axiosInstance.get(
+        //     `/users/${params.id}/posts`
+        // );
 
-    const resultUser = await axiosInstance.get(`/users/${params.id}`);
-    const resultUserPosts = await axiosInstance.get(
-        `/users/${params.id}/posts`
-    );
+        const result = await Promise.all([
+            axiosInstance.get(`/users/${params.name}`),
+            axiosInstance.get(`/users/${params.name}/posts`),
+        ]);
 
-    // console.log(resultUser.data, "resultUser");
-    // console.log(resultUserPosts.data, "resultUserPosts");
-
-    // console.log("page [id] getServerSideProps");
-
-    return {
-        props: {
-            user: resultUser.data.data,
-            postsList: resultUserPosts.data.data,
-        },
-    };
+        // console.log(result[0].data, "result_0_data getServerSideProps");
+        return {
+            props: {
+                // user: resultUser.data.data,
+                // postsList: resultUserPosts.data.data,
+                user: result[0].data.data,
+                postsList: result[1].data.data,
+                error: false,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                error: error,
+            },
+        };
+    }
 }

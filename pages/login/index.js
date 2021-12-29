@@ -29,7 +29,7 @@ export default function Login(errors, touched) {
 
             const response = result.data;
 
-            // console.log(result, "response result");
+            console.log(result, "response result");
 
             if (response.error) {
                 console.log(response.error, "response error");

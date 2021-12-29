@@ -42,7 +42,7 @@ export function EditPostForm({
     );
 
     return (
-        <div className="border border-t-0 border-[#949494] p-2">
+        <div className=" pr-2">
             <Formik
                 initialValues={{
                     postContent: editContent || "",

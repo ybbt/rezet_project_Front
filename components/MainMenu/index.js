@@ -15,7 +15,7 @@ export function MainMenu({ isAuth }) {
             <Link href="#">
                 <a className="text-black">Users</a>
             </Link>
-            <Link href={`/user/${signedUserAppContext.id}`}>
+            <Link href={`/${signedUserAppContext.name}`}>
                 <a className="text-black">Profile</a>
             </Link>
             <Link href="#">

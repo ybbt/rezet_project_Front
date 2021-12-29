@@ -14,7 +14,8 @@ import { EditPostForm } from "../components/EditPostForm";
 import { MainMenu } from "../components/MainMenu";
 import { PageTemplate } from "../components/PageTemplate";
 import { SignBanner } from "../components/SignBanner";
-import { DropdownUserMenu } from "../components/DropdownUserMenu";
+// import { DropdownUserMenu } from "../components/DropdownUserMenu";
+import { UserBanner } from "../components/UserBanner";
 
 import signedUserContext from "../context/signedUserContext";
 
@@ -30,7 +31,7 @@ export default function Index({ postsList, error }) {
 
     useEffect(async () => {
         try {
-            const result = await axiosInstance.get("/authme");
+            const result = await axiosInstance.get("/me");
 
             const response = result.data;
 
@@ -51,11 +52,11 @@ export default function Index({ postsList, error }) {
         // console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
-                text: postContent,
+                content: postContent,
                 // user_id: signedUser.id,
             });
 
-            setPosts([...posts, response.data.data]);
+            setPosts([response.data.data, ...posts]);
         } catch (error) {
             message.error(`${error}`);
             console.log(error, "error addpost");
@@ -78,18 +79,20 @@ export default function Index({ postsList, error }) {
 
     async function handleUpdatePost(updatedData) {
         try {
-            const login_token = Cookies.get("token_mytweeter");
-            axiosInstance.interceptors.request.use((config) => {
-                config.headers.Authorization = login_token
-                    ? `Bearer ${login_token}`
-                    : "";
-                return config;
-            });
+            // const login_token = Cookies.get("token_mytweeter");
+            // axiosInstance.interceptors.request.use((config) => {
+            //     config.headers.Authorization = login_token
+            //         ? `Bearer ${login_token}`
+            //         : "";
+            //     return config;
+            // });
+
+            // console.log(updatedData);
 
             const response = await axiosInstance.put(
                 `/posts/${updatedData.id}`,
                 {
-                    text: updatedData.text,
+                    content: updatedData.content,
                 }
             );
 
@@ -128,7 +131,9 @@ export default function Index({ postsList, error }) {
     }
 
     const addPostComponent = !!Object.keys(signedUserAppContext).length && (
-        <EditPostForm onSave={handleAddPost} />
+        <div className="border border-t-0 border-[#949494] p-2">
+            <EditPostForm onSave={handleAddPost} />
+        </div>
     );
 
     const signBanner = !Object.keys(signedUserAppContext).length &&
@@ -136,10 +141,7 @@ export default function Index({ postsList, error }) {
 
     const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <DropdownUserMenu
-                user={signedUserAppContext}
-                onLogout={handlerLogout}
-            />
+            <UserBanner user={signedUserAppContext} onLogout={handlerLogout} />
         </div>
     );
 
@@ -167,8 +169,6 @@ export async function getStaticProps() {
     try {
         const res = await axiosInstance.get("/posts");
 
-        // console.log(res, "posts");
-
         return {
             props: { postsList: res.data.data, error: false },
         };
@@ -176,7 +176,7 @@ export async function getStaticProps() {
         console.log(error.response, "error getStaticProps");
         return {
             props: {
-                error: true,
+                error: error,
                 // postsList: "",
             },
         };
