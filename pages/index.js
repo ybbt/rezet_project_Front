@@ -78,13 +78,15 @@ export default function Index({ postsList, error }) {
 
     async function handleUpdatePost(updatedData) {
         try {
-            const login_token = Cookies.get("token_mytweeter");
-            axiosInstance.interceptors.request.use((config) => {
-                config.headers.Authorization = login_token
-                    ? `Bearer ${login_token}`
-                    : "";
-                return config;
-            });
+            // const login_token = Cookies.get("token_mytweeter");
+            // axiosInstance.interceptors.request.use((config) => {
+            //     config.headers.Authorization = login_token
+            //         ? `Bearer ${login_token}`
+            //         : "";
+            //     return config;
+            // });
+
+            // console.log(updatedData);
 
             const response = await axiosInstance.put(
                 `/posts/${updatedData.id}`,
@@ -128,7 +130,9 @@ export default function Index({ postsList, error }) {
     }
 
     const addPostComponent = !!Object.keys(signedUserAppContext).length && (
-        <EditPostForm onSave={handleAddPost} />
+        <div className="border border-t-0 border-[#949494] p-2">
+            <EditPostForm onSave={handleAddPost} />
+        </div>
     );
 
     const signBanner = !Object.keys(signedUserAppContext).length &&
@@ -152,9 +156,7 @@ export default function Index({ postsList, error }) {
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
                 Explore
             </header>
-            <div className="border border-t-0 border-[#949494] p-2">
-                {addPostComponent}
-            </div>
+            {addPostComponent}
             <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
@@ -176,7 +178,7 @@ export async function getStaticProps() {
         console.log(error.response, "error getStaticProps");
         return {
             props: {
-                error: true,
+                error: error,
                 // postsList: "",
             },
         };

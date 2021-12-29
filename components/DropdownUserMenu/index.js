@@ -12,7 +12,7 @@ export function DropdownUserMenu({ user, /* onProfile,  */ onLogout }) {
     function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/user/${user.name}`);
+                Router.push(`/${user.name}`);
                 break;
             case menuKey.logout:
                 onLogout();
@@ -39,7 +39,7 @@ export function DropdownUserMenu({ user, /* onProfile,  */ onLogout }) {
 
     return (
         <Space wrap>
-            <Dropdown overlay={menu} placement="topLeft">
+            <Dropdown overlay={menu} trigger={["click"]} placement="topLeft">
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
