@@ -24,7 +24,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
         const newPost = { ...post };
 
-        newPost.text = content;
+        newPost.content = content;
 
         onUpdatePost(newPost);
     }
@@ -35,15 +35,15 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
     const displayContent = componentEditCondition ? (
         <EditPostForm
-            editContent={post.text}
+            editContent={post.content}
             onSave={handleUdate}
             onCancel={handleCancel}
         />
     ) : (
-        <div className="max-w-2xl min-w-[32rem]">{post.text}</div>
+        <div className="max-w-2xl min-w-[32rem]">{post.content}</div>
     );
 
-    const dropdownMenu = signedUserId === post.user_id && (
+    const dropdownMenu = signedUserId === post.author_id && (
         <DropdownPostMenu
             onDeletePost={() => onDeletePost(post)}
             onEditPost={handleEdit}
@@ -54,8 +54,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between">
-            {/* <div className=""> */}
-            <Link href={`/user/${post.user.id}`}>
+            <Link href={`/user/${post.author.name}`}>
                 <a className="block min-w-[60px] mx-4">
                     <Image
                         src="/avatar.png"
@@ -69,17 +68,17 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserId }) {
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
                     <div className="flex ">
-                        <Link href={`/user/${post.user.id}`}>
+                        <Link href={`/user/${post.author.name}`}>
                             <a className="text-black no-underline">
                                 <div className="font-bold text-base pr-2">{`${
-                                    post.user.first_name
-                                } ${post.user.last_name || ""}`}</div>
+                                    post.author.first_name
+                                } ${post.author.last_name || ""}`}</div>
                             </a>
                         </Link>
                         <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
-                            <Link href={`/user/${post.user.id}`}>
+                            <Link href={`/user/${post.author.id}`}>
                                 <a className="text-inherit">
-                                    <span className="text-inherit">{`@${post.user.name}`}</span>
+                                    <span className="text-inherit">{`@${post.author.name}`}</span>
                                 </a>
                             </Link>
                         </div>

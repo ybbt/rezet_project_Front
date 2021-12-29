@@ -28,7 +28,7 @@ export default ({ user, postsList }) => {
 
     useEffect(async () => {
         try {
-            const result = await axiosInstance.get("/authme");
+            const result = await axiosInstance.get("/me");
 
             const response = result.data;
 
@@ -51,7 +51,7 @@ export default ({ user, postsList }) => {
         // console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
-                text: postContent,
+                content: postContent,
                 // user_id: signedUser.id,
             });
 
@@ -89,7 +89,7 @@ export default ({ user, postsList }) => {
             const response = await axiosInstance.put(
                 `/posts/${updatedData.id}`,
                 {
-                    text: updatedData.text,
+                    content: updatedData.content,
                 }
             );
 
@@ -173,22 +173,24 @@ export default ({ user, postsList }) => {
 };
 
 export async function getServerSideProps /* getStaticProps */({ params }) {
-    // console.log(params, "serverSideProps new");
+    // const resultUser = await axiosInstance.get(`/users/${params.id}`);
+    // const resultUserPosts = await axiosInstance.get(
+    //     `/users/${params.id}/posts`
+    // );
 
-    const resultUser = await axiosInstance.get(`/users/${params.id}`);
-    const resultUserPosts = await axiosInstance.get(
-        `/users/${params.id}/posts`
-    );
+    const result = await Promise.all([
+        axiosInstance.get(`/users/${params.name}`),
+        axiosInstance.get(`/users/${params.name}/posts`),
+    ]);
 
-    // console.log(resultUser.data, "resultUser");
-    // console.log(resultUserPosts.data, "resultUserPosts");
-
-    // console.log("page [id] getServerSideProps");
+    // console.log(result[0].data, "result_0_data getServerSideProps");
 
     return {
         props: {
-            user: resultUser.data,
-            postsList: resultUserPosts.data,
+            // user: resultUser.data.data,
+            // postsList: resultUserPosts.data.data,
+            user: result[0].data.data,
+            postsList: result[1].data.data,
         },
     };
 }

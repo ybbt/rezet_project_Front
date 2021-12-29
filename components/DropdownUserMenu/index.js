@@ -12,7 +12,7 @@ export function DropdownUserMenu({ user, /* onProfile,  */ onLogout }) {
     function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/user/${user.id}`);
+                Router.push(`/user/${user.name}`);
                 break;
             case menuKey.logout:
                 onLogout();

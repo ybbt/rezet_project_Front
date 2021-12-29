@@ -30,7 +30,7 @@ export default function Index({ postsList, error }) {
 
     useEffect(async () => {
         try {
-            const result = await axiosInstance.get("/authme");
+            const result = await axiosInstance.get("/me");
 
             const response = result.data;
 
@@ -51,11 +51,11 @@ export default function Index({ postsList, error }) {
         // console.log(postContent);
         try {
             const response = await axiosInstance.post("/posts", {
-                text: postContent,
+                content: postContent,
                 // user_id: signedUser.id,
             });
 
-            setPosts([...posts, response.data.data]);
+            setPosts([response.data.data, ...posts]);
         } catch (error) {
             message.error(`${error}`);
             console.log(error, "error addpost");
@@ -89,7 +89,7 @@ export default function Index({ postsList, error }) {
             const response = await axiosInstance.put(
                 `/posts/${updatedData.id}`,
                 {
-                    text: updatedData.text,
+                    content: updatedData.content,
                 }
             );
 
@@ -152,7 +152,9 @@ export default function Index({ postsList, error }) {
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
                 Explore
             </header>
-            {addPostComponent}
+            <div className="border border-t-0 border-[#949494] p-2">
+                {addPostComponent}
+            </div>
             <PostsList
                 postsList={posts}
                 onDeletePost={handleDeletePost}
@@ -166,8 +168,6 @@ export default function Index({ postsList, error }) {
 export async function getStaticProps() {
     try {
         const res = await axiosInstance.get("/posts");
-
-        // console.log(res.data, "posts");
 
         return {
             props: { postsList: res.data.data, error: false },
