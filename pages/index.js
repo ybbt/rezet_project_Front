@@ -14,7 +14,8 @@ import { EditPostForm } from "../components/EditPostForm";
 import { MainMenu } from "../components/MainMenu";
 import { PageTemplate } from "../components/PageTemplate";
 import { SignBanner } from "../components/SignBanner";
-import { DropdownUserMenu } from "../components/DropdownUserMenu";
+// import { DropdownUserMenu } from "../components/DropdownUserMenu";
+import { UserBanner } from "../components/UserBanner";
 
 import signedUserContext from "../context/signedUserContext";
 
@@ -140,10 +141,7 @@ export default function Index({ postsList, error }) {
 
     const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <DropdownUserMenu
-                user={signedUserAppContext}
-                onLogout={handlerLogout}
-            />
+            <UserBanner user={signedUserAppContext} onLogout={handlerLogout} />
         </div>
     );
 

@@ -3,7 +3,11 @@ import Router from "next/router";
 
 import { UserBanner } from "../UserBanner";
 
-export function DropdownUserMenu({ user, /* onProfile,  */ onLogout }) {
+export function DropdownUserMenu({
+    children,
+    user,
+    /* onProfile,  */ onLogout,
+}) {
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -43,7 +47,8 @@ export function DropdownUserMenu({ user, /* onProfile,  */ onLogout }) {
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    <UserBanner user={user} />
+                    {/* <UserBanner user={user} /> */}
+                    {children}
                 </Button>
             </Dropdown>
         </Space>
