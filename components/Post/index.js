@@ -67,7 +67,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
                             </a>
                         </Link>
                         <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
-                            <Link href={`/${post.author.id}`}>
+                            <Link href={`/${post.author.name}`}>
                                 <a className="text-inherit">
                                     <span className="text-inherit">{`@${post.author.name}`}</span>
                                 </a>
