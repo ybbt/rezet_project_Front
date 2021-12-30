@@ -146,6 +146,15 @@ export default ({ user, postsList }) => {
         </div>
     );
 
+    const postsComponentList = posts && (
+        <PostsList
+            postsList={posts}
+            onDeletePost={handleDeletePost}
+            onUpdatePost={handleUpdatePost}
+            signedUser={signedUserAppContext}
+        />
+    );
+
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
@@ -162,12 +171,7 @@ export default ({ user, postsList }) => {
                 <UserWrapper user={user} />
             </div>
             {addPostComponent}
-            <PostsList
-                postsList={posts}
-                onDeletePost={handleDeletePost}
-                onUpdatePost={handleUpdatePost}
-                signedUser={signedUserAppContext}
-            />
+            {postsComponentList}
         </PageTemplate>
     );
 };
@@ -191,13 +195,12 @@ export async function getServerSideProps /* getStaticProps */({ params }) {
                 // postsList: resultUserPosts.data.data,
                 user: result[0].data.data,
                 postsList: result[1].data.data,
-                error: false,
             },
         };
     } catch (error) {
         return {
             props: {
-                error: error,
+                error: error.response.statusText,
             },
         };
     }

@@ -48,6 +48,10 @@ export default function Index({ postsList, error }) {
         }
     }, []);
 
+    useEffect(() => {
+        error && message.error(`${error}`);
+    });
+
     async function handleAddPost(postContent) {
         // console.log(postContent);
         try {
@@ -145,6 +149,15 @@ export default function Index({ postsList, error }) {
         </div>
     );
 
+    const postsComponentList = posts && (
+        <PostsList
+            postsList={posts}
+            onDeletePost={handleDeletePost}
+            onUpdatePost={handleUpdatePost}
+            signedUser={signedUserAppContext}
+        />
+    );
+
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
@@ -155,12 +168,7 @@ export default function Index({ postsList, error }) {
                 Explore
             </header>
             {addPostComponent}
-            <PostsList
-                postsList={posts}
-                onDeletePost={handleDeletePost}
-                onUpdatePost={handleUpdatePost}
-                signedUser={signedUserAppContext}
-            />
+            {postsComponentList}
         </PageTemplate>
     );
 }
@@ -170,14 +178,14 @@ export async function getStaticProps() {
         const res = await axiosInstance.get("/posts");
 
         return {
-            props: { postsList: res.data.data, error: false },
+            props: { postsList: res.data.data },
         };
     } catch (error) {
-        console.log(error.response, "error getStaticProps");
+        console.log(error.response.statusText, "error getStaticProps");
         return {
             props: {
-                error: error,
-                // postsList: "",
+                error: error.response.statusText,
+                // postsList: {},
             },
         };
     }
