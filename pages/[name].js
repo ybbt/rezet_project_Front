@@ -1,7 +1,15 @@
 import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 
-import axiosInstance from "../libs/axiosInstance";
+import {
+    getUserPosts,
+    deletePost,
+    sendPost,
+    updatePost,
+} from "../libs/postService";
+import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
+import { getUser } from "../libs/userService";
+
 import Cookies from "js-cookie";
 
 import { message } from "antd";
@@ -12,51 +20,46 @@ import signedUserContext from "../context/signedUserContext";
 import { PageTemplate } from "../components/PageTemplate";
 import { SignBanner } from "../components/SignBanner";
 import { MainMenu } from "../components/MainMenu";
-import { DropdownUserMenu } from "../components/DropdownUserMenu";
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
 import { UserWrapper } from "../components/UserWrapper";
 import { UserBanner } from "../components/UserBanner";
 
-export default ({ user, postsList }) => {
+export default ({ error, user, postsList }) => {
     const [posts, setPosts] = useState(postsList);
-    const [signedUserAppContext, setSignedUserAppContext] =
-        useContext(signedUserContext);
+    const [signedUser, setSignedUser] = useContext(signedUserContext);
 
     const router = useRouter();
 
-    // console.log(postsList, "postsList in page [id]");
-
     useEffect(async () => {
         try {
-            const result = await axiosInstance.get("/me");
+            const result = await fetchAuth();
 
             const response = result.data;
 
-            // console.log(response, "reponse");
-
-            // setSignedUser(result.data.data);
-            setSignedUserAppContext(result.data.data);
+            setSignedUser(result.data.data);
         } catch (error) {
             console.log(error);
-            console.log("Token wrong, user don`t signed");
+            message.error(`${error}`);
+
             Cookies.remove("token_mytweeter");
+            setSignedUser({});
         }
     }, []);
+
+    useEffect(() => {
+        error && message.error(`${error}`);
+    });
 
     useEffect(() => {
         setPosts(postsList);
     }, [postsList]);
 
     async function handleAddPost(postContent) {
-        // console.log(postContent);
         try {
-            const response = await axiosInstance.post("/posts", {
-                content: postContent,
-                // user_id: signedUser.id,
-            });
+            const response = await sendPost(postContent);
 
-            setPosts([...posts, response.data.data]);
+            setPosts([response.data.data, ...posts]);
         } catch (error) {
             message.error(`${error}`);
             console.log(error, "error addpost");
@@ -65,7 +68,7 @@ export default ({ user, postsList }) => {
 
     async function handleDeletePost(post) {
         try {
-            const response = await axiosInstance.delete(`/posts/${post.id}`);
+            const response = await deletePost(post.id); //axiosInstance.delete(`/posts/${post.id}`);
 
             const newPosts = posts.filter(
                 (postItem) => postItem.id !== post.id
@@ -79,19 +82,9 @@ export default ({ user, postsList }) => {
 
     async function handleUpdatePost(updatedData) {
         try {
-            const login_token = Cookies.get("token_mytweeter");
-            axiosInstance.interceptors.request.use((config) => {
-                config.headers.Authorization = login_token
-                    ? `Bearer ${login_token}`
-                    : "";
-                return config;
-            });
-
-            const response = await axiosInstance.put(
-                `/posts/${updatedData.id}`,
-                {
-                    content: updatedData.content,
-                }
+            const response = await updatePost(
+                updatedData.id,
+                updatedData.content
             );
 
             const newPostList = posts.map((postItem) =>
@@ -108,39 +101,26 @@ export default ({ user, postsList }) => {
 
     async function handlerLogout() {
         try {
-            const login_token = Cookies.get("token_mytweeter");
-            axiosInstance.interceptors.request.use((config) => {
-                config.headers.Authorization = login_token
-                    ? `Bearer ${login_token}`
-                    : "";
-                return config;
-            });
-
-            await axiosInstance.post(`/logout`);
+            await fetchSignOut();
 
             Cookies.remove("token_mytweeter");
 
-            // setSignedUser({});
-            setSignedUserAppContext({});
+            setSignedUser({});
         } catch (error) {
             console.log(error, "error");
             message.error(`${error}`);
         }
     }
 
-    const signBanner = !Object.keys(signedUserAppContext).length && (
-        <SignBanner />
-    );
+    const signBanner = !Object.keys(signedUser).length && <SignBanner />;
 
-    // console.log(signedUserContext, "signedUserContext id");
-
-    const userBannerDropdown = !!Object.keys(signedUserAppContext).length && (
+    const userBannerDropdown = !!Object.keys(signedUser).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner user={signedUserAppContext} onLogout={handlerLogout} />
+            <UserBanner user={signedUser} onLogout={handlerLogout} />
         </div>
     );
 
-    const addPostComponent = user.name === signedUserAppContext.name && (
+    const addPostComponent = user.name === signedUser.name && (
         <div className="border border-t-0 border-[#949494] p-2">
             <EditPostForm onSave={handleAddPost} />
         </div>
@@ -151,14 +131,14 @@ export default ({ user, postsList }) => {
             postsList={posts}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={signedUserAppContext}
+            signedUser={signedUser}
         />
     );
 
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu isAuth={!!Object.keys(signedUserAppContext).length} />
+                <MainMenu isAuth={!!Object.keys(signedUser).length} />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
@@ -176,23 +156,15 @@ export default ({ user, postsList }) => {
     );
 };
 
-export async function getServerSideProps /* getStaticProps */({ params }) {
+export async function getServerSideProps({ params }) {
     try {
-        // const resultUser = await axiosInstance.get(`/users/${params.id}`);
-        // const resultUserPosts = await axiosInstance.get(
-        //     `/users/${params.id}/posts`
-        // );
-
         const result = await Promise.all([
-            axiosInstance.get(`/users/${params.name}`),
-            axiosInstance.get(`/users/${params.name}/posts`),
+            getUser(params.name),
+            getUserPosts(params.name),
         ]);
 
-        // console.log(result[0].data, "result_0_data getServerSideProps");
         return {
             props: {
-                // user: resultUser.data.data,
-                // postsList: resultUserPosts.data.data,
                 user: result[0].data.data,
                 postsList: result[1].data.data,
             },

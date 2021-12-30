@@ -1,4 +1,4 @@
-import { Alert } from "antd";
+import { Alert, message } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
@@ -7,43 +7,30 @@ import { signinSchema } from "../../schemas/signinSchema";
 import Cookies from "js-cookie";
 
 import Router from "next/router";
-// import classNames from "classnames";
+
 import Link from "next/link";
 
-import axiosInstance from "../../libs/axiosInstance";
 import SignInUp from "../../components/SignInUp";
 import AuthorizationElement from "../../components/AuthorizationElement";
+import { fetchSignIn } from "../../libs/authorizeService";
 
 export default function Login(errors, touched) {
-    async function handleSubmitData({ login, password } /* , { resetForm } */) {
-        // console.log("in login");
+    async function handleSubmitData({ login, password }, { resetForm }) {
         try {
-            const result = await axiosInstance.post("/login", {
-                login: login,
-                // email,
-                password,
-                // headers: {
-                //     Authorization: "",
-                // },
-            });
+            const result = await fetchSignIn(login, password);
 
             const response = result.data;
 
             console.log(result, "response result");
 
-            if (response.error) {
-                console.log(response.error, "response error");
-                message.error(`${response.error}`);
-            } else {
-                Cookies.set("token_mytweeter", response.token, {
-                    secure: true,
-                });
-                // resetForm();
-                Router.push("/");
-            }
+            Cookies.set("token_mytweeter", response.token, {
+                secure: true,
+            });
+            Router.push("/");
         } catch (error) {
-            message.error(`${error}`);
-            console.log(error);
+            message.error(`${error.response.data.errors[0]}`);
+            console.log(error.response.data.errors[0], "error catch");
+            resetForm();
         }
     }
 
@@ -53,7 +40,7 @@ export default function Login(errors, touched) {
                 <Formik
                     initialValues={{
                         login: "",
-                        // email: "",
+
                         password: "",
                     }}
                     validationSchema={signinSchema}
@@ -65,7 +52,6 @@ export default function Login(errors, touched) {
                                 formName="login"
                                 title="User name (email)"
                             />
-                            {/* <AuthorizationElement formName="email" title="Email" /> */}
                             <AuthorizationElement
                                 formName="password"
                                 title="Password"

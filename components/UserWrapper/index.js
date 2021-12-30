@@ -4,11 +4,7 @@ import Image from "next/image";
 export function UserWrapper({ user }) {
     return (
         <div className="flex flex-col">
-            <Image
-                /* layout="fill" */ src="/cover.png"
-                width="720"
-                height="120"
-            />
+            <Image src="/cover.png" width="720" height="120" />
             <div className="flex justify-between px-4 py-3">
                 <div className="flex flex-col">
                     <div className="font-bold text-lg">{`${user.first_name} ${

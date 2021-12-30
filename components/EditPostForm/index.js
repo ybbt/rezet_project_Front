@@ -7,15 +7,7 @@ import { postSaveSchema } from "../../schemas/postSaveSchema";
 
 import classNames from "classnames";
 
-export function EditPostForm({
-    editContent,
-    onSave,
-    onCancel,
-    errors,
-    touched,
-}) {
-    // const initValue = editContent || "";
-
+export function EditPostForm({ editContent, onSave, onCancel }) {
     const buttonCancel = editContent ? (
         <button
             onClick={onCancel}
@@ -31,10 +23,6 @@ export function EditPostForm({
         onSave(postContent);
         resetForm();
     }
-
-    // const PostSaveSchema = Yup.object().shape({
-    //     postContent: Yup.string().required("Required Field!"),
-    // });
 
     const textAreaStyle = classNames(
         "w-full resize-none focus-visible:outline-none  focus:border focus:border-[#949494]",
@@ -52,7 +40,6 @@ export function EditPostForm({
                 validationSchema={postSaveSchema}
                 onSubmit={handleSave}
             >
-                {/* {AutorizationForm} */}
                 <Form>
                     <Field
                         as="textarea"

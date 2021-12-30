@@ -7,14 +7,14 @@ import { signupSchema } from "../../schemas/signupSchema";
 import Cookies from "js-cookie";
 
 import Router from "next/router";
-// import classNames from "classnames";
+
 import Link from "next/link";
 
-import axiosInstance from "../../libs/axiosInstance";
 import SignInUp from "../../components/SignInUp";
 import AuthorizationElement from "../../components/AuthorizationElement";
+import { fetchSignUp } from "../../libs/authorizeService";
 
-export default function Register({ errors, touched }) {
+export default function Register() {
     async function handleSubmitData(
         {
             firstName,
@@ -23,35 +23,29 @@ export default function Register({ errors, touched }) {
             email,
             password,
             passwordConfirmation,
-        } /* ,
-        { resetForm } */
+        },
+        { resetForm }
     ) {
         try {
-            const result = await axiosInstance.post("/register", {
-                first_name: firstName,
-                last_name: lastName,
-                name: userName,
+            const result = await fetchSignUp(
+                firstName,
+                lastName,
+                userName,
                 email,
                 password,
-                password_confirmation: passwordConfirmation,
-            });
+                passwordConfirmation
+            );
 
             const response = result.data;
 
-            // console.log(response.token); // *****************************************
-
-            if (response.error) {
-                console.log(response.error);
-            } else {
-                Cookies.set("token_mytweeter", response.token, {
-                    secure: true,
-                });
-                // resetForm();
-                Router.push("/");
-            }
+            Cookies.set("token_mytweeter", response.token, {
+                secure: true,
+            });
+            Router.push("/");
         } catch (error) {
-            message.error(`${error}`);
-            console.log(error, "error");
+            message.error(`${error.response.data.message}`);
+            console.log(error.response.data.message, "error");
+            resetForm();
         }
     }
 

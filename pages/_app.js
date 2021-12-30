@@ -1,18 +1,14 @@
 import "../styles/globals.css";
-// import "antd/dist/antd.css";
 
 import React, { useState } from "react";
 
-// var signedUserContext = React.createContext(null);
 import signedUserContext from "../context/signedUserContext";
 
 function MyApp({ Component, pageProps }) {
-    var [signedUserAppContext, setSignedUserAppContext] = useState({});
+    var [signedUser, setSignedUser] = useState({});
 
     return (
-        <signedUserContext.Provider
-            value={[signedUserAppContext, setSignedUserAppContext]}
-        >
+        <signedUserContext.Provider value={[signedUser, setSignedUser]}>
             <Component {...pageProps} />
         </signedUserContext.Provider>
     );

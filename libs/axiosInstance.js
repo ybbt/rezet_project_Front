@@ -5,13 +5,13 @@ const axiosInstance = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_SERV_URL}/api`,
 });
 
-// Request interceptor for API calls
 axiosInstance.interceptors.request.use(
     async (config) => {
         config.headers = {
             Authorization: Cookies.get("token_mytweeter")
                 ? `Bearer ${Cookies.get("token_mytweeter")}`
                 : "",
+            Accept: "application/json",
         };
         return config;
     },
@@ -19,9 +19,5 @@ axiosInstance.interceptors.request.use(
         Promise.reject(error);
     }
 );
-
-// const axiosInstanceBackend = axios.create({
-//     baseURL: `${process.env.NEXT_PUBLIC_SERV_URL}/api`,
-// });
 
 export default axiosInstance;

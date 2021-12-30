@@ -1,13 +1,7 @@
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
-import { UserBanner } from "../UserBanner";
-
-export function DropdownUserMenu({
-    children,
-    user,
-    /* onProfile,  */ onLogout,
-}) {
+export function DropdownUserMenu({ children, user, onLogout }) {
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -25,7 +19,10 @@ export function DropdownUserMenu({
     }
 
     const menu = (
-        <Menu onClick={handleMenuClick}>
+        <Menu
+            onClick={handleMenuClick}
+            style={{ position: "fixed", bottom: "65px" }}
+        >
             <Menu.Item
                 key={menuKey.profile}
                 style={{ borderWidth: "1px", borderColor: "black" }}
@@ -47,7 +44,6 @@ export function DropdownUserMenu({
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    {/* <UserBanner user={user} /> */}
                     {children}
                 </Button>
             </Dropdown>
