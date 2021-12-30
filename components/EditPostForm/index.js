@@ -3,12 +3,18 @@ import { useState } from "react";
 import { Alert } from "antd";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
-
 import { postSaveSchema } from "../../schemas/postSaveSchema";
+
+import classNames from "classnames";
 
 export function EditPostForm({ editContent, onSave, onCancel }) {
     const buttonCancel = editContent ? (
-        <button onClick={onCancel}>Cancel</button>
+        <button
+            onClick={onCancel}
+            className="text-blue-400 border-[#54C1FF] border p-1 m-1 w-24 h-7 text-xs"
+        >
+            Cancel
+        </button>
     ) : null;
 
     const nameSaveButton = editContent ? "Save" : "Tweet";
@@ -18,8 +24,13 @@ export function EditPostForm({ editContent, onSave, onCancel }) {
         resetForm();
     }
 
+    const textAreaStyle = classNames(
+        "w-full resize-none focus-visible:outline-none  focus:border focus:border-[#949494]",
+        { "border border-[#949494]": !!editContent }
+    );
+
     return (
-        <>
+        <div className=" pr-2">
             <Formik
                 initialValues={{
                     postContent: editContent || "",
@@ -30,19 +41,30 @@ export function EditPostForm({ editContent, onSave, onCancel }) {
                 onSubmit={handleSave}
             >
                 <Form>
-                    <Field as="textarea" id="postContent" name="postContent" />
-                    <ErrorMessage
+                    <Field
+                        as="textarea"
+                        id="postContent"
                         name="postContent"
-                        render={(msg) => (
-                            <Alert message={msg} type="error" showIcon />
-                        )}
+                        placeholder="Whats up?"
+                        className={textAreaStyle}
                     />
-                    <div>
-                        <button type="submit">{nameSaveButton}</button>
+                    <ErrorMessage
+                        render={(msg) => (
+                            <Alert message={msg} type="error" showIcon></Alert>
+                        )}
+                        name="postContent"
+                    />
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="bg-[#54C1FF] text-white border-[#54C1FF] border p-1 m-1 w-24 h-7 text-xs"
+                        >
+                            {nameSaveButton}
+                        </button>
                         {buttonCancel}
                     </div>
                 </Form>
             </Formik>
-        </>
+        </div>
     );
 }
