@@ -22,11 +22,30 @@ import { UserBanner } from "../components/UserBanner";
 
 import signedUserContext from "../context/signedUserContext";
 
+// ********
+import { useSelector, useDispatch } from "react-redux";
+import {
+    setPostsRedux,
+    sendPostRedux,
+    deletePostRedux,
+    updatePostRedux,
+} from "../redux/actions";
+import { initializeStore } from "../redux/store"; // ---  для серверного запросу
+// ********
+
 export default function Index({ postsList, error }) {
     const [posts, setPosts] = useState(postsList);
     const [isLoaded, setIsLoaded] = useState(false);
 
     const [signedUser, setSignedUser] = useContext(signedUserContext);
+
+    // *******
+    const dispatch = useDispatch();
+    const postsListStore = useSelector((state) => state.postsReducer.postsList);
+    // const stateInStore = useSelector((state) => state);
+    // console.log(stateInStore, "state in index");
+    // console.log(postsListStore, "postsListStore in index");
+    // ***********
 
     useEffect(async () => {
         try {
@@ -52,9 +71,10 @@ export default function Index({ postsList, error }) {
 
     async function handleAddPost(postContent) {
         try {
-            const response = await sendPost(postContent);
+            // const response = await sendPost(postContent);
 
-            setPosts([response.data.data, ...posts]);
+            // setPosts([response.data.data, ...posts]);
+            dispatch(sendPostRedux(postContent));
         } catch (error) {
             message.error(`${error}`);
             console.log(error, "error addpost");
@@ -63,12 +83,13 @@ export default function Index({ postsList, error }) {
 
     async function handleDeletePost(post) {
         try {
-            const response = await deletePost(post.id);
+            // const response = await deletePost(post.id);
 
-            const newPosts = posts.filter(
-                (postItem) => postItem.id !== post.id
-            );
-            setPosts(newPosts);
+            // const newPosts = posts.filter(
+            //     (postItem) => postItem.id !== post.id
+            // );
+            // setPosts(newPosts);
+            dispatch(deletePostRedux(post));
         } catch (error) {
             message.error(`${error.response}`);
             console.log(error);
@@ -77,17 +98,19 @@ export default function Index({ postsList, error }) {
 
     async function handleUpdatePost(updatedData) {
         try {
-            const response = await updatePost(
-                updatedData.id,
-                updatedData.content
-            );
+            // const response = await updatePost(
+            //     updatedData.id,
+            //     updatedData.content
+            // );
 
-            const newPostList = posts.map((postItem) =>
-                postItem.id === updatedData.id
-                    ? { ...postItem, ...updatedData }
-                    : postItem
-            );
-            setPosts(newPostList);
+            // const newPostList = posts.map((postItem) =>
+            //     postItem.id === updatedData.id
+            //         ? { ...postItem, ...updatedData }
+            //         : postItem
+            // );
+            // setPosts(newPostList);
+
+            dispatch(updatePostRedux(updatedData));
         } catch (error) {
             console.log(error, "error");
             message.error(`${error}`);
@@ -124,9 +147,9 @@ export default function Index({ postsList, error }) {
         </div>
     );
 
-    const postsComponentList = posts && (
+    const postsComponentList = /* posts */ postsListStore && (
         <PostsList
-            postsList={posts}
+            postsList={postsListStore} //posts
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
             signedUser={signedUser}
@@ -148,18 +171,46 @@ export default function Index({ postsList, error }) {
     );
 }
 
-export async function getStaticProps() {
-    try {
-        const res = await getHomePosts();
+// export async function getStaticProps() {
+//     try {
+//         const res = await getHomePosts();
 
-        return {
-            props: { postsList: res.data.data },
-        };
-    } catch (error) {
-        return {
-            props: {
-                error: error.response.statusText,
-            },
-        };
-    }
-}
+//         return {
+//             props: { postsList: res.data.data },
+//         };
+//     } catch (error) {
+//         return {
+//             props: {
+//                 error: error.response.statusText,
+//             },
+//         };
+//     }
+// }
+
+// **************
+export const withRedux = (getStaticProps) => async () => {
+    const store = initializeStore();
+    const result = await getStaticProps(store);
+
+    console.log(result, "result in serverSideProps");
+
+    return {
+        ...result,
+
+        props: {
+            initialReduxState: store.getState(),
+            ...result.props,
+        },
+    };
+};
+
+export const getStaticProps = withRedux(async (store) => {
+    await store.dispatch(setPostsRedux());
+
+    return {
+        props: {
+            message: "hello world",
+        },
+    };
+});
+// ******************
