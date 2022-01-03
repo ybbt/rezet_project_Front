@@ -2,10 +2,11 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { EditPostForm } from "../EditPostForm";
-
 import moment from "moment";
 
+import { MessageOutlined } from "@ant-design/icons";
+
+import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
 
 export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
@@ -67,7 +68,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
                             </a>
                         </Link>
                         <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
-                            <Link href={`/${post.author.id}`}>
+                            <Link href={`/${post.author.name}`}>
                                 <a className="text-inherit">
                                     <span className="text-inherit">{`@${post.author.name}`}</span>
                                 </a>
@@ -78,6 +79,12 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
                     {dropdownMenu}
                 </div>
                 {displayContent}
+                <Link href={`/posts/${post.id}`}>
+                    <a className="flex">
+                        <MessageOutlined />
+                        <div>{post.comments_count}</div>
+                    </a>
+                </Link>
             </div>
         </div>
     );

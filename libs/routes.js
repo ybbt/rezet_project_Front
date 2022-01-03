@@ -17,3 +17,7 @@ export const AUTHORIZE_ROUTES = {
 export const USER_ROUTES = {
     GET_USER: (userName) => `/users/${userName}`,
 };
+
+export const COMMENT_ROUTES = {
+    GET_POST_COMMENTS: (postId) => `posts/${postId}/comments`,
+};
