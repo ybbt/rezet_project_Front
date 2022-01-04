@@ -7,6 +7,10 @@ import {
     updatePost,
 } from "../libs/postService";
 
+import { fetchAuth } from "../libs/authorizeService";
+
+import Cookies from "js-cookie";
+
 /* // INITIALIZES CLOCK ON SERVER
 export const serverRenderClock = () => (dispatch) =>
   dispatch({
@@ -17,44 +21,110 @@ export const serverRenderClock = () => (dispatch) =>
 
 export const setPostsRedux = () => async (dispatch) => {
     console.log("setPostsRedux in action before fetch");
-    const response = await getHomePosts(); //fetch("http://127.0.0.1:8000/api/posts");
-    // const json = await response.json();
-    // console.log(response.data.data, "setPostsRedux in action after fetch");
-    dispatch({
-        type: types.SET_POSTS,
-        payload: { posts: response.data.data },
-    });
+    try {
+        const response = await getHomePosts();
+        dispatch({
+            type: types.SET_POSTS,
+            payload: { posts: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
 };
 
 export const sendPostRedux = (content) => async (dispatch) => {
-    console.log("setPostsRedux in action before fetch");
-    const response = await sendPost(content);
-    // const json = await response.json();
-    // console.log(response.data.data, "setPostsRedux in action after fetch");
-    dispatch({
-        type: types.SEND_POST,
-        payload: { post: response.data.data },
-    });
+    console.log("sendPostsRedux in action before fetch");
+    try {
+        const response = await sendPost(content);
+        dispatch({
+            type: types.SEND_POST,
+            payload: { post: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
 };
 
 export const deletePostRedux = (post) => async (dispatch) => {
-    console.log("setPostsRedux in action before fetch");
-    const response = await deletePost(post.id);
-    // const json = await response.json();
-    // console.log(response.data.data, "setPostsRedux in action after fetch");
-    dispatch({
-        type: types.DELETE_POST,
-        payload: { post: post },
-    });
+    console.log("deletePostsRedux in action before fetch");
+    try {
+        const response = await deletePost(post.id);
+        dispatch({
+            type: types.DELETE_POST,
+            payload: { post: post },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
 };
 
 export const updatePostRedux = (updatedData) => async (dispatch) => {
-    console.log("setPostsRedux in action before fetch");
-    const response = await updatePost(updatedData.id, updatedData.content);
-    // const json = await response.json();
-    // console.log(response.data.data, "setPostsRedux in action after fetch");
-    dispatch({
-        type: types.UPDATE_POST,
-        payload: { updatedPost: response.data.data },
-    });
+    console.log("updatePostsRedux in action before fetch");
+    try {
+        const response = await updatePost(updatedData.id, updatedData.content);
+        dispatch({
+            type: types.UPDATE_POST,
+            payload: { updatedPost: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
+};
+
+export const authMeRedux = () => async (dispatch) => {
+    console.log("authMe in action before fetch");
+    try {
+        const response = await fetchAuth();
+        dispatch({
+            type: types.AUTH_ME,
+            payload: { signedUser: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.AUTH_ME,
+            payload: { signedUser: {} },
+        });
+        Cookies.remove("token_mytweeter");
+    }
+};
+
+export const logoutRedux = () => async (dispatch) => {
+    console.log("logout in action before fetch");
+    try {
+        const response = await fetchSignOut();
+        dispatch({
+            type: types.LOGOUT,
+            payload: { signedUser: {} },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+        Cookies.remove("token_mytweeter");
+    }
 };

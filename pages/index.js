@@ -29,6 +29,8 @@ import {
     sendPostRedux,
     deletePostRedux,
     updatePostRedux,
+    authMeRedux,
+    logoutRedux,
 } from "../redux/actions";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
@@ -42,108 +44,117 @@ export default function Index({ postsList, error }) {
     // *******
     const dispatch = useDispatch();
     const postsListStore = useSelector((state) => state.postsReducer.postsList);
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+    const errorStore = useSelector((state) => state.errorReducer.error);
     // const stateInStore = useSelector((state) => state);
     // console.log(stateInStore, "state in index");
     // console.log(postsListStore, "postsListStore in index");
     // ***********
 
     useEffect(async () => {
-        try {
-            const result = await fetchAuth();
-
-            const response = result.data;
-
-            setSignedUser(result.data.data);
-        } catch (error) {
-            console.log(error);
-            message.error(`${error}`);
-
-            Cookies.remove("token_mytweeter");
-            setSignedUser({});
-        } finally {
-            setIsLoaded(true);
-        }
+        // try {
+        //     const result = await fetchAuth();
+        //     const response = result.data;
+        //     setSignedUser(result.data.data);
+        // } catch (error) {
+        //     console.log(error);
+        //     message.error(`${error}`);
+        //     Cookies.remove("token_mytweeter");
+        //     setSignedUser({});
+        // } finally {
+        //     setIsLoaded(true);
+        // }
+        await dispatch(authMeRedux());
+        setIsLoaded(true);
     }, []);
 
     useEffect(() => {
-        error && message.error(`${error}`);
-    });
+        errorStore && message.error(`${errorStore}`);
+        console.log(errorStore, "errorStore in useEffect");
+    }, [errorStore]);
 
     async function handleAddPost(postContent) {
-        try {
-            // const response = await sendPost(postContent);
+        // try {
+        // const response = await sendPost(postContent);
 
-            // setPosts([response.data.data, ...posts]);
-            dispatch(sendPostRedux(postContent));
-        } catch (error) {
-            message.error(`${error}`);
-            console.log(error, "error addpost");
-        }
+        // setPosts([response.data.data, ...posts]);
+        // } catch (error) {
+        //     message.error(`${error}`);
+        //     console.log(error, "error addpost");
+        // }
+        dispatch(sendPostRedux(postContent));
     }
 
     async function handleDeletePost(post) {
-        try {
-            // const response = await deletePost(post.id);
+        // try {
+        // const response = await deletePost(post.id);
 
-            // const newPosts = posts.filter(
-            //     (postItem) => postItem.id !== post.id
-            // );
-            // setPosts(newPosts);
-            dispatch(deletePostRedux(post));
-        } catch (error) {
-            message.error(`${error.response}`);
-            console.log(error);
-        }
+        // const newPosts = posts.filter(
+        //     (postItem) => postItem.id !== post.id
+        // );
+        // setPosts(newPosts);
+        // } catch (error) {
+        //     message.error(`${error.response}`);
+        //     console.log(error);
+        // }
+        dispatch(deletePostRedux(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        try {
-            // const response = await updatePost(
-            //     updatedData.id,
-            //     updatedData.content
-            // );
+        // try {
+        // const response = await updatePost(
+        //     updatedData.id,
+        //     updatedData.content
+        // );
 
-            // const newPostList = posts.map((postItem) =>
-            //     postItem.id === updatedData.id
-            //         ? { ...postItem, ...updatedData }
-            //         : postItem
-            // );
-            // setPosts(newPostList);
+        // const newPostList = posts.map((postItem) =>
+        //     postItem.id === updatedData.id
+        //         ? { ...postItem, ...updatedData }
+        //         : postItem
+        // );
+        // setPosts(newPostList);
 
-            dispatch(updatePostRedux(updatedData));
-        } catch (error) {
-            console.log(error, "error");
-            message.error(`${error}`);
-        }
+        // } catch (error) {
+        //     console.log(error, "error");
+        //     message.error(`${error}`);
+        // }
+        dispatch(updatePostRedux(updatedData));
     }
 
     async function handlerLogout() {
-        try {
-            await fetchSignOut();
+        // try {
+        //     await fetchSignOut();
 
-            Cookies.remove("token_mytweeter");
+        //     Cookies.remove("token_mytweeter");
 
-            // setSignedUser({});
-            setSignedUser({});
-        } catch (error) {
-            console.log(error, "error");
-            message.error(`${error}`);
-        }
+        //     // setSignedUser({});
+        //     setSignedUser({});
+        // } catch (error) {
+        //     console.log(error, "error");
+        //     message.error(`${error}`);
+        // }
+        dispatch(logoutRedux());
     }
 
-    const addPostComponent = !!Object.keys(signedUser).length && (
+    const addPostComponent = !!Object.keys(signedUserStore /* signedUser */)
+        .length && (
         <div className="border border-t-0 border-[#949494] p-2">
             <EditPostForm onSave={handleAddPost} />
         </div>
     );
 
-    const signBanner = !Object.keys(signedUser).length && isLoaded && (
-        <SignBanner />
-    );
+    const signBanner = !Object.keys(signedUserStore /* signedUser */).length &&
+        isLoaded && <SignBanner />;
 
-    const userBannerDropdown = !!Object.keys(signedUser).length && (
+    const userBannerDropdown = !!Object.keys(signedUserStore /* signedUser */)
+        .length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner user={signedUser} onLogout={handlerLogout} />
+            <UserBanner
+                user={signedUserStore /* signedUser */}
+                onLogout={handlerLogout}
+            />
         </div>
     );
 
@@ -152,7 +163,7 @@ export default function Index({ postsList, error }) {
             postsList={postsListStore} //posts
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={signedUser}
+            signedUser={signedUserStore /* signedUser */}
         />
     );
 
