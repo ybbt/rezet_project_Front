@@ -17,9 +17,34 @@ import { MainMenu } from "../../components/MainMenu";
 import { PostsList } from "../../components/PostsList";
 import { Post } from "../../components/Post";
 
+// ********
+import { useSelector, useDispatch } from "react-redux";
+import {
+    setPostCommentsRedux,
+    /* authMeRedux, logoutRedux ,*/
+} from "../../redux/actions";
+import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
+// ********
+
 export default ({ post, commentsList, error }) => {
     const [signedUser, setSignedUser] = useContext(signedUserContext);
     const [comments, setComments] = useState(commentsList);
+
+    // *******
+    const dispatch = useDispatch();
+    const commentsListStore = useSelector(
+        (state) => state.postsReducer.commentsList
+    );
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+    const activeUserStore = useSelector((state) => state.userReducer.user);
+
+    const errorStore = useSelector((state) => state.errorReducer.error);
+    // const stateInStore = useSelector((state) => state);
+    // console.log(stateInStore, "state in index");
+    // console.log(signedUserStore, "signedUserStore in index");
+    // ***********
 
     useEffect(async () => {
         try {

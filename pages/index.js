@@ -29,7 +29,7 @@ import {
     sendPostRedux,
     deletePostRedux,
     updatePostRedux,
-    // authMeRedux,
+    authMeRedux,
     logoutRedux,
 } from "../redux/actions";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
@@ -53,25 +53,25 @@ export default function Index(/* { postsList, error } */) {
     // console.log(signedUserStore, "signedUserStore in index");
     // ***********
 
-    // useEffect(async () => {
-    //     // try {
-    //     //     const result = await fetchAuth();
-    //     //     const response = result.data;
-    //     //     setSignedUser(result.data.data);
-    //     // } catch (error) {
-    //     //     console.log(error);
-    //     //     message.error(`${error}`);
-    //     //     Cookies.remove("token_mytweeter");
-    //     //     setSignedUser({});
-    //     // } finally {
-    //     //     setIsLoaded(true);
-    //     // }
+    useEffect(async () => {
+        // try {
+        //     const result = await fetchAuth();
+        //     const response = result.data;
+        //     setSignedUser(result.data.data);
+        // } catch (error) {
+        //     console.log(error);
+        //     message.error(`${error}`);
+        //     Cookies.remove("token_mytweeter");
+        //     setSignedUser({});
+        // } finally {
+        //     setIsLoaded(true);
+        // }
 
-    //     // if (!signedUserStore.name) {
-    //     await dispatch(authMeRedux());
-    //     setIsLoaded(true);
-    //     // }
-    // }, [dispatch]);
+        // if (!signedUserStore.name) {
+        await dispatch(authMeRedux());
+        setIsLoaded(!!Object.keys(signedUserStore).length);
+        // }
+    }, [dispatch]);
 
     useEffect(() => {
         errorStore && message.error(`${errorStore}`);
@@ -148,8 +148,7 @@ export default function Index(/* { postsList, error } */) {
         </div>
     );
 
-    const signBanner = !Object.keys(signedUserStore /* signedUser */).length &&
-        isLoaded && <SignBanner />;
+    const signBanner = isLoaded && <SignBanner />;
 
     const userBannerDropdown = !!Object.keys(signedUserStore /* signedUser */)
         .length && (

@@ -8,6 +8,8 @@ import {
     updatePost,
 } from "../libs/postService";
 
+import { getPostComments } from "../libs/commentService";
+
 import { getUser } from "../libs/userService";
 
 import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
@@ -130,29 +132,47 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
     }
 };
 
-// export const authMeRedux = () => async (dispatch) => {
-//     console.log("authMe in action before fetch");
-//     try {
-//         const response = await fetchAuth();
-//         dispatch({
-//             type: types.AUTH_ME,
-//             payload: { signedUser: response.data.data },
-//         });
-//     } catch (error) {
-//         // message.error(`${error.response}`);
-//         // console.log(error);
-//         console.log("authMe in action Error");
-//         dispatch({
-//             type: types.AUTH_ME,
-//             payload: {
-//                 signedUser: {
-//                     /* fakap: "XXX" */
-//                 },
-//             },
-//         });
-//         Cookies.remove("token_mytweeter");
-//     }
-// };
+export const setPostCommentsRedux = (postId) => async (dispatch) => {
+    console.log("setPostCommentsRedux in action before fetch");
+    try {
+        const response = await getPostComments(postId);
+        dispatch({
+            type: types.SET_POST_COMMENTS,
+            payload: { postComments: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
+};
+
+export const authMeRedux = () => async (dispatch) => {
+    console.log("authMe in action before fetch");
+    try {
+        const response = await fetchAuth();
+        dispatch({
+            type: types.AUTH_ME,
+            payload: { signedUser: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        console.log("authMe in action Error");
+        dispatch({
+            type: types.AUTH_ME,
+            payload: {
+                signedUser: {
+                    /* fakap: "XXX" */
+                },
+            },
+        });
+        Cookies.remove("token_mytweeter");
+    }
+};
 
 export const logoutRedux = () => async (dispatch) => {
     console.log("logout in action before fetch");

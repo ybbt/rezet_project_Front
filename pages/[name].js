@@ -1,21 +1,21 @@
 import { useRouter } from "next/router";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect /* , useContext */ } from "react";
 
-import {
-    getUserPosts,
-    deletePost,
-    sendPost,
-    updatePost,
-} from "../libs/postService";
-import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
-import { getUser } from "../libs/userService";
+// import {
+//     getUserPosts,
+//     deletePost,
+//     sendPost,
+//     updatePost,
+// } from "../libs/postService";
+// import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
+// import { getUser } from "../libs/userService";
 
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 import { message } from "antd";
 import "antd/dist/antd.css";
 
-import signedUserContext from "../context/signedUserContext";
+// import signedUserContext from "../context/signedUserContext";
 
 import { PageTemplate } from "../components/PageTemplate";
 import { SignBanner } from "../components/SignBanner";
@@ -33,7 +33,7 @@ import {
     deletePostRedux,
     updatePostRedux,
     setUserRedux,
-    // authMeRedux,
+    authMeRedux,
     logoutRedux,
 } from "../redux/actions";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
@@ -48,9 +48,7 @@ export default ({ error, user, postsList }) => {
 
     // *******
     const dispatch = useDispatch();
-    const postsListStore = useSelector(
-        (state) => state.userPostsReducer.postsList
-    );
+    const postsListStore = useSelector((state) => state.postsReducer.postsList);
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
@@ -62,27 +60,27 @@ export default ({ error, user, postsList }) => {
     // console.log(signedUserStore, "signedUserStore in index");
     // ***********
 
-    // useEffect(async () => {
-    //     console.log("useEffect in [name]");
-    //     // try {
-    //     //     const result = await fetchAuth();
+    useEffect(async () => {
+        console.log("useEffect in [name]");
+        // try {
+        //     const result = await fetchAuth();
 
-    //     //     const response = result.data;
+        //     const response = result.data;
 
-    //     //     setSignedUser(result.data.data);
-    //     // } catch (error) {
-    //     //     console.log(error);
-    //     //     message.error(`${error}`);
+        //     setSignedUser(result.data.data);
+        // } catch (error) {
+        //     console.log(error);
+        //     message.error(`${error}`);
 
-    //     //     Cookies.remove("token_mytweeter");
-    //     //     setSignedUser({});
-    //     // }
+        //     Cookies.remove("token_mytweeter");
+        //     setSignedUser({});
+        // }
 
-    //     // if (!signedUserStore.name) {
-    //     await dispatch(authMeRedux());
-    //     setIsLoaded(true);
-    //     // }
-    // }, [dispatch]);
+        // if (!signedUserStore.name) {
+        await dispatch(authMeRedux());
+        setIsLoaded(!!Object.keys(signedUserStore).length);
+        // }
+    }, [dispatch]);
 
     useEffect(() => {
         error && message.error(`${error}`);
@@ -156,8 +154,7 @@ export default ({ error, user, postsList }) => {
     // const signBanner = !Object.keys(/* signedUser */ signedUserStore)
     //     .length && <SignBanner />;
 
-    const signBanner = !Object.keys(/* signedUser */ signedUserStore).length &&
-        isLoaded && <SignBanner />;
+    const signBanner = isLoaded && <SignBanner />;
 
     const userBannerDropdown = !!Object.keys(/* signedUser */ signedUserStore)
         .length && (

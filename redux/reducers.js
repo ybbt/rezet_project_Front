@@ -6,10 +6,15 @@ const initialPostsState = {
     postsList: [],
 };
 
-// INITIAL USER POSTS STATE
-const initialUserPostsState = {
-    postsList: [],
+// INITIAL POSTS STATE
+const initialCommentsState = {
+    commentsList: [],
 };
+
+// // INITIAL USER POSTS STATE
+// const initialUserPostsState = {
+//     postsList: [],
+// };
 
 // INITIAL AUTH STATE
 const initialAuthState = {
@@ -41,19 +46,19 @@ const userReducer = (state = initialUserState, { type, payload }) => {
     }
 };
 
-// POSTS REDUCER
-const userPostsReducer = (state = initialUserPostsState, { type, payload }) => {
-    switch (type) {
-        case types.SET_USER_POSTS:
-            console.log("SET_USER_POSTS in switch");
-            return Object.assign({}, state, {
-                postsList: payload.userPosts,
-            });
-            break;
-        default:
-            return state;
-    }
-};
+// // POSTS REDUCER
+// const userPostsReducer = (state = initialUserPostsState, { type, payload }) => {
+//     switch (type) {
+//         case types.SET_USER_POSTS:
+//             console.log("SET_USER_POSTS in switch");
+//             return Object.assign({}, state, {
+//                 postsList: payload.userPosts,
+//             });
+//             break;
+//         default:
+//             return state;
+//     }
+// };
 
 // POSTS REDUCER
 const postsReducer = (state = initialPostsState, { type, payload }) => {
@@ -91,12 +96,24 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
                 postsList: newPostsList,
             });
             break;
-        // case types.SET_USER_POSTS:
-        //     console.log("SET_USER_POSTS in switch");
-        //     return Object.assign({}, state, {
-        //         postsList: payload.userPosts,
-        //     });
-        //     break;
+        case types.SET_USER_POSTS:
+            console.log("SET_USER_POSTS in switch");
+            return Object.assign({}, state, {
+                postsList: payload.userPosts,
+            });
+            break;
+        default:
+            return state;
+    }
+};
+
+const commentsReducer = (state = initialCommentsState, { type, payload }) => {
+    switch (type) {
+        case types.SET_POST_COMMENTS:
+            return Object.assign({}, state, {
+                commentsList: payload.posts,
+            });
+            break;
         default:
             return state;
     }
@@ -104,21 +121,21 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
 
 const authReducer = (state = initialAuthState, { type, payload }) => {
     switch (type) {
-        // case types.AUTH_ME:
-        //     console.log("AUTH_ME in switch");
-        //     Object.assign({}, state, {
-        //         signedUser: payload.signedUser,
-        //     });
-        //     return Object.assign({}, state, {
-        //         signedUser: payload.signedUser,
-        //     });
-        //     break;
-        // case types.LOGOUT:
-        //     console.log("LOGOUT in switch");
-        //     return Object.assign({}, state, {
-        //         signedUser: payload.signedUser,
-        //     });
-        //     break;
+        case types.AUTH_ME:
+            console.log("AUTH_ME in switch");
+            Object.assign({}, state, {
+                signedUser: payload.signedUser,
+            });
+            return Object.assign({}, state, {
+                signedUser: payload.signedUser,
+            });
+            break;
+        case types.LOGOUT:
+            console.log("LOGOUT in switch");
+            return Object.assign({}, state, {
+                signedUser: payload.signedUser,
+            });
+            break;
         default:
             return state;
     }
@@ -147,8 +164,9 @@ const errorReducer = (state = initialErrorsState, { type, payload }) => {
 const reducers = {
     authReducer,
     userReducer,
-    userPostsReducer,
+    // userPostsReducer,
     postsReducer,
+    commentsReducer,
     errorReducer,
 };
 
