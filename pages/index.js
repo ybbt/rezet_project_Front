@@ -3,15 +3,15 @@ import { useState, useEffect, useContext } from "react";
 import { message } from "antd";
 import "antd/dist/antd.css";
 
-import {
-    getHomePosts,
-    deletePost,
-    sendPost,
-    updatePost,
-} from "../libs/postService";
-import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
+// import {
+//     getHomePosts,
+//     deletePost,
+//     sendPost,
+//     updatePost,
+// } from "../libs/postService";
+// import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
 
-import Cookies from "js-cookie";
+// import Cookies from "js-cookie";
 
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
@@ -29,17 +29,17 @@ import {
     sendPostRedux,
     deletePostRedux,
     updatePostRedux,
-    authMeRedux,
+    // authMeRedux,
     logoutRedux,
 } from "../redux/actions";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
 
-export default function Index({ postsList, error }) {
-    const [posts, setPosts] = useState(postsList);
+export default function Index(/* { postsList, error } */) {
+    // const [posts, setPosts] = useState(postsList);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    const [signedUser, setSignedUser] = useContext(signedUserContext);
+    // const [signedUser, setSignedUser] = useContext(signedUserContext);
 
     // *******
     const dispatch = useDispatch();
@@ -50,25 +50,28 @@ export default function Index({ postsList, error }) {
     const errorStore = useSelector((state) => state.errorReducer.error);
     // const stateInStore = useSelector((state) => state);
     // console.log(stateInStore, "state in index");
-    // console.log(postsListStore, "postsListStore in index");
+    // console.log(signedUserStore, "signedUserStore in index");
     // ***********
 
-    useEffect(async () => {
-        // try {
-        //     const result = await fetchAuth();
-        //     const response = result.data;
-        //     setSignedUser(result.data.data);
-        // } catch (error) {
-        //     console.log(error);
-        //     message.error(`${error}`);
-        //     Cookies.remove("token_mytweeter");
-        //     setSignedUser({});
-        // } finally {
-        //     setIsLoaded(true);
-        // }
-        await dispatch(authMeRedux());
-        setIsLoaded(true);
-    }, []);
+    // useEffect(async () => {
+    //     // try {
+    //     //     const result = await fetchAuth();
+    //     //     const response = result.data;
+    //     //     setSignedUser(result.data.data);
+    //     // } catch (error) {
+    //     //     console.log(error);
+    //     //     message.error(`${error}`);
+    //     //     Cookies.remove("token_mytweeter");
+    //     //     setSignedUser({});
+    //     // } finally {
+    //     //     setIsLoaded(true);
+    //     // }
+
+    //     // if (!signedUserStore.name) {
+    //     await dispatch(authMeRedux());
+    //     setIsLoaded(true);
+    //     // }
+    // }, [dispatch]);
 
     useEffect(() => {
         errorStore && message.error(`${errorStore}`);
@@ -84,7 +87,7 @@ export default function Index({ postsList, error }) {
         //     message.error(`${error}`);
         //     console.log(error, "error addpost");
         // }
-        dispatch(sendPostRedux(postContent));
+        await dispatch(sendPostRedux(postContent));
     }
 
     async function handleDeletePost(post) {
@@ -99,7 +102,7 @@ export default function Index({ postsList, error }) {
         //     message.error(`${error.response}`);
         //     console.log(error);
         // }
-        dispatch(deletePostRedux(post));
+        await dispatch(deletePostRedux(post));
     }
 
     async function handleUpdatePost(updatedData) {
@@ -120,7 +123,7 @@ export default function Index({ postsList, error }) {
         //     console.log(error, "error");
         //     message.error(`${error}`);
         // }
-        dispatch(updatePostRedux(updatedData));
+        await dispatch(updatePostRedux(updatedData));
     }
 
     async function handlerLogout() {
@@ -135,7 +138,7 @@ export default function Index({ postsList, error }) {
         //     console.log(error, "error");
         //     message.error(`${error}`);
         // }
-        dispatch(logoutRedux());
+        await dispatch(logoutRedux());
     }
 
     const addPostComponent = !!Object.keys(signedUserStore /* signedUser */)
@@ -170,7 +173,11 @@ export default function Index({ postsList, error }) {
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu isAuth={!!Object.keys(signedUser).length} />
+                <MainMenu
+                    isAuth={
+                        !!Object.keys(signedUserStore /* signedUser */).length
+                    }
+                />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">

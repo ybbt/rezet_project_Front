@@ -2,12 +2,15 @@ import * as types from "./actionsTypes";
 
 import {
     getHomePosts,
+    getUserPosts,
     deletePost,
     sendPost,
     updatePost,
 } from "../libs/postService";
 
-import { fetchAuth } from "../libs/authorizeService";
+import { getUser } from "../libs/userService";
+
+import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
 
 import Cookies from "js-cookie";
 
@@ -18,6 +21,42 @@ export const serverRenderClock = () => (dispatch) =>
     payload: { light: false, ts: Date.now() },
   })
  */
+
+export const setUserRedux = (userName) => async (dispatch) => {
+    console.log("setUserRedux in action before fetch");
+    try {
+        const response = await getUser(userName);
+        dispatch({
+            type: types.SET_USER,
+            payload: { user: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
+};
+
+export const setUserPostsRedux = (userName) => async (dispatch) => {
+    console.log("setUserPostsRedux in action before fetch");
+    try {
+        const response = await getUserPosts(userName);
+        dispatch({
+            type: types.SET_USER_POSTS,
+            payload: { userPosts: response.data.data },
+        });
+    } catch (error) {
+        // message.error(`${error.response}`);
+        // console.log(error);
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.response },
+        });
+    }
+};
 
 export const setPostsRedux = () => async (dispatch) => {
     console.log("setPostsRedux in action before fetch");
@@ -91,24 +130,29 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
     }
 };
 
-export const authMeRedux = () => async (dispatch) => {
-    console.log("authMe in action before fetch");
-    try {
-        const response = await fetchAuth();
-        dispatch({
-            type: types.AUTH_ME,
-            payload: { signedUser: response.data.data },
-        });
-    } catch (error) {
-        // message.error(`${error.response}`);
-        // console.log(error);
-        dispatch({
-            type: types.AUTH_ME,
-            payload: { signedUser: {} },
-        });
-        Cookies.remove("token_mytweeter");
-    }
-};
+// export const authMeRedux = () => async (dispatch) => {
+//     console.log("authMe in action before fetch");
+//     try {
+//         const response = await fetchAuth();
+//         dispatch({
+//             type: types.AUTH_ME,
+//             payload: { signedUser: response.data.data },
+//         });
+//     } catch (error) {
+//         // message.error(`${error.response}`);
+//         // console.log(error);
+//         console.log("authMe in action Error");
+//         dispatch({
+//             type: types.AUTH_ME,
+//             payload: {
+//                 signedUser: {
+//                     /* fakap: "XXX" */
+//                 },
+//             },
+//         });
+//         Cookies.remove("token_mytweeter");
+//     }
+// };
 
 export const logoutRedux = () => async (dispatch) => {
     console.log("logout in action before fetch");
@@ -118,13 +162,13 @@ export const logoutRedux = () => async (dispatch) => {
             type: types.LOGOUT,
             payload: { signedUser: {} },
         });
+        Cookies.remove("token_mytweeter");
     } catch (error) {
         // message.error(`${error.response}`);
-        // console.log(error);
+        console.log(error, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
             payload: { error: error.response },
         });
-        Cookies.remove("token_mytweeter");
     }
 };

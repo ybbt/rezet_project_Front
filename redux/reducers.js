@@ -6,6 +6,11 @@ const initialPostsState = {
     postsList: [],
 };
 
+// INITIAL USER POSTS STATE
+const initialUserPostsState = {
+    postsList: [],
+};
+
 // INITIAL AUTH STATE
 const initialAuthState = {
     signedUser: {},
@@ -14,6 +19,40 @@ const initialAuthState = {
 // INITIAL ERRORS STATE
 const initialErrorsState = {
     error: false,
+};
+
+// INITIAL USER STATE
+const initialUserState = {
+    user: {},
+};
+
+// USERS REDUCER
+const userReducer = (state = initialUserState, { type, payload }) => {
+    switch (type) {
+        case types.SET_USER:
+            console.log("SET_USER in switch");
+            return Object.assign({}, state, {
+                user: payload.user,
+            });
+            break;
+
+        default:
+            return state;
+    }
+};
+
+// POSTS REDUCER
+const userPostsReducer = (state = initialUserPostsState, { type, payload }) => {
+    switch (type) {
+        case types.SET_USER_POSTS:
+            console.log("SET_USER_POSTS in switch");
+            return Object.assign({}, state, {
+                postsList: payload.userPosts,
+            });
+            break;
+        default:
+            return state;
+    }
 };
 
 // POSTS REDUCER
@@ -52,6 +91,12 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
                 postsList: newPostsList,
             });
             break;
+        // case types.SET_USER_POSTS:
+        //     console.log("SET_USER_POSTS in switch");
+        //     return Object.assign({}, state, {
+        //         postsList: payload.userPosts,
+        //     });
+        //     break;
         default:
             return state;
     }
@@ -59,22 +104,21 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
 
 const authReducer = (state = initialAuthState, { type, payload }) => {
     switch (type) {
-        case types.AUTH_ME:
-            console.log("AUTH_ME in switch");
-            const YYY = Object.assign({}, state, {
-                signedUser: payload.signedUser,
-            });
-            console.log(YYY, "in AUTH_ME");
-            return Object.assign({}, state, {
-                signedUser: payload.signedUser,
-            });
-            break;
-        case types.LOGOUT:
-            console.log("LOGOUT in switch");
-            return Object.assign({}, state, {
-                signedUser: payload.signedUser,
-            });
-            break;
+        // case types.AUTH_ME:
+        //     console.log("AUTH_ME in switch");
+        //     Object.assign({}, state, {
+        //         signedUser: payload.signedUser,
+        //     });
+        //     return Object.assign({}, state, {
+        //         signedUser: payload.signedUser,
+        //     });
+        //     break;
+        // case types.LOGOUT:
+        //     console.log("LOGOUT in switch");
+        //     return Object.assign({}, state, {
+        //         signedUser: payload.signedUser,
+        //     });
+        //     break;
         default:
             return state;
     }
@@ -85,7 +129,7 @@ const errorReducer = (state = initialErrorsState, { type, payload }) => {
         case types.SET_ERROR:
             console.log("SET_ERROR in switch");
             return Object.assign({}, state, {
-                error: payload.error,
+                error: payload.error.statusText,
             });
             break;
         case types.UNSET_ERROR:
@@ -102,6 +146,8 @@ const errorReducer = (state = initialErrorsState, { type, payload }) => {
 // COMBINED REDUCERS
 const reducers = {
     authReducer,
+    userReducer,
+    userPostsReducer,
     postsReducer,
     errorReducer,
 };
