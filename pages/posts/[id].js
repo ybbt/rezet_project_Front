@@ -6,6 +6,8 @@ import "antd/dist/antd.css";
 
 import Cookies from "js-cookie";
 
+import Router from "next/router";
+
 import { fetchAuth, fetchSignOut } from "../../libs/authorizeService";
 import { getPost } from "../../libs/postService";
 import { getPostComments } from "../../libs/commentService";
@@ -14,180 +16,231 @@ import { PageTemplate } from "../../components/PageTemplate";
 import { SignBanner } from "../../components/SignBanner";
 import { UserBanner } from "../../components/UserBanner";
 import { MainMenu } from "../../components/MainMenu";
-import { PostsList } from "../../components/PostsList";
+import { CommentsList } from "../../components/CommentsList";
 import { Post } from "../../components/Post";
 
 // ********
 import { useSelector, useDispatch } from "react-redux";
 import {
     setPostCommentsRedux,
-    /* authMeRedux, logoutRedux ,*/
+    setPostOneRedux,
+    updatePostOneRedux,
+    deletePostOneRedux,
+    authMeRedux,
+    logoutRedux,
 } from "../../redux/actions";
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 // ********
 
-export default ({ post, commentsList, error }) => {
-    const [signedUser, setSignedUser] = useContext(signedUserContext);
-    const [comments, setComments] = useState(commentsList);
+export default () =>
+    /* { post, commentsList, error } */
+    /* props */ {
+        const [signedUser, setSignedUser] = useContext(signedUserContext);
+        // const [comments, setComments] = useState(commentsList);
+        const [isLoaded, setIsLoaded] = useState(false);
 
-    // *******
-    const dispatch = useDispatch();
-    const commentsListStore = useSelector(
-        (state) => state.postsReducer.commentsList
-    );
-    const signedUserStore = useSelector(
-        (state) => state.authReducer.signedUser
-    );
-    const activeUserStore = useSelector((state) => state.userReducer.user);
+        // console.log(props, "props in [id]");
 
-    const errorStore = useSelector((state) => state.errorReducer.error);
-    // const stateInStore = useSelector((state) => state);
-    // console.log(stateInStore, "state in index");
-    // console.log(signedUserStore, "signedUserStore in index");
-    // ***********
+        // *******
+        const dispatch = useDispatch();
+        const commentsListStore = useSelector(
+            (state) => state.commentsReducer.commentsList
+        );
+        const postStore = useSelector((state) => state.postReducer.post);
+        const signedUserStore = useSelector(
+            (state) => state.authReducer.signedUser
+        );
+        // const activeUserStore = useSelector((state) => state.userReducer.user);
 
-    useEffect(async () => {
-        try {
-            const result = await fetchAuth();
+        const errorStore = useSelector((state) => state.errorReducer.error);
+        // const stateInStore = useSelector((state) => state);
+        // console.log(stateInStore, "state in [id]");
+        // console.log(signedUserStore, "signedUserStore in index");
+        // ***********
 
-            const response = result.data;
+        useEffect(async () => {
+            // try {
+            //     const result = await fetchAuth();
 
-            setSignedUser(result.data.data);
-        } catch (error) {
-            console.log(error);
-            message.error(`${error}`);
+            //     const response = result.data;
 
-            Cookies.remove("token_mytweeter");
-            setSignedUser({});
+            //     setSignedUser(result.data.data);
+            // } catch (error) {
+            //     console.log(error);
+            //     message.error(`${error}`);
+
+            //     Cookies.remove("token_mytweeter");
+            //     setSignedUser({});
+            // }
+            setIsLoaded(false);
+            await dispatch(authMeRedux());
+            setIsLoaded(true);
+        }, []);
+
+        // useEffect(() => {
+        //     error && message.error(`${error}`);
+        // });
+
+        async function handleAddPost(postContent) {
+            // try {
+            //     const response = await sendPost(postContent);
+            //     setPosts([response.data.data, ...posts]);
+            // } catch (error) {
+            //     message.error(`${error}`);
+            //     console.log(error, "error addpost");
+            // }
         }
-    }, []);
 
-    useEffect(() => {
-        error && message.error(`${error}`);
-    });
+        async function handleDeletePost(post) {
+            dispatch(deletePostOneRedux(post));
+            Router.push("/");
+        }
 
-    async function handleAddPost(postContent) {
-        // try {
-        //     const response = await sendPost(postContent);
-        //     setPosts([response.data.data, ...posts]);
-        // } catch (error) {
-        //     message.error(`${error}`);
-        //     console.log(error, "error addpost");
-        // }
-    }
+        async function handleUpdatePost(updatedData) {
+            dispatch(updatePostOneRedux(updatedData));
+        }
 
-    async function handleDeletePost(post) {
-        // try {
-        //     const response = await deletePost(post.id);
-        //     const newPosts = posts.filter(
-        //         (postItem) => postItem.id !== post.id
-        //     );
-        //     setPosts(newPosts);
-        // } catch (error) {
-        //     message.error(`${error.response}`);
-        //     console.log(error);
-        // }
-    }
+        async function handleUpdateComment() {}
 
-    async function handleUpdatePost(updatedData) {
-        // try {
-        //     const response = await updatePost(
-        //         updatedData.id,
-        //         updatedData.content
-        //     );
-        //     const newPostList = posts.map((postItem) =>
-        //         postItem.id === updatedData.id
-        //             ? { ...postItem, ...updatedData }
-        //             : postItem
-        //     );
-        //     setPosts(newPostList);
-        // } catch (error) {
-        //     console.log(error, "error");
-        //     message.error(`${error}`);
-        // }
-    }
+        async function handleDeleteComment() {}
 
-    async function handleUpdateComment() {}
+        async function handlerLogout() {
+            // try {
+            //     await fetchSignOut();
+            //     Cookies.remove("token_mytweeter");
+            //     // setSignedUser({});
+            //     setSignedUser({});
+            // } catch (error) {
+            //     console.log(error, "error");
+            //     message.error(`${error}`);
+            // }
+            await dispatch(logoutRedux());
+        }
 
-    async function handleDeleteComment() {}
+        const signBanner = !Object.keys(/* signedUser */ signedUserStore)
+            .length &&
+            isLoaded && <SignBanner />;
 
-    async function handlerLogout() {
-        // try {
-        //     await fetchSignOut();
-        //     Cookies.remove("token_mytweeter");
-        //     // setSignedUser({});
-        //     setSignedUser({});
-        // } catch (error) {
-        //     console.log(error, "error");
-        //     message.error(`${error}`);
-        // }
-    }
-
-    const signBanner = !Object.keys(signedUser).length && <SignBanner />;
-
-    const userBannerDropdown = !!Object.keys(signedUser).length && (
-        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner user={signedUser} onLogout={handlerLogout} />
-        </div>
-    );
-
-    const commentsComponentList = comments && (
-        <PostsList
-            postsList={comments}
-            onDeletePost={handleDeleteComment}
-            onUpdatePost={handleUpdateComment}
-            signedUser={signedUser}
-        />
-    );
-
-    return (
-        <PageTemplate signBanner={signBanner}>
-            <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu isAuth={!!Object.keys(signedUser).length} />
+        const userBannerDropdown = !!Object.keys(
+            /* signedUser */ signedUserStore
+        ).length && (
+            <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
+                <UserBanner
+                    user={/* signedUser */ signedUserStore}
+                    onLogout={handlerLogout}
+                />
             </div>
-            {userBannerDropdown}
-            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
-                Thread
-            </header>
-            {/* <div className="border border-t-0 border-[#949494] "> */}
-            <Post
-                post={post}
-                key={post.id}
-                onDeletePost={handleDeletePost}
-                onUpdatePost={handleUpdatePost}
-                signedUserName={signedUser.name}
+        );
+
+        const commentsComponentList = /* comments */ commentsListStore && (
+            <CommentsList
+                commentsList={/* comments */ commentsListStore}
+                onDeleteComment={handleDeleteComment}
+                onUpdateComment={handleUpdateComment}
+                signedUser={/* signedUser */ signedUserStore}
             />
-            {/* </div> */}
-            <div className="h-10"></div>
-            {commentsComponentList}
-        </PageTemplate>
-    );
+        );
+
+        return (
+            <PageTemplate signBanner={signBanner}>
+                <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
+                    <MainMenu
+                        isAuth={
+                            !!Object.keys(/* signedUser */ signedUserStore)
+                                .length
+                        }
+                    />
+                </div>
+                {userBannerDropdown}
+                <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
+                    Thread
+                </header>
+                {/* <div className="border border-t-0 border-[#949494] "> */}
+
+                <Post
+                    post={postStore}
+                    key={postStore.id}
+                    onDeletePost={handleDeletePost}
+                    onUpdatePost={handleUpdatePost}
+                    signedUserName={/* signedUser */ signedUserStore.name}
+                />
+
+                {/* </div> */}
+                <div className="h-10"></div>
+                {commentsComponentList}
+            </PageTemplate>
+        );
+    };
+
+// export async function getServerSideProps({ params }) {
+//     try {
+//         // console.log(params, "params");
+//         // const result = await getPost(params.id);
+//         // const result2 = await getPostComments(params.id);
+//         // console.log(result2, "result2");
+
+//         const result = await Promise.all([
+//             getPost(params.id),
+//             getPostComments(params.id),
+//         ]);
+
+//         return {
+//             props: {
+//                 post: result[0].data.data,
+//                 commentsList: result[1].data.data,
+//             },
+//         };
+//     } catch (error) {
+//         // console.log(error, "ERROR COMMENTID");
+//         return {
+//             props: {
+//                 error: error.response.statusText,
+//             },
+//         };
+//     }
+// }
+
+// **************
+export const withRedux = (getServerSideProps) => async (ctx) => {
+    // console.log("start in serverSideProps withRedux");
+    const store = initializeStore();
+    const result = await getServerSideProps(ctx, store);
+    // console.log(store.getState(), "STORE [id]");
+
+    // console.log(result, "result in serverSideProps withRedux");
+
+    return {
+        ...result,
+
+        props: {
+            initialReduxState: store.getState(),
+            ...result.props,
+        },
+    };
 };
 
-export async function getServerSideProps({ params }) {
+export const getServerSideProps = withRedux(async (context, store) => {
+    // console.log(context.params, "context.params in getServerSideProps [id]");
     try {
-        // console.log(params, "params");
-        // const result = await getPost(params.id);
-        // const result2 = await getPostComments(params.id);
-        // console.log(result2, "result2");
-
-        const result = await Promise.all([
-            getPost(params.id),
-            getPostComments(params.id),
+        /* const result =  */ await Promise.all([
+            store.dispatch(setPostOneRedux(context.params.id)),
+            store.dispatch(setPostCommentsRedux(context.params.id)),
         ]);
+
+        // console.log("result[0]", "result in getServerSideProps");
 
         return {
             props: {
-                post: result[0].data.data,
-                commentsList: result[1].data.data,
+                message: "hello world",
             },
         };
     } catch (error) {
-        // console.log(error, "ERROR COMMENTID");
+        console.log(error, "error in getServerSideProps");
         return {
             props: {
-                error: error.response.statusText,
+                error: error.message, //.response.statusText,
             },
         };
     }
-}
+});
+// ******************

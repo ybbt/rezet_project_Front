@@ -68,8 +68,9 @@ export default function Index(/* { postsList, error } */) {
         // }
 
         // if (!signedUserStore.name) {
+        setIsLoaded(false);
         await dispatch(authMeRedux());
-        setIsLoaded(!!Object.keys(signedUserStore).length);
+        setIsLoaded(true);
         // }
     }, [dispatch]);
 
@@ -148,7 +149,9 @@ export default function Index(/* { postsList, error } */) {
         </div>
     );
 
-    const signBanner = isLoaded && <SignBanner />;
+    const signBanner = !Object.keys(signedUserStore).length && isLoaded && (
+        <SignBanner />
+    );
 
     const userBannerDropdown = !!Object.keys(signedUserStore /* signedUser */)
         .length && (
@@ -208,8 +211,9 @@ export default function Index(/* { postsList, error } */) {
 export const withRedux = (getStaticProps) => async () => {
     const store = initializeStore();
     const result = await getStaticProps(store);
+    // console.log(store.getState(), "STORE idex");
 
-    console.log(result, "result in serverSideProps");
+    // console.log(result, "result in serverSideProps");
 
     return {
         ...result,

@@ -6,6 +6,7 @@ import {
     deletePost,
     sendPost,
     updatePost,
+    getPost,
 } from "../libs/postService";
 
 import { getPostComments } from "../libs/commentService";
@@ -15,14 +16,6 @@ import { getUser } from "../libs/userService";
 import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
 
 import Cookies from "js-cookie";
-
-/* // INITIALIZES CLOCK ON SERVER
-export const serverRenderClock = () => (dispatch) =>
-  dispatch({
-    type: types.TICK,
-    payload: { light: false, ts: Date.now() },
-  })
- */
 
 export const setUserRedux = (userName) => async (dispatch) => {
     console.log("setUserRedux in action before fetch");
@@ -37,13 +30,67 @@ export const setUserRedux = (userName) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
+        });
+    }
+};
+
+export const setPostOneRedux = (postId) => async (dispatch) => {
+    console.log(postId, "postId in  setPostOneRedux");
+    try {
+        const response = await getPost(postId);
+        // console.log(response.data, "result in setPostOneRedux");
+        dispatch({
+            type: types.SET_POST_SINGLE,
+            payload: { post: response.data.data },
+        });
+    } catch (error) {
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.message && error.response },
+        });
+    }
+};
+
+export const updatePostOneRedux = (updatedData) => async (dispatch) => {
+    console.log(updatedData, "postId in  updatePostOneRedux");
+    try {
+        const response = await updatePost(updatedData.id, updatedData.content);
+        // console.log(response.data, "result in updatePostOneRedux");
+        dispatch({
+            type: types.UPDATE_POST_SINGLE,
+            payload: { updatedPost: updatedData },
+        });
+    } catch (error) {
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.message && error.response },
+        });
+    }
+};
+
+export const deletePostOneRedux = (post) => async (dispatch) => {
+    console.log(post, "postId in  deletePostOneRedux");
+    try {
+        const response = await deletePost(post.id);
+        // console.log(response.data, "result in updatePostOneRedux");
+        // dispatch({
+        //     type: types.DELETE_POST_SINGLE,
+        //     payload: { deletedPost: post },
+        // });
+    } catch (error) {
+        dispatch({
+            type: types.SET_ERROR,
+            payload: { error: error.message && error.response },
         });
     }
 };
 
 export const setUserPostsRedux = (userName) => async (dispatch) => {
-    console.log("setUserPostsRedux in action before fetch");
+    // console.log(
+    //     userName,
+    //     "userName in setUserPostsRedux in action before fetch"
+    // );
     try {
         const response = await getUserPosts(userName);
         dispatch({
@@ -52,10 +99,10 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
         });
     } catch (error) {
         // message.error(`${error.response}`);
-        // console.log(error);
+        console.log(error.message, "error in setUserPostsRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
@@ -73,7 +120,7 @@ export const setPostsRedux = () => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
@@ -91,7 +138,7 @@ export const sendPostRedux = (content) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
@@ -109,7 +156,7 @@ export const deletePostRedux = (post) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
@@ -120,32 +167,36 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
         const response = await updatePost(updatedData.id, updatedData.content);
         dispatch({
             type: types.UPDATE_POST,
-            payload: { updatedPost: response.data.data },
+            payload: { updatedPost: updatedData },
         });
     } catch (error) {
         // message.error(`${error.response}`);
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
 
 export const setPostCommentsRedux = (postId) => async (dispatch) => {
-    console.log("setPostCommentsRedux in action before fetch");
+    console.log(
+        postId,
+        "postId in setPostCommentsRedux in action before fetch"
+    );
     try {
         const response = await getPostComments(postId);
+        // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
             type: types.SET_POST_COMMENTS,
             payload: { postComments: response.data.data },
         });
     } catch (error) {
         // message.error(`${error.response}`);
-        // console.log(error);
+        console.log(error.message, "error in setPostCommentsRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };
@@ -188,7 +239,7 @@ export const logoutRedux = () => async (dispatch) => {
         console.log(error, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.response },
+            payload: { error: error.message && error.response },
         });
     }
 };

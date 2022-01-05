@@ -55,8 +55,8 @@ export default ({ error, user, postsList }) => {
     const activeUserStore = useSelector((state) => state.userReducer.user);
 
     const errorStore = useSelector((state) => state.errorReducer.error);
-    const stateInStore = useSelector((state) => state);
-    console.log(stateInStore, "state in index");
+    // const stateInStore = useSelector((state) => state);
+    // console.log(stateInStore, "state in [name]");
     // console.log(signedUserStore, "signedUserStore in index");
     // ***********
 
@@ -77,9 +77,10 @@ export default ({ error, user, postsList }) => {
         // }
 
         // if (!signedUserStore.name) {
+
+        setIsLoaded(false);
         await dispatch(authMeRedux());
-        setIsLoaded(!!Object.keys(signedUserStore).length);
-        // }
+        setIsLoaded(true);
     }, [dispatch]);
 
     useEffect(() => {
@@ -154,7 +155,8 @@ export default ({ error, user, postsList }) => {
     // const signBanner = !Object.keys(/* signedUser */ signedUserStore)
     //     .length && <SignBanner />;
 
-    const signBanner = isLoaded && <SignBanner />;
+    const signBanner = !Object.keys(/* signedUser */ signedUserStore).length &&
+        isLoaded && <SignBanner />;
 
     const userBannerDropdown = !!Object.keys(/* signedUser */ signedUserStore)
         .length && (
@@ -233,11 +235,12 @@ export default ({ error, user, postsList }) => {
 
 // **************
 export const withRedux = (getServerSideProps) => async (ctx) => {
-    console.log("start in serverSideProps withRedux");
+    // console.log("start in serverSideProps withRedux");
     const store = initializeStore();
     const result = await getServerSideProps(ctx, store);
+    // console.log(store.getState(), "STORE [name]");
 
-    console.log(result, "result in serverSideProps withRedux");
+    // console.log(result, "result in serverSideProps withRedux");
 
     return {
         ...result,
@@ -250,7 +253,7 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
 };
 
 export const getServerSideProps = withRedux(async (context, store) => {
-    console.log(context.params, "context.params in getServerSideProps");
+    // console.log(context.params, "context.params in getServerSideProps");
     try {
         /* const result =  */ await Promise.all([
             store.dispatch(setUserRedux(context.params.name)),
@@ -260,7 +263,7 @@ export const getServerSideProps = withRedux(async (context, store) => {
         // await store.dispatch(setUserRedux(context.params.name));
         // await store.dispatch(setUserPostsRedux(context.params.name));
 
-        console.log("result[0]", "result in getServerSideProps");
+        // console.log("result[0]", "result in getServerSideProps");
 
         return {
             props: {
@@ -271,7 +274,7 @@ export const getServerSideProps = withRedux(async (context, store) => {
         console.log(error, "error in getServerSideProps");
         return {
             props: {
-                error: error.response.statusText,
+                error: error.message, //.response.statusText,
             },
         };
     }
