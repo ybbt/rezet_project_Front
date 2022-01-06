@@ -18,6 +18,7 @@ import { UserBanner } from "../../components/UserBanner";
 import { MainMenu } from "../../components/MainMenu";
 import { CommentsList } from "../../components/CommentsList";
 import { Post } from "../../components/Post";
+import { EditPostForm } from "../../components/EditPostForm";
 
 // ********
 import { useSelector, useDispatch } from "react-redux";
@@ -26,6 +27,9 @@ import {
     setPostOneRedux,
     updatePostOneRedux,
     deletePostOneRedux,
+    sendCommentRedux,
+    updateCommentRedux,
+    deleteCommentRedux,
     authMeRedux,
     logoutRedux,
 } from "../../redux/actions";
@@ -53,25 +57,12 @@ export default () =>
         // const activeUserStore = useSelector((state) => state.userReducer.user);
 
         const errorStore = useSelector((state) => state.errorReducer.error);
-        // const stateInStore = useSelector((state) => state);
-        // console.log(stateInStore, "state in [id]");
+        const stateInStore = useSelector((state) => state);
+        console.log(stateInStore, "state in [id]");
         // console.log(signedUserStore, "signedUserStore in index");
         // ***********
 
         useEffect(async () => {
-            // try {
-            //     const result = await fetchAuth();
-
-            //     const response = result.data;
-
-            //     setSignedUser(result.data.data);
-            // } catch (error) {
-            //     console.log(error);
-            //     message.error(`${error}`);
-
-            //     Cookies.remove("token_mytweeter");
-            //     setSignedUser({});
-            // }
             setIsLoaded(false);
             await dispatch(authMeRedux());
             setIsLoaded(true);
@@ -81,14 +72,8 @@ export default () =>
         //     error && message.error(`${error}`);
         // });
 
-        async function handleAddPost(postContent) {
-            // try {
-            //     const response = await sendPost(postContent);
-            //     setPosts([response.data.data, ...posts]);
-            // } catch (error) {
-            //     message.error(`${error}`);
-            //     console.log(error, "error addpost");
-            // }
+        async function handleAddComment(commentContent) {
+            dispatch(sendCommentRedux(postStore.id, commentContent));
         }
 
         async function handleDeletePost(post) {
@@ -100,20 +85,13 @@ export default () =>
             dispatch(updatePostOneRedux(updatedData));
         }
 
-        async function handleUpdateComment() {}
+        async function handleUpdateComment(updatedData) {}
 
-        async function handleDeleteComment() {}
+        async function handleDeleteComment(comment) {
+            dispatch(deleteCommentRedux(comment));
+        }
 
         async function handlerLogout() {
-            // try {
-            //     await fetchSignOut();
-            //     Cookies.remove("token_mytweeter");
-            //     // setSignedUser({});
-            //     setSignedUser({});
-            // } catch (error) {
-            //     console.log(error, "error");
-            //     message.error(`${error}`);
-            // }
             await dispatch(logoutRedux());
         }
 
@@ -141,6 +119,14 @@ export default () =>
             />
         );
 
+        const addCommentComponent = !!Object.keys(
+            signedUserStore /* signedUser */
+        ).length && (
+            <div className="border border-t-0 border-[#949494] p-2">
+                <EditPostForm onSave={handleAddComment} />
+            </div>
+        );
+
         return (
             <PageTemplate signBanner={signBanner}>
                 <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
@@ -166,12 +152,14 @@ export default () =>
                 />
 
                 {/* </div> */}
+                {addCommentComponent}
                 <div className="h-10"></div>
                 {commentsComponentList}
             </PageTemplate>
         );
     };
 
+//#region
 // export async function getServerSideProps({ params }) {
 //     try {
 //         // console.log(params, "params");
@@ -199,6 +187,7 @@ export default () =>
 //         };
 //     }
 // }
+//#endregion
 
 // **************
 export const withRedux = (getServerSideProps) => async (ctx) => {

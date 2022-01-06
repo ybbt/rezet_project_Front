@@ -24,11 +24,11 @@ export function Comment({
     async function handleUdate(content) {
         setComponentEditCondition(false);
 
-        // const newPost = { ...post };
+        const newComment = { ...comment };
 
-        // newPost.content = content;
+        newComment.content = content;
 
-        // onUpdatePost(newPost);
+        onUpdateComment(newComment);
     }
 
     function handleCancel() {

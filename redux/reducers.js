@@ -31,6 +31,7 @@ const initialUserState = {
     user: {},
 };
 
+// TODO Зробити заміну кількості коментарів після видалення та додавання
 // COMMENTS REDUCER
 const commentsReducer = (state = initialCommentsState, { type, payload }) => {
     switch (type) {
@@ -40,6 +41,35 @@ const commentsReducer = (state = initialCommentsState, { type, payload }) => {
             });
             // console.log(newState, "SET_POST_COMMENTS in switch");
             return newState;
+            break;
+        case types.SEND_COMMENT:
+            console.log(payload, "payload SEND_COMMENT in switch");
+            return Object.assign({}, state, {
+                commentsList: [
+                    payload && payload.comment,
+                    ...state.commentsList,
+                ],
+            });
+            break;
+        case types.UPDATE_COMMENT:
+            const newCommentsListUpdated = state.commentsList.map(
+                (commentItem) =>
+                    commentItem.id === payload.updatedComment.id
+                        ? { ...commentItem, ...payload.updatedComment }
+                        : commentItem
+            );
+            // console.log(newCommentsList, "newCommentsList");
+            return Object.assign({}, state, {
+                commentsList: newCommentsListUpdated,
+            });
+        case types.DELETE_COMMENT:
+            const newCommentsListDeleted = state.commentsList.filter(
+                (commentItem) => commentItem.id !== payload.deletedComment.id
+            );
+            // console.log(newCommentsList, "newCommentsList");
+            return Object.assign({}, state, {
+                commentsList: newCommentsListDeleted,
+            });
             break;
         default:
             return state;
@@ -71,13 +101,13 @@ const postReducer = (state = initialPostState, { type, payload }) => {
             });
             break;
         case types.UPDATE_POST_SINGLE:
-            console.log("SET_POST in switch");
+            console.log("UPDATE_POST_SINGLE in switch");
             return Object.assign({}, state, {
                 post: { ...state.post, ...payload.updatedPost },
             });
             break;
         case types.DELETE_POST_SINGLE:
-            console.log("SET_POST in switch");
+            console.log("DELETE_POST_SINGLE in switch");
             return Object.assign({}, state, {
                 post: {},
             });
@@ -91,15 +121,6 @@ const postReducer = (state = initialPostState, { type, payload }) => {
 const postsReducer = (state = initialPostsState, { type, payload }) => {
     const newPostsList = {};
     switch (type) {
-        // case types.SET_POST_COMMENTS:
-        //     const newState = Object.assign({}, state, {
-        //         postsList: [{ nidame: "Sarah" }],
-        //         comments: payload.comments,
-        //         name: "commentYorik,",
-        //     });
-        //     console.log(newState, "SET_POST_COMMENTS in switch");
-        //     return newState;
-        //     break;
         case types.SET_POSTS:
             console.log("SET_POSTS in switch");
             return Object.assign({}, state, {
@@ -188,10 +209,10 @@ const errorReducer = (state = initialErrorsState, { type, payload }) => {
 // COMBINED REDUCERS
 const reducers = {
     commentsReducer,
-    authReducer,
-    userReducer,
     postReducer,
+    userReducer,
     postsReducer,
+    authReducer,
     errorReducer,
 };
 

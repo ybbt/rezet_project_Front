@@ -20,4 +20,7 @@ export const USER_ROUTES = {
 
 export const COMMENT_ROUTES = {
     GET_POST_COMMENTS: (postId) => `posts/${postId}/comments`,
+    SET_COMMENT: (postId) => `/posts/${postId}/comments`,
+    UPDATE_COMMENT: (commentId) => `/comments/${commentId}`,
+    DELETE_COMMENT: (commentId) => `/comments/${commentId}`,
 };
