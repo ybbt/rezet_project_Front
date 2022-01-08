@@ -27,6 +27,7 @@ import { UserBanner } from "../components/UserBanner";
 
 export default ({ error, user, postsList }) => {
     const [posts, setPosts] = useState(postsList);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [signedUser, setSignedUser] = useContext(signedUserContext);
 
     const router = useRouter();
@@ -44,6 +45,8 @@ export default ({ error, user, postsList }) => {
 
             Cookies.remove("token_mytweeter");
             setSignedUser({});
+        } finally {
+            setIsLoaded(true);
         }
     }, []);
 
@@ -68,7 +71,7 @@ export default ({ error, user, postsList }) => {
 
     async function handleDeletePost(post) {
         try {
-            const response = await deletePost(post.id); //axiosInstance.delete(`/posts/${post.id}`);
+            const response = await deletePost(post.id);
 
             const newPosts = posts.filter(
                 (postItem) => postItem.id !== post.id
@@ -112,11 +115,13 @@ export default ({ error, user, postsList }) => {
         }
     }
 
-    const signBanner = !Object.keys(signedUser).length && <SignBanner />;
+    const signBanner = !Object.keys(signedUser).length && isLoaded && (
+        <SignBanner />
+    );
 
     const userBannerDropdown = !!Object.keys(signedUser).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner user={signedUser} onLogout={handlerLogout} />
+            <UserBanner onLogout={handlerLogout} />
         </div>
     );
 
@@ -131,14 +136,13 @@ export default ({ error, user, postsList }) => {
             postsList={posts}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={signedUser}
         />
     );
 
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu isAuth={!!Object.keys(signedUser).length} />
+                <MainMenu />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">

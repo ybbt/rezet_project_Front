@@ -1,7 +1,12 @@
+import { useContext } from "react";
+
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
-export function DropdownUserMenu({ children, user, onLogout }) {
+import signedUserContext from "../../context/signedUserContext";
+
+export function DropdownUserMenu({ children, onLogout }) {
+    const [signedUser] = useContext(signedUserContext);
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -10,7 +15,7 @@ export function DropdownUserMenu({ children, user, onLogout }) {
     function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/${user.name}`);
+                Router.push(`/${signedUser.name}`);
                 break;
             case menuKey.logout:
                 onLogout();

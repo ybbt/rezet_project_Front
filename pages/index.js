@@ -100,7 +100,6 @@ export default function Index({ postsList, error }) {
 
             Cookies.remove("token_mytweeter");
 
-            // setSignedUser({});
             setSignedUser({});
         } catch (error) {
             console.log(error, "error");
@@ -120,7 +119,7 @@ export default function Index({ postsList, error }) {
 
     const userBannerDropdown = !!Object.keys(signedUser).length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner user={signedUser} onLogout={handlerLogout} />
+            <UserBanner onLogout={handlerLogout} />
         </div>
     );
 
@@ -129,14 +128,13 @@ export default function Index({ postsList, error }) {
             postsList={posts}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={signedUser}
         />
     );
 
     return (
         <PageTemplate signBanner={signBanner}>
             <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu isAuth={!!Object.keys(signedUser).length} />
+                <MainMenu />
             </div>
             {userBannerDropdown}
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">

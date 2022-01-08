@@ -1,11 +1,11 @@
+import { useContext } from "react";
+
 import { Post } from "../Post/index";
 
-export function PostsList({
-    postsList,
-    onDeletePost,
-    onUpdatePost,
-    signedUser,
-}) {
+import signedUserContext from "../../context/signedUserContext";
+
+export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
+    const [signedUser] = useContext(signedUserContext);
     return postsList.map((postItem) => {
         return (
             <Post
