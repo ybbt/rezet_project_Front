@@ -145,7 +145,7 @@ export default function Index(/* { postsList, error } */) {
     const addPostComponent = !!Object.keys(signedUserStore /* signedUser */)
         .length && (
         <div className="border border-t-0 border-[#949494] p-2">
-            <EditPostForm onSave={handleAddPost} />
+            <EditPostForm onSave={handleAddPost} contentKind="post" />
         </div>
     );
 
@@ -157,7 +157,7 @@ export default function Index(/* { postsList, error } */) {
         .length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
             <UserBanner
-                user={signedUserStore /* signedUser */}
+                // user={signedUserStore /* signedUser */}
                 onLogout={handlerLogout}
             />
         </div>
@@ -165,10 +165,10 @@ export default function Index(/* { postsList, error } */) {
 
     const postsComponentList = /* posts */ postsListStore && (
         <PostsList
-            postsList={postsListStore} //posts
+            // postsList={postsListStore} //posts
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={signedUserStore /* signedUser */}
+            // signedUser={signedUserStore /* signedUser */}
         />
     );
 
