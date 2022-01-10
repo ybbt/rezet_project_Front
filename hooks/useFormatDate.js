@@ -1,6 +1,6 @@
-import moment from "moment";
+import { DateTime } from "luxon";
 import { useMemo } from "react";
 
 export default function useFormatDate(date, format) {
-    return useMemo(() => moment(date).format(format), [date, format]);
+    return useMemo(() => new DateTime(date).toFormat(format), [date, format]);
 }

@@ -47,7 +47,7 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
         />
     );
 
-    const formatedCreatedAt = useFormatDate(post.created_at, "D MMM YYYY");
+    const formatedCreatedAt = useFormatDate(post.created_at, "d MMM y");
     /* moment(
             post.created_at
         ).format("D MMM YYYY"); */
