@@ -2,15 +2,26 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+import { useSelector } from "react-redux";
+
 import moment from "moment";
 
-import { MessageOutlined } from "@ant-design/icons";
+import { Tooltip } from "antd";
+import { MessageOutlined, EditOutlined } from "@ant-design/icons";
 
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
 
-export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
+export function Post({
+    post,
+    onDeletePost,
+    onUpdatePost /* , signedUserName */,
+}) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
+
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
 
     function handleEdit() {
         setComponentEditCondition(true);
@@ -35,12 +46,14 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
             editContent={post.content}
             onSave={handleUdate}
             onCancel={handleCancel}
+            contentKind="post"
         />
     ) : (
         <div className="max-w-2xl min-w-[32rem]">{post.content}</div>
     );
 
-    const dropdownMenu = signedUserName === post.author.name && (
+    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
+        post.author.name && (
         <DropdownPostMenu
             onDeletePost={() => onDeletePost(post)}
             onEditPost={handleEdit}
@@ -48,6 +61,20 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
     );
 
     const createdAt = moment(post.created_at).format("D MMM YYYY");
+    const updatedAt = moment(post.updated_at).format("D MMM YYYY HH:mm");
+    const updatedAtComponent = post.created_at !== post.updated_at && (
+        <Tooltip
+            placement="right"
+            title={updatedAt}
+            overlayInnerStyle={{
+                fontSize: "10px",
+                display: "flex",
+                alignItems: "center",
+            }}
+        >
+            <EditOutlined />
+        </Tooltip>
+    );
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
@@ -74,7 +101,8 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
                                 </a>
                             </Link>
                         </div>
-                        <div className="text-[#949494]">{createdAt}</div>
+                        <div className="text-[#949494] mr-3">{createdAt}</div>
+                        {updatedAtComponent}
                     </div>
                     {dropdownMenu}
                 </div>

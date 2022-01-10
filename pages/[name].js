@@ -162,7 +162,7 @@ export default ({ error, user, postsList }) => {
         .length && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
             <UserBanner
-                user={/* signedUser */ signedUserStore}
+                // user={/* signedUser */ signedUserStore}
                 onLogout={handlerLogout}
             />
         </div>
@@ -171,16 +171,16 @@ export default ({ error, user, postsList }) => {
     const addPostComponent = /* user */ activeUserStore.name ===
         /* signedUser */ signedUserStore.name && (
         <div className="border border-t-0 border-[#949494] p-2">
-            <EditPostForm onSave={handleAddPost} />
+            <EditPostForm onSave={handleAddPost} contentKind="post" />
         </div>
     );
 
     const postsComponentList = /* posts */ postsListStore && (
         <PostsList
-            postsList={/* posts */ postsListStore}
+            // postsList={/* posts */ postsListStore}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
-            signedUser={/* signedUser */ signedUserStore}
+            // signedUser={/* signedUser */ signedUserStore}
         />
     );
 

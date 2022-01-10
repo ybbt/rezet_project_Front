@@ -2,9 +2,12 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+import { useSelector } from "react-redux";
+
 import moment from "moment";
 
-import { MessageOutlined } from "@ant-design/icons";
+import { Tooltip } from "antd";
+import { MessageOutlined, EditOutlined } from "@ant-design/icons";
 
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
@@ -13,9 +16,16 @@ export function Comment({
     /* post */ comment,
     onDeleteComment,
     onUpdateComment,
-    signedUserName,
+    // signedUserName,
 }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
+
+    const commentsListStore = useSelector(
+        (state) => state.commentsReducer.commentsList
+    );
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
 
     function handleEdit() {
         setComponentEditCondition(true);
@@ -40,12 +50,14 @@ export function Comment({
             editContent={comment.content}
             onSave={handleUdate}
             onCancel={handleCancel}
+            contentKind="comment"
         />
     ) : (
         <div className="max-w-2xl min-w-[32rem]">{comment.content}</div>
     );
 
-    const dropdownMenu = signedUserName === comment.author.name && (
+    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
+        comment.author.name && (
         <DropdownPostMenu
             onDeletePost={() => onDeleteComment(/* post */ comment)}
             onEditPost={handleEdit}
@@ -53,6 +65,20 @@ export function Comment({
     );
 
     const createdAt = moment(comment.created_at).format("D MMM YYYY");
+    const updatedAt = moment(comment.updated_at).format("D MMM YYYY HH:mm");
+    const updatedAtComponent = comment.created_at !== comment.updated_at && (
+        <Tooltip
+            placement="right"
+            title={updatedAt}
+            overlayInnerStyle={{
+                fontSize: "10px",
+                display: "flex",
+                alignItems: "center",
+            }}
+        >
+            <EditOutlined />
+        </Tooltip>
+    );
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
@@ -79,7 +105,8 @@ export function Comment({
                                 </a>
                             </Link>
                         </div>
-                        <div className="text-[#949494]">{createdAt}</div>
+                        <div className="text-[#949494] mr-3">{createdAt}</div>
+                        {updatedAtComponent}
                     </div>
                     {dropdownMenu}
                 </div>

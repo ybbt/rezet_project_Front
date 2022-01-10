@@ -1,7 +1,13 @@
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
-export function DropdownUserMenu({ children, user, onLogout }) {
+import { useSelector } from "react-redux";
+
+export function DropdownUserMenu({ children, /* user, */ onLogout }) {
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -10,7 +16,7 @@ export function DropdownUserMenu({ children, user, onLogout }) {
     function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/${user.name}`);
+                Router.push(`/${signedUserStore.name}`);
                 break;
             case menuKey.logout:
                 onLogout();

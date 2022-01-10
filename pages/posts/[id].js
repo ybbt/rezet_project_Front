@@ -39,7 +39,7 @@ import { initializeStore } from "../../redux/store"; // ---  для сервер
 export default () =>
     /* { post, commentsList, error } */
     /* props */ {
-        const [signedUser, setSignedUser] = useContext(signedUserContext);
+        // const [signedUser, setSignedUser] = useContext(signedUserContext);
         // const [comments, setComments] = useState(commentsList);
         const [isLoaded, setIsLoaded] = useState(false);
 
@@ -57,8 +57,8 @@ export default () =>
         // const activeUserStore = useSelector((state) => state.userReducer.user);
 
         const errorStore = useSelector((state) => state.errorReducer.error);
-        const stateInStore = useSelector((state) => state);
-        console.log(stateInStore, "state in [id]");
+        /*         const stateInStore = useSelector((state) => state);
+        console.log(stateInStore, "state in [id]"); */
         // console.log(signedUserStore, "signedUserStore in index");
         // ***********
 
@@ -85,7 +85,9 @@ export default () =>
             dispatch(updatePostOneRedux(updatedData));
         }
 
-        async function handleUpdateComment(updatedData) {}
+        async function handleUpdateComment(updatedData) {
+            dispatch(updateCommentRedux(updatedData));
+        }
 
         async function handleDeleteComment(comment) {
             dispatch(deleteCommentRedux(comment));
@@ -104,7 +106,7 @@ export default () =>
         ).length && (
             <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
                 <UserBanner
-                    user={/* signedUser */ signedUserStore}
+                    // user={/* signedUser */ signedUserStore}
                     onLogout={handlerLogout}
                 />
             </div>
@@ -112,10 +114,10 @@ export default () =>
 
         const commentsComponentList = /* comments */ commentsListStore && (
             <CommentsList
-                commentsList={/* comments */ commentsListStore}
+                // commentsList={/* comments */ commentsListStore}
                 onDeleteComment={handleDeleteComment}
                 onUpdateComment={handleUpdateComment}
-                signedUser={/* signedUser */ signedUserStore}
+                // signedUser={/* signedUser */ signedUserStore}
             />
         );
 
@@ -123,7 +125,7 @@ export default () =>
             signedUserStore /* signedUser */
         ).length && (
             <div className="border border-t-0 border-[#949494] p-2">
-                <EditPostForm onSave={handleAddComment} />
+                <EditPostForm onSave={handleAddComment} contentKind="comment" />
             </div>
         );
 
@@ -138,8 +140,9 @@ export default () =>
                     />
                 </div>
                 {userBannerDropdown}
-                <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
+                <header className="border border-[#949494] h-12 font-bold text-lg flex flex-col justify-center pl-4">
                     Thread
+                    <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
                 </header>
                 {/* <div className="border border-t-0 border-[#949494] "> */}
 
@@ -148,7 +151,7 @@ export default () =>
                     key={postStore.id}
                     onDeletePost={handleDeletePost}
                     onUpdatePost={handleUpdatePost}
-                    signedUserName={/* signedUser */ signedUserStore.name}
+                    // signedUserName={/* signedUser */ signedUserStore.name}
                 />
 
                 {/* </div> */}
