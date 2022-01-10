@@ -2,7 +2,7 @@ import { Alert, message } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
-import { signupSchema } from "../../schemas/signupSchema";
+import { signupSchema } from "../schemas/signupSchema";
 
 import Cookies from "js-cookie";
 
@@ -10,9 +10,9 @@ import Router from "next/router";
 
 import Link from "next/link";
 
-import SignInUp from "../../components/SignInUp";
-import AuthorizationElement from "../../components/AuthorizationElement";
-import { fetchSignUp } from "../../libs/authorizeService";
+import SignInUp from "../components/SignInUp";
+import AuthorizationElement from "../components/AuthorizationElement";
+import { fetchSignUp } from "../libs/authorizeService";
 
 export default function Register() {
     async function handleSubmitData(

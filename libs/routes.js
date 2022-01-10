@@ -2,7 +2,7 @@ export const POST_ROUTES = {
     SET_POST: "/posts",
     HOME_POSTS: "/posts",
     GET_POST: (postId) => `/posts/${postId}`,
-    UPDATE_POST: (postId) => `/posts/${postId}`,
+    UPDATE_POST: (postId) => `/posts/${postId}8`,
     DELETE_POST: (postId) => `/posts/${postId}`,
     GET_USER_POSTS: (userName) => `/users/${userName}/posts`,
 };
