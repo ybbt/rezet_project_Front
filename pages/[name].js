@@ -40,11 +40,13 @@ export default ({ error, user, postsList }) => {
 
             setSignedUser(result.data.data);
         } catch (error) {
-            console.log(error);
-            message.error(`${error}`);
-
-            Cookies.remove("token_mytweeter");
-            setSignedUser({});
+            if (error.response && error.response.status === 401) {
+                Cookies.remove("token_mytweeter");
+                setSignedUser({});
+            } else {
+                console.log(error);
+                message.error(`${error}`);
+            }
         } finally {
             setIsLoaded(true);
         }
@@ -176,7 +178,7 @@ export async function getServerSideProps({ params }) {
     } catch (error) {
         return {
             props: {
-                error: error.response.statusText,
+                error: error.message,
             },
         };
     }

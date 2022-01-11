@@ -6,7 +6,7 @@ import signedUserContext from "../../context/signedUserContext";
 export function MainMenu() {
     const [signedUser] = useContext(signedUserContext);
 
-    const authUserMenu = !!signedUser && (
+    const authUserMenu = !!Object.keys(signedUser).length && (
         <>
             <Link href="#">
                 <a className="text-black">Messages</a>
