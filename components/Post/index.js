@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { EditPostForm } from "../EditPostForm";
 
-// import moment from "moment";
 import useFormatDate from "../../hooks/useFormatDate";
 
 import { DropdownPostMenu } from "../DropdownPostMenu";
@@ -48,9 +47,6 @@ export function Post({ post, onDeletePost, onUpdatePost, signedUserName }) {
     );
 
     const formatedCreatedAt = useFormatDate(post.created_at, "d MMM y");
-    /* moment(
-            post.created_at
-        ).format("D MMM YYYY"); */
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
