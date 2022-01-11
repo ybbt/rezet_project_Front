@@ -5,16 +5,12 @@ const signinSchema = Yup.object().shape({
         if (value) {
             switch (value.includes("@")) {
                 case true:
-                    return Yup.string()
-                        .email("Invalid email")
-                        .required("Required email");
+                    return Yup.string().email("Invalid email");
                 case false:
-                    return Yup.string()
-                        .required("Required user name")
-                        .matches(
-                            /^[a-zA-Z0-9]+$/,
-                            "User name can only contain letters and numbers"
-                        );
+                    return Yup.string().matches(
+                        /^[a-zA-Z0-9]+$/,
+                        "User name can only contain letters and numbers"
+                    );
             }
         }
         return Yup.string().required("Required field");
