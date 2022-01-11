@@ -103,7 +103,7 @@ export default ({ error, user, postsList }) => {
         //     console.log(error, "error addpost");
         // }
         await dispatch(sendPostRedux(postContent));
-        dispatch(incrementPostsCount());
+        // dispatch(incrementPostsCount());
     }
 
     async function handleDeletePost(post) {
@@ -119,7 +119,7 @@ export default ({ error, user, postsList }) => {
         //     console.log(error);
         // }
         await dispatch(deletePostRedux(post));
-        dispatch(decrementPostsCount());
+        // dispatch(decrementPostsCount());
     }
 
     async function handleUpdatePost(updatedData) {

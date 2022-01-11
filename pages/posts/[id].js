@@ -1,12 +1,14 @@
 import { useState, useEffect /* , useContext */ } from "react";
-import signedUserContext from "../../context/signedUserContext";
+// import signedUserContext from "../../context/signedUserContext";
 
-import { message } from "antd";
+import Link from "next/link";
+
+import { message, Space } from "antd";
 import "antd/dist/antd.css";
 
 import Cookies from "js-cookie";
 
-import Router from "next/router";
+// import Router from "next/router";
 
 import { fetchAuth, fetchSignOut } from "../../libs/authorizeService";
 import { getPost } from "../../libs/postService";
@@ -76,7 +78,7 @@ export default () =>
 
         async function handleDeletePost(post) {
             await dispatch(deletePostOneRedux(post));
-            Router.push("/");
+            // Router.push("/");
         }
 
         async function handleUpdatePost(updatedData) {
@@ -85,7 +87,7 @@ export default () =>
 
         async function handleAddComment(commentContent) {
             await dispatch(sendCommentRedux(postStore.id, commentContent));
-            dispatch(incrementCommentsCount());
+            // dispatch(incrementCommentsCount());
         }
 
         async function handleUpdateComment(updatedData) {
@@ -94,7 +96,7 @@ export default () =>
 
         async function handleDeleteComment(comment) {
             await dispatch(deleteCommentRedux(comment));
-            dispatch(decrementCommentsCount());
+            // dispatch(decrementCommentsCount());
         }
 
         async function handlerLogout() {
@@ -133,10 +135,24 @@ export default () =>
             </div>
         );
 
+        const beTheFirstSigninSignUpComponent = !Object.keys(signedUserStore)
+            .length && (
+            <>
+                <Link href={`/register`}>
+                    <a>Sign Up</a>
+                </Link>
+                or
+                <Link href={`/login`}>
+                    <a>Sign In</a>
+                </Link>
+            </>
+        );
+
         const beTheFirstComponent = !postStore.comments_count && (
-            <div className="border border-[#949494] p-3">
+            <Space className="border border-[#949494] border-t-0 p-3">
                 No comments yet... Be the first!
-            </div>
+                {beTheFirstSigninSignUpComponent}
+            </Space>
         );
 
         return (
@@ -166,7 +182,7 @@ export default () =>
 
                 {/* </div> */}
                 {addCommentComponent}
-                <div className="h-10 border border-[#949494]"></div>
+                <div className="h-10 border border-[#949494] border-t-0"></div>
                 {beTheFirstComponent}
                 {commentsComponentList}
             </PageTemplate>

@@ -19,6 +19,7 @@ import { getUser } from "../libs/userService";
 import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
 
 import Cookies from "js-cookie";
+import Router from "next/router";
 
 export const setUserRedux = (userName) => async (dispatch) => {
     console.log("setUserRedux in action before fetch");
@@ -81,6 +82,7 @@ export const deletePostOneRedux = (post) => async (dispatch) => {
         //     type: types.DELETE_POST_SINGLE,
         //     payload: { deletedPost: post },
         // });
+        Router.push("/");
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
@@ -137,6 +139,9 @@ export const sendPostRedux = (content) => async (dispatch) => {
             payload: { post: response.data.data },
             // payload: { content, author },
         });
+        dispatch({
+            type: types.INCREMENT_POSTS_COUNT,
+        });
     } catch (error) {
         // message.error(`${error.response}`);
         // console.log(error);
@@ -154,6 +159,9 @@ export const deletePostRedux = (post) => async (dispatch) => {
         dispatch({
             type: types.DELETE_POST,
             payload: { post: post },
+        });
+        dispatch({
+            type: types.DECREMENT_POSTS_COUNT,
         });
     } catch (error) {
         // message.error(`${error.response}`);
@@ -211,6 +219,9 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
             type: types.SEND_COMMENT,
             payload: { comment: response.data.data },
         });
+        dispatch({
+            type: types.INCREMENT_COMMENTS_COUNT,
+        });
     } catch (error) {
         // message.error(`${error.response}`);
         console.log(error.message, "error in sendCommentRedux");
@@ -251,6 +262,9 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         dispatch({
             type: types.DELETE_COMMENT,
             payload: { deletedComment: comment },
+        });
+        dispatch({
+            type: types.DECREMENT_COMMENTS_COUNT,
         });
     } catch (error) {
         // message.error(`${error.response}`);
@@ -305,18 +319,18 @@ export const logoutRedux = () => async (dispatch) => {
     }
 };
 
-export const incrementPostsCount = () => ({
-    type: types.INCREMENT_POSTS_COUNT,
-});
+// export const incrementPostsCount = () => ({
+//     type: types.INCREMENT_POSTS_COUNT,
+// });
 
-export const decrementPostsCount = () => ({
-    type: types.DECREMENT_POSTS_COUNT,
-});
+// export const decrementPostsCount = () => ({
+//     type: types.DECREMENT_POSTS_COUNT,
+// });
 
-export const incrementCommentsCount = () => ({
-    type: types.INCREMENT_COMMENTS_COUNT,
-});
+// export const incrementCommentsCount = () => ({
+//     type: types.INCREMENT_COMMENTS_COUNT,
+// });
 
-export const decrementCommentsCount = () => ({
-    type: types.DECREMENT_COMMENTS_COUNT,
-});
+// export const decrementCommentsCount = () => ({
+//     type: types.DECREMENT_COMMENTS_COUNT,
+// });
