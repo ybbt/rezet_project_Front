@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect /* , useContext */ } from "react";
 import signedUserContext from "../../context/signedUserContext";
 
 import { message } from "antd";
@@ -32,6 +32,8 @@ import {
     deleteCommentRedux,
     authMeRedux,
     logoutRedux,
+    incrementCommentsCount,
+    decrementCommentsCount,
 } from "../../redux/actions";
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 // ********
@@ -72,25 +74,27 @@ export default () =>
         //     error && message.error(`${error}`);
         // });
 
-        async function handleAddComment(commentContent) {
-            dispatch(sendCommentRedux(postStore.id, commentContent));
-        }
-
         async function handleDeletePost(post) {
-            dispatch(deletePostOneRedux(post));
+            await dispatch(deletePostOneRedux(post));
             Router.push("/");
         }
 
         async function handleUpdatePost(updatedData) {
-            dispatch(updatePostOneRedux(updatedData));
+            await dispatch(updatePostOneRedux(updatedData));
+        }
+
+        async function handleAddComment(commentContent) {
+            await dispatch(sendCommentRedux(postStore.id, commentContent));
+            dispatch(incrementCommentsCount());
         }
 
         async function handleUpdateComment(updatedData) {
-            dispatch(updateCommentRedux(updatedData));
+            await dispatch(updateCommentRedux(updatedData));
         }
 
         async function handleDeleteComment(comment) {
-            dispatch(deleteCommentRedux(comment));
+            await dispatch(deleteCommentRedux(comment));
+            dispatch(decrementCommentsCount());
         }
 
         async function handlerLogout() {
@@ -124,8 +128,14 @@ export default () =>
         const addCommentComponent = !!Object.keys(
             signedUserStore /* signedUser */
         ).length && (
-            <div className="border border-t-0 border-[#949494] p-2">
+            <div className="border border-t-0 border-[#949494] p-2 ">
                 <EditPostForm onSave={handleAddComment} contentKind="comment" />
+            </div>
+        );
+
+        const beTheFirstComponent = !postStore.comments_count && (
+            <div className="border border-[#949494] p-3">
+                No comments yet... Be the first!
             </div>
         );
 
@@ -156,7 +166,8 @@ export default () =>
 
                 {/* </div> */}
                 {addCommentComponent}
-                <div className="h-10"></div>
+                <div className="h-10 border border-[#949494]"></div>
+                {beTheFirstComponent}
                 {commentsComponentList}
             </PageTemplate>
         );

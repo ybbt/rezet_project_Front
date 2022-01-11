@@ -33,6 +33,7 @@ export function Post({
         const newPost = { ...post };
 
         newPost.content = content;
+        newPost.updated_at = moment();
 
         onUpdatePost(newPost);
     }

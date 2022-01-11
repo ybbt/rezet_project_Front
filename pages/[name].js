@@ -35,6 +35,8 @@ import {
     setUserRedux,
     authMeRedux,
     logoutRedux,
+    incrementPostsCount,
+    decrementPostsCount,
 } from "../redux/actions";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
@@ -101,6 +103,7 @@ export default ({ error, user, postsList }) => {
         //     console.log(error, "error addpost");
         // }
         await dispatch(sendPostRedux(postContent));
+        dispatch(incrementPostsCount());
     }
 
     async function handleDeletePost(post) {
@@ -116,6 +119,7 @@ export default ({ error, user, postsList }) => {
         //     console.log(error);
         // }
         await dispatch(deletePostRedux(post));
+        dispatch(decrementPostsCount());
     }
 
     async function handleUpdatePost(updatedData) {

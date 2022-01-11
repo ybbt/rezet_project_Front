@@ -6,7 +6,7 @@ const initialPostsState = {
     postsList: [],
 };
 
-// INITIAL POSTS STATE
+// INITIAL COMMENTS STATE
 const initialCommentsState = {
     commentsList: [],
 };
@@ -31,7 +31,6 @@ const initialUserState = {
     user: {},
 };
 
-// TODO Зробити заміну кількості коментарів після видалення та додавання
 // COMMENTS REDUCER
 const commentsReducer = (state = initialCommentsState, { type, payload }) => {
     switch (type) {
@@ -85,7 +84,26 @@ const userReducer = (state = initialUserState, { type, payload }) => {
                 user: payload.user,
             });
             break;
-
+        case types.INCREMENT_POSTS_COUNT:
+            console.log("UPDATE_POSTS_COUNT in switch");
+            const newUserDataIncrement = {
+                ...state.user,
+                posts_count: state.user.posts_count + 1,
+            };
+            return Object.assign({}, state, {
+                user: newUserDataIncrement,
+            });
+            break;
+        case types.DECREMENT_POSTS_COUNT:
+            console.log("DECREMENT_POSTS_COUNT in switch");
+            const newUserDataDecrement = {
+                ...state.user,
+                posts_count: state.user.posts_count - 1,
+            };
+            return Object.assign({}, state, {
+                user: newUserDataDecrement,
+            });
+            break;
         default:
             return state;
     }
@@ -110,6 +128,26 @@ const postReducer = (state = initialPostState, { type, payload }) => {
             console.log("DELETE_POST_SINGLE in switch");
             return Object.assign({}, state, {
                 post: {},
+            });
+            break;
+        case types.INCREMENT_COMMENTS_COUNT:
+            console.log("INCREMENT_COMMENTS_COUNT in switch");
+            const newPostDataIncrement = {
+                ...state.post,
+                comments_count: state.post.comments_count + 1,
+            };
+            return Object.assign({}, state, {
+                post: newPostDataIncrement,
+            });
+            break;
+        case types.DECREMENT_COMMENTS_COUNT:
+            console.log("DECREMENT_COMMENTS_COUNT in switch");
+            const newPostDataDecrement = {
+                ...state.post,
+                comments_count: state.post.comments_count - 1,
+            };
+            return Object.assign({}, state, {
+                post: newPostDataDecrement,
             });
             break;
         default:

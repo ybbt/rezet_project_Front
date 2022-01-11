@@ -135,6 +135,7 @@ export const sendPostRedux = (content) => async (dispatch) => {
         dispatch({
             type: types.SEND_POST,
             payload: { post: response.data.data },
+            // payload: { content, author },
         });
     } catch (error) {
         // message.error(`${error.response}`);
@@ -303,3 +304,19 @@ export const logoutRedux = () => async (dispatch) => {
         });
     }
 };
+
+export const incrementPostsCount = () => ({
+    type: types.INCREMENT_POSTS_COUNT,
+});
+
+export const decrementPostsCount = () => ({
+    type: types.DECREMENT_POSTS_COUNT,
+});
+
+export const incrementCommentsCount = () => ({
+    type: types.INCREMENT_COMMENTS_COUNT,
+});
+
+export const decrementCommentsCount = () => ({
+    type: types.DECREMENT_COMMENTS_COUNT,
+});

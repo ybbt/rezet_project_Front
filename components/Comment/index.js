@@ -37,6 +37,7 @@ export function Comment({
         const newComment = { ...comment };
 
         newComment.content = content;
+        newComment.updated_at = moment();
 
         onUpdateComment(newComment);
     }
