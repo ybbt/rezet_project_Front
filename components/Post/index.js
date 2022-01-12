@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 
 // import moment from "moment";
-
+import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
 import { Tooltip } from "antd";
@@ -35,7 +35,7 @@ export function Post({
         const newPost = { ...post };
 
         newPost.content = content;
-        newPost.updated_at = moment();
+        newPost.updated_at = DateTime.now();
 
         onUpdatePost(newPost);
     }

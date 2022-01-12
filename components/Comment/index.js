@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSelector } from "react-redux";
 
 // import moment from "moment";
+import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
 import { Tooltip } from "antd";
@@ -38,7 +39,7 @@ export function Comment({
         const newComment = { ...comment };
 
         newComment.content = content;
-        newComment.updated_at = moment();
+        newComment.updated_at = DateTime.now();
 
         onUpdateComment(newComment);
     }
