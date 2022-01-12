@@ -83,6 +83,9 @@ export default ({ error, user, postsList }) => {
     const activeUserStore = useSelector((state) => state.userReducer.user);
 
     const errorStore = useSelector((state) => state.errorReducer.error);
+    const statusTextStore = useSelector(
+        (state) => state.errorReducer.statusText
+    );
     // const stateInStore = useSelector((state) => state);
     // console.log(stateInStore, "state in [name]");
     // console.log(signedUserStore, "signedUserStore in index");
@@ -111,9 +114,13 @@ export default ({ error, user, postsList }) => {
         setIsLoaded(true);
     }, [dispatch]);
 
-    useEffect(() => {
-        error && message.error(`${error}`);
-    });
+    // useEffect(() => {
+    //     error && message.error(`${error}`);
+    // });
+
+    if (errorStore) {
+        return <div>{statusTextStore}</div>;
+    }
 
     // useEffect(() => {
     //     setPosts(postsList);
@@ -267,19 +274,30 @@ export default ({ error, user, postsList }) => {
 export const withRedux = (getServerSideProps) => async (ctx) => {
     // console.log("start in serverSideProps withRedux");
     const store = initializeStore();
-    const result = await getServerSideProps(ctx, store);
-    // console.log(store.getState(), "STORE [name]");
+    try {
+        const result = await getServerSideProps(ctx, store);
+        // console.log(store.getState(), "STORE [name]");
 
-    // console.log(result, "result in serverSideProps withRedux");
+        // console.log(result, "result in serverSideProps withRedux");
 
-    return {
-        ...result,
+        return {
+            ...result,
 
-        props: {
-            initialReduxState: store.getState(),
-            ...result.props,
-        },
-    };
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            // ...result,
+            props: {
+                // initialReduxState: store.getState(),
+                error: true,
+                // ...result.props,
+            },
+        };
+    }
 };
 
 export const getServerSideProps = withRedux(async (context, store) => {
@@ -302,6 +320,7 @@ export const getServerSideProps = withRedux(async (context, store) => {
         };
     } catch (error) {
         console.log(error, "error in getServerSideProps");
+        store.dispatch(setErrorRedux(error));
         return {
             props: {
                 error: error.message, //.response.statusText,

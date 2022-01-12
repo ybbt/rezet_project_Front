@@ -91,6 +91,9 @@ export default () =>
         // const activeUserStore = useSelector((state) => state.userReducer.user);
 
         const errorStore = useSelector((state) => state.errorReducer.error);
+        const statusTextStore = useSelector(
+            (state) => state.errorReducer.statusText
+        );
         // const stateInStore = useSelector((state) => state);
         // console.log(stateInStore, "state in [id]");
         // console.log(signedUserStore, "signedUserStore in index");
@@ -103,8 +106,13 @@ export default () =>
         }, []);
 
         // useEffect(() => {
-        //     error && message.error(`${error}`);
-        // });
+        //     errorStore && message.error(`${statusTextStore}`);
+        //     return <div>{statusTextStore}</div>;
+        // }, [errorStore]);
+
+        if (errorStore) {
+            return <div>{statusTextStore}</div>;
+        }
 
         async function handleDeletePost(post) {
             await dispatch(deleteActivePostRedux(post));
@@ -253,30 +261,44 @@ export default () =>
 export const withRedux = (getServerSideProps) => async (ctx) => {
     // console.log("start in serverSideProps withRedux");
     const store = initializeStore();
-    const result = await getServerSideProps(ctx, store);
-    // console.log(store.getState(), "STORE [id]");
+    try {
+        const result = await getServerSideProps(ctx, store);
+        // console.log(store.getState(), "STORE [id]");
+        // console.log(result, "result in serverSideProps withRedux");
+        // const state = store.getState();
+        // console.log(state, "state in withRedux");
+        // console.log("after maby error");
 
-    // console.log(result, "result in serverSideProps withRedux");
-
-    return {
-        ...result,
-
-        props: {
-            initialReduxState: store.getState(),
-            ...result.props,
-        },
-    };
+        return {
+            ...result,
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            // ...result,
+            props: {
+                // initialReduxState: store.getState(),
+                error: true,
+                // ...result.props,
+            },
+        };
+    }
 };
 
 export const getServerSideProps = withRedux(async (context, store) => {
     // console.log(context.params, "context.params in getServerSideProps [id]");
     try {
-        /* const result =  */ await Promise.all([
+        const result = await Promise.all([
             store.dispatch(setActivePostRedux(context.params.id)),
             store.dispatch(setPostCommentsRedux(context.params.id)),
         ]);
 
-        // console.log("result[0]", "result in getServerSideProps");
+        const res = JSON.parse(JSON.stringify(result));
+
+        // console.log("after dispatch");
 
         return {
             props: {
@@ -284,7 +306,9 @@ export const getServerSideProps = withRedux(async (context, store) => {
             },
         };
     } catch (error) {
-        console.log(error, "error in getServerSideProps");
+        // console.log(error, "error in getServerSideProps");
+        store.dispatch(setErrorRedux(error));
+
         return {
             props: {
                 error: error.message, //.response.statusText,

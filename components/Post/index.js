@@ -63,8 +63,8 @@ export function Post({
         />
     );
 
-    const createdAt = useFormatDate(post.created_at, "dd MMM y"); //moment(post.created_at).format("D MMM YYYY");
-    const updatedAt = useFormatDate(post.updated_at, "dd MMM y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(post.created_at, "dd LLL y"); //moment(post.created_at).format("D MMM YYYY");
+    const updatedAt = useFormatDate(post.updated_at, "dd LLL y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
 
     const updatedAtComponent = post.created_at !== post.updated_at && (
         <Tooltip

@@ -57,6 +57,9 @@ export default function Index(/* { postsList, error } */) {
         (state) => state.authReducer.signedUser
     );
     const errorStore = useSelector((state) => state.errorReducer.error);
+    const statusTextStore = useSelector(
+        (state) => state.errorReducer.statusText
+    );
     // const stateInStore = useSelector((state) => state);
     // console.log(stateInStore, "state in index");
     // console.log(signedUserStore, "signedUserStore in index");
@@ -87,6 +90,10 @@ export default function Index(/* { postsList, error } */) {
         errorStore && message.error(`${errorStore}`);
         console.log(errorStore, "errorStore in useEffect");
     }, [errorStore]);
+
+    if (errorStore) {
+        return <div>{statusTextStore}</div>;
+    }
 
     async function handleAddPost(postContent) {
         // try {
@@ -219,28 +226,43 @@ export default function Index(/* { postsList, error } */) {
 // **************
 export const withRedux = (getStaticProps) => async () => {
     const store = initializeStore();
-    const result = await getStaticProps(store);
-    // console.log(store.getState(), "STORE idex");
+    try {
+        const result = await getStaticProps(store);
+        // console.log(store.getState(), "STORE idex");
 
-    // console.log(result, "result in serverSideProps");
+        // console.log(result, "result in serverSideProps");
 
-    return {
-        ...result,
+        return {
+            ...result,
 
-        props: {
-            initialReduxState: store.getState(),
-            ...result.props,
-        },
-    };
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            // ...result,
+            props: {
+                // initialReduxState: store.getState(),
+                error: true,
+                // ...result.props,
+            },
+        };
+    }
 };
 
 export const getStaticProps = withRedux(async (store) => {
-    await store.dispatch(setPostsRedux());
-
-    return {
-        props: {
-            message: "hello world",
-        },
-    };
+    try {
+        await store.dispatch(setPostsRedux());
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        console.log(error, "Error in getStaticProps");
+        store.dispatch(setErrorRedux(error));
+    }
 });
 // ******************
