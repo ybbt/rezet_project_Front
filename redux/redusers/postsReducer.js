@@ -16,7 +16,7 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
         case types.SEND_POST:
             console.log("SEND_POST in switch");
             return Object.assign({}, state, {
-                postsList: [payload && payload.post, ...state.postsList],
+                postsList: [/* payload &&  */ payload.post, ...state.postsList],
             });
             break;
         case types.DELETE_POST:
