@@ -5,5 +5,8 @@ export default function useFormatDate(date, format) {
     if (!date) {
         return null;
     }
-    return useMemo(() => new DateTime(date).toFormat(format), [date, format]);
+    return useMemo(
+        () => DateTime.fromISO(date).toFormat(format),
+        [date, format]
+    );
 }
