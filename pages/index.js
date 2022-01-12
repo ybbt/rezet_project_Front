@@ -29,9 +29,18 @@ import {
     sendPostRedux,
     deletePostRedux,
     updatePostRedux,
+    // authMeRedux,
+    // logoutRedux,
+} from "../redux/actions/postsListActions.js";
+import {
+    // setPostsRedux,
+    // sendPostRedux,
+    // deletePostRedux,
+    // updatePostRedux,
     authMeRedux,
     logoutRedux,
-} from "../redux/actions";
+} from "../redux/actions/authorizationActions.js";
+
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
 

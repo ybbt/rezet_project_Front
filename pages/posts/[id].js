@@ -24,19 +24,49 @@ import { EditPostForm } from "../../components/EditPostForm";
 
 // ********
 import { useSelector, useDispatch } from "react-redux";
+
 import {
-    setPostCommentsRedux,
+    // setPostCommentsRedux,
     setActivePostRedux,
     updateActivePostRedux,
     deleteActivePostRedux,
+    // sendCommentRedux,
+    // updateCommentRedux,
+    // deleteCommentRedux,
+    // authMeRedux,
+    // logoutRedux,
+    // incrementCommentsCount,
+    // decrementCommentsCount,
+} from "../../redux/actions/activePostActions.js";
+
+import {
+    setPostCommentsRedux,
+    // setActivePostRedux,
+    // updateActivePostRedux,
+    // deleteActivePostRedux,
     sendCommentRedux,
     updateCommentRedux,
     deleteCommentRedux,
+    // authMeRedux,
+    // logoutRedux,
+    // incrementCommentsCount,
+    // decrementCommentsCount,
+} from "../../redux/actions/commentsListActions.js";
+
+import {
+    // setPostCommentsRedux,
+    // setActivePostRedux,
+    // updateActivePostRedux,
+    // deleteActivePostRedux,
+    // sendCommentRedux,
+    // updateCommentRedux,
+    // deleteCommentRedux,
     authMeRedux,
     logoutRedux,
-    incrementCommentsCount,
-    decrementCommentsCount,
-} from "../../redux/actions";
+    // incrementCommentsCount,
+    // decrementCommentsCount,
+} from "../../redux/actions/authorizationActions.js";
+
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 // ********
 
@@ -54,15 +84,15 @@ export default () =>
         const commentsListStore = useSelector(
             (state) => state.commentsReducer.commentsList
         );
-        const postStore = useSelector((state) => state.postReducer.post);
+        const postStore = useSelector((state) => state.postReducer.activePost);
         const signedUserStore = useSelector(
             (state) => state.authReducer.signedUser
         );
         // const activeUserStore = useSelector((state) => state.userReducer.user);
 
         const errorStore = useSelector((state) => state.errorReducer.error);
-        /*         const stateInStore = useSelector((state) => state);
-        console.log(stateInStore, "state in [id]"); */
+        // const stateInStore = useSelector((state) => state);
+        // console.log(stateInStore, "state in [id]");
         // console.log(signedUserStore, "signedUserStore in index");
         // ***********
 

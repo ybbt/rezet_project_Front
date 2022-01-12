@@ -38,7 +38,7 @@ export const setUserRedux = (userName) => async (dispatch) => {
         });
     }
 };
-
+//#region activePost
 export const setActivePostRedux = (postId) => async (dispatch) => {
     console.log(postId, "postId in  setActivePostRedux");
     try {
@@ -90,7 +90,9 @@ export const deleteActivePostRedux = (post) => async (dispatch) => {
         });
     }
 };
+//#endregion
 
+//#region  postsList
 export const setUserPostsRedux = (userName) => async (dispatch) => {
     // console.log(
     //     userName,
@@ -190,7 +192,9 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
         });
     }
 };
+//#endregion
 
+//#region  commentsList
 export const setPostCommentsRedux = (postId) => async (dispatch) => {
     console.log(postId, "setPostCommentsRedux in action before fetch");
     try {
@@ -275,7 +279,9 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         });
     }
 };
+//#endregion
 
+//#region authorization
 export const authMeRedux = () => async (dispatch) => {
     console.log("authMe in action before fetch");
     try {
@@ -318,6 +324,7 @@ export const logoutRedux = () => async (dispatch) => {
         });
     }
 };
+//#endregion
 
 // export const incrementPostsCount = () => ({
 //     type: types.INCREMENT_POSTS_COUNT,

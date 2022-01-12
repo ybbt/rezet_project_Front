@@ -27,17 +27,43 @@ import { UserBanner } from "../components/UserBanner";
 
 // ********
 import { useSelector, useDispatch } from "react-redux";
+
+import {
+    // setUserPostsRedux,
+    // sendPostRedux,
+    // deletePostRedux,
+    // updatePostRedux,
+    setUserRedux,
+    // authMeRedux,
+    // logoutRedux,
+    // incrementPostsCount,
+    // decrementPostsCount,
+} from "../redux/actions/activeUserActions.js";
+
 import {
     setUserPostsRedux,
     sendPostRedux,
     deletePostRedux,
     updatePostRedux,
-    setUserRedux,
+    // setUserRedux,
+    // authMeRedux,
+    // logoutRedux,
+    // incrementPostsCount,
+    // decrementPostsCount,
+} from "../redux/actions/postsListActions.js";
+
+import {
+    // setUserPostsRedux,
+    // sendPostRedux,
+    // deletePostRedux,
+    // updatePostRedux,
+    // setUserRedux,
     authMeRedux,
     logoutRedux,
-    incrementPostsCount,
-    decrementPostsCount,
-} from "../redux/actions";
+    // incrementPostsCount,
+    // decrementPostsCount,
+} from "../redux/actions/authorizationActions.js";
+
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
 
