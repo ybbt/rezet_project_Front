@@ -4,7 +4,8 @@ import Image from "next/image";
 
 import { useSelector } from "react-redux";
 
-import moment from "moment";
+// import moment from "moment";
+import useFormatDate from "../../hooks/useFormatDate";
 
 import { Tooltip } from "antd";
 import { MessageOutlined, EditOutlined } from "@ant-design/icons";
@@ -65,8 +66,9 @@ export function Comment({
         />
     );
 
-    const createdAt = moment(comment.created_at).format("D MMM YYYY");
-    const updatedAt = moment(comment.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(comment.created_at, "dd MMM y"); //moment(comment.created_at).format("D MMM YYYY");
+    const updatedAt = useFormatDate(comment.updated_at, "dd MMM y"); //moment(comment.updated_at).format("D MMM YYYY HH:mm");
+
     const updatedAtComponent = comment.created_at !== comment.updated_at && (
         <Tooltip
             placement="right"

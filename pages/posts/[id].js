@@ -26,9 +26,9 @@ import { EditPostForm } from "../../components/EditPostForm";
 import { useSelector, useDispatch } from "react-redux";
 import {
     setPostCommentsRedux,
-    setPostOneRedux,
-    updatePostOneRedux,
-    deletePostOneRedux,
+    setActivePostRedux,
+    updateActivePostRedux,
+    deleteActivePostRedux,
     sendCommentRedux,
     updateCommentRedux,
     deleteCommentRedux,
@@ -77,12 +77,12 @@ export default () =>
         // });
 
         async function handleDeletePost(post) {
-            await dispatch(deletePostOneRedux(post));
+            await dispatch(deleteActivePostRedux(post));
             // Router.push("/");
         }
 
         async function handleUpdatePost(updatedData) {
-            await dispatch(updatePostOneRedux(updatedData));
+            await dispatch(updateActivePostRedux(updatedData));
         }
 
         async function handleAddComment(commentContent) {
@@ -242,7 +242,7 @@ export const getServerSideProps = withRedux(async (context, store) => {
     // console.log(context.params, "context.params in getServerSideProps [id]");
     try {
         /* const result =  */ await Promise.all([
-            store.dispatch(setPostOneRedux(context.params.id)),
+            store.dispatch(setActivePostRedux(context.params.id)),
             store.dispatch(setPostCommentsRedux(context.params.id)),
         ]);
 

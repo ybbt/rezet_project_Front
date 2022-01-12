@@ -4,7 +4,9 @@ import Image from "next/image";
 
 import { useSelector } from "react-redux";
 
-import moment from "moment";
+// import moment from "moment";
+
+import useFormatDate from "../../hooks/useFormatDate";
 
 import { Tooltip } from "antd";
 import { MessageOutlined, EditOutlined } from "@ant-design/icons";
@@ -61,8 +63,9 @@ export function Post({
         />
     );
 
-    const createdAt = moment(post.created_at).format("D MMM YYYY");
-    const updatedAt = moment(post.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(post.created_at, "dd MMM y"); //moment(post.created_at).format("D MMM YYYY");
+    const updatedAt = useFormatDate(post.updated_at, "dd MMM y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
+
     const updatedAtComponent = post.created_at !== post.updated_at && (
         <Tooltip
             placement="right"

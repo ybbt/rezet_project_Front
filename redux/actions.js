@@ -39,11 +39,11 @@ export const setUserRedux = (userName) => async (dispatch) => {
     }
 };
 
-export const setPostOneRedux = (postId) => async (dispatch) => {
-    console.log(postId, "postId in  setPostOneRedux");
+export const setActivePostRedux = (postId) => async (dispatch) => {
+    console.log(postId, "postId in  setActivePostRedux");
     try {
         const response = await getPost(postId);
-        // console.log(response.data, "result in setPostOneRedux");
+        // console.log(response.data, "result in setActivePostRedux");
         dispatch({
             type: types.SET_POST_SINGLE,
             payload: { post: response.data.data },
@@ -56,11 +56,11 @@ export const setPostOneRedux = (postId) => async (dispatch) => {
     }
 };
 
-export const updatePostOneRedux = (updatedData) => async (dispatch) => {
-    console.log(updatedData, "postId in  updatePostOneRedux");
+export const updateActivePostRedux = (updatedData) => async (dispatch) => {
+    console.log(updatedData, "postId in  updateActivePostRedux");
     try {
         const response = await updatePost(updatedData.id, updatedData.content);
-        // console.log(response.data, "result in updatePostOneRedux");
+        // console.log(response.data, "result in updateActivePostRedux");
         dispatch({
             type: types.UPDATE_POST_SINGLE,
             payload: { updatedPost: updatedData },
@@ -73,11 +73,11 @@ export const updatePostOneRedux = (updatedData) => async (dispatch) => {
     }
 };
 
-export const deletePostOneRedux = (post) => async (dispatch) => {
-    console.log(post, "postId in  deletePostOneRedux");
+export const deleteActivePostRedux = (post) => async (dispatch) => {
+    console.log(post, "postId in  deleteActivePostRedux");
     try {
         const response = await deletePost(post.id);
-        // console.log(response.data, "result in updatePostOneRedux");
+        // console.log(response.data, "result in updateActivePostRedux");
         // dispatch({
         //     type: types.DELETE_POST_SINGLE,
         //     payload: { deletedPost: post },
@@ -255,7 +255,7 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
 };
 
 export const deleteCommentRedux = (comment) => async (dispatch) => {
-    console.log(comment, "updateCommentRedux in action before fetch");
+    console.log(/* comment, */ "deleteCommentRedux in action before fetch");
     try {
         const response = await deleteComment(comment.id);
         // console.log(response.data.data, "response in setPostCommentsRedux");
