@@ -13,17 +13,17 @@ import { Space } from "antd";
 
 import { useSelector } from "react-redux";
 
-export function MainMenu({ isAuth }) {
+export function MainMenu(/* { isAuth } */) {
     // const [signedUserAppContext, setSignedUserAppContext] =
     //     useContext(signedUserContext);
 
-    const signedUserStore = useSelector(
-        (state) => state.authReducer.signedUser
+    const { signedUser: signedUserStore, isAuth: isAuthStore } = useSelector(
+        (state) => state.authReducer
     );
 
-    const authUserMenu = isAuth && (
+    const authUserMenu = isAuthStore && (
         <>
-            <Link href="#" className="">
+            <Link href="/login" className="">
                 <a className="text-black ">
                     <Space>
                         <MailOutlined />

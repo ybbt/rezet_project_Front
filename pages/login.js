@@ -1,37 +1,57 @@
-import { Alert, message } from "antd";
+import { useEffect } from "react";
+
+import { Alert, message, Spin } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
 import { signinSchema } from "../schemas/signinSchema";
 
-import Cookies from "js-cookie";
-
 import Router from "next/router";
 
 import Link from "next/link";
 
+import { useSelector, useDispatch } from "react-redux";
+
 import SignInUp from "../components/SignInUp";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { fetchSignIn } from "../libs/authorizeService";
+import {
+    authMeRedux,
+    loginRedux,
+} from "../redux/actions/authorizationActions.js";
+
+import useAuthStatus from "../hooks/useAuthStatus";
 
 export default function Login(errors, touched) {
-    async function handleSubmitData({ login, password }, { resetForm }) {
-        try {
-            const result = await fetchSignIn(login, password);
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
+    const isLoadStore = useSelector((state) => state.authReducer.isLoad);
+    const dispatch = useDispatch();
 
-            const response = result.data;
+    const stateInStore = useSelector((state) => state);
+    console.log(stateInStore, "state in login");
 
-            console.log(result, "response result");
+    useAuthStatus();
 
-            Cookies.set("token_mytweeter", response.token, {
-                secure: true,
-            });
+    useEffect(() => {
+        if (isAuthStore) {
             Router.push("/");
-        } catch (error) {
-            message.error(`${error.response.data.errors[0]}`);
-            console.log(error.response.data.errors[0], "error catch");
-            resetForm();
         }
+    }, [isAuthStore]);
+
+    async function handleSubmitData({ login, password }, { resetForm }) {
+        dispatch(loginRedux(login, password));
+    }
+
+    if (!isLoadStore || isAuthStore) {
+        return (
+            // <div className="w-full flex justify-center h-screen">
+            //     <Spin size="large" />;
+            // </div>
+            <div class="flex items-center justify-center space-x-2 animate-bounce h-screen">
+                <div class="w-8 h-8 bg-blue-400 rounded-full"></div>
+                <div class="w-8 h-8 bg-green-400 rounded-full"></div>
+                <div class="w-8 h-8 bg-black rounded-full"></div>
+            </div>
+        );
     }
 
     return (

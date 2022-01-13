@@ -1,10 +1,10 @@
+import { useEffect } from "react";
+
 import { Alert, message } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
 import { signupSchema } from "../schemas/signupSchema";
-
-import Cookies from "js-cookie";
 
 import Router from "next/router";
 
@@ -12,9 +12,32 @@ import Link from "next/link";
 
 import SignInUp from "../components/SignInUp";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { fetchSignUp } from "../libs/authorizeService";
+
+import { useSelector, useDispatch } from "react-redux";
+
+import {
+    authMeRedux,
+    registerRedux,
+} from "../redux/actions/authorizationActions.js";
+
+import useAuthStatus from "../hooks/useAuthStatus";
 
 export default function Register() {
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
+    const isLoadStore = useSelector((state) => state.authReducer.isLoad);
+    const dispatch = useDispatch();
+
+    // const stateInStore = useSelector((state) => state);
+    // console.log(stateInStore, "state in login");
+
+    useAuthStatus();
+
+    useEffect(() => {
+        if (isAuthStore) {
+            Router.push("/");
+        }
+    }, [isAuthStore]);
+
     async function handleSubmitData(
         {
             firstName,
@@ -26,27 +49,26 @@ export default function Register() {
         },
         { resetForm }
     ) {
-        try {
-            const result = await fetchSignUp(
+        dispatch(
+            registerRedux(
                 firstName,
                 lastName,
                 userName,
                 email,
                 password,
                 passwordConfirmation
-            );
+            )
+        );
+    }
 
-            const response = result.data;
-
-            Cookies.set("token_mytweeter", response.token, {
-                secure: true,
-            });
-            Router.push("/");
-        } catch (error) {
-            message.error(`${error.response.data.message}`);
-            console.log(error.response.data.message, "error");
-            resetForm();
-        }
+    if (!isLoadStore || isAuthStore) {
+        return (
+            <div class="flex items-center justify-center space-x-2 animate-bounce h-screen">
+                <div class="w-8 h-8 bg-blue-400 rounded-full"></div>
+                <div class="w-8 h-8 bg-green-400 rounded-full"></div>
+                <div class="w-8 h-8 bg-black rounded-full"></div>
+            </div>
+        );
     }
 
     return (
