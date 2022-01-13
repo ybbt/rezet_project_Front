@@ -1,9 +1,12 @@
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-export function DropdownUserMenu({ children, /* user, */ onLogout }) {
+import { logoutRedux } from "../../redux/actions/authorizationActions.js";
+
+export function DropdownUserMenu({ children }) {
+    const dispatch = useDispatch();
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
@@ -19,7 +22,7 @@ export function DropdownUserMenu({ children, /* user, */ onLogout }) {
                 Router.push(`/${signedUserStore.name}`);
                 break;
             case menuKey.logout:
-                onLogout();
+                dispatch(logoutRedux());
                 break;
         }
     }

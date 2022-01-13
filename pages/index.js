@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { message } from "antd";
+// import { message } from "antd";
 import "antd/dist/antd.css";
 
 import { PostsList } from "../components/PostsList";
@@ -17,15 +17,11 @@ import {
     deletePostRedux,
     updatePostRedux,
 } from "../redux/actions/postsListActions.js";
-import {
-    authMeRedux,
-    logoutRedux,
-} from "../redux/actions/authorizationActions.js";
+import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import useAuthStatus from "../hooks/useAuthStatus";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
-// ********
 
 export default function Index() {
     const dispatch = useDispatch();
@@ -64,10 +60,6 @@ export default function Index() {
         await dispatch(updatePostRedux(updatedData));
     }
 
-    async function handlerLogout() {
-        await dispatch(logoutRedux());
-    }
-
     const addPostComponent = isAuthStore && (
         <div className="border border-t-0 border-[#949494] p-2">
             <EditPostForm onSave={handleAddPost} contentKind="post" />
@@ -78,14 +70,11 @@ export default function Index() {
 
     const userBannerDropdown = isAuthStore && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner
-                // user={signedUserStore /* signedUser */}
-                onLogout={handlerLogout}
-            />
+            <UserBanner />
         </div>
     );
 
-    const postsComponentList = /* posts */ postsListStore && (
+    const postsComponentList = postsListStore && (
         <PostsList
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
@@ -122,11 +111,8 @@ export const withRedux = (getStaticProps) => async () => {
         };
     } catch (error) {
         return {
-            // ...result,
             props: {
-                // initialReduxState: store.getState(),
                 error: true,
-                // ...result.props,
             },
         };
     }

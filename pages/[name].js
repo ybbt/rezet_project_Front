@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { useState, useEffect /* , useContext */ } from "react";
+import { useEffect } from "react";
 
-import { message } from "antd";
+// import { message } from "antd";
 import "antd/dist/antd.css";
 
 import { PageTemplate } from "../components/PageTemplate";
@@ -26,10 +26,7 @@ import {
     updatePostRedux,
 } from "../redux/actions/postsListActions.js";
 
-import {
-    authMeRedux,
-    logoutRedux,
-} from "../redux/actions/authorizationActions.js";
+import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 // ********
@@ -71,15 +68,11 @@ export default ({ error, user, postsList }) => {
         await dispatch(updatePostRedux(updatedData));
     }
 
-    async function handlerLogout() {
-        await dispatch(logoutRedux());
-    }
-
     const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
 
     const userBannerDropdown = !!isAuthStore && (
         <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner onLogout={handlerLogout} />
+            <UserBanner />
         </div>
     );
 

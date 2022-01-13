@@ -2,20 +2,15 @@ import Image from "next/image";
 
 import { DropdownUserMenu } from "../DropdownUserMenu";
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
-import { logoutRedux } from "../../redux/actions/authorizationActions.js";
-
-export function UserBanner({ /* user, */ onLogout }) {
-    const dispatch = useDispatch();
+export function UserBanner({}) {
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
 
     return (
-        <DropdownUserMenu
-            /* user={user} */ onLogout={onLogout /* dispatch(logoutRedux()) */}
-        >
+        <DropdownUserMenu>
             <div className="flex w-full">
                 <div className="pr-4 ">
                     <Image src="/avatar.png" width="40" height="40" />
