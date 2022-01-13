@@ -45,7 +45,7 @@ export const setActivePostRedux = (postId) => async (dispatch) => {
         const response = await getPost(postId);
         // console.log(response.data, "result in setActivePostRedux");
         dispatch({
-            type: types.SET_POST_SINGLE,
+            type: types.SET_ACTIVE_POST,
             payload: { post: response.data.data },
         });
     } catch (error) {
@@ -62,7 +62,7 @@ export const updateActivePostRedux = (updatedData) => async (dispatch) => {
         const response = await updatePost(updatedData.id, updatedData.content);
         // console.log(response.data, "result in updateActivePostRedux");
         dispatch({
-            type: types.UPDATE_POST_SINGLE,
+            type: types.UPDATE_ACTIVE_POST,
             payload: { updatedPost: updatedData },
         });
     } catch (error) {
@@ -101,7 +101,7 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
     try {
         const response = await getUserPosts(userName);
         dispatch({
-            type: types.SET_USER_POSTS,
+            type: types.SET_USER_POSTSLIST,
             payload: { userPosts: response.data.data },
         });
     } catch (error) {
@@ -119,7 +119,7 @@ export const setPostsRedux = () => async (dispatch) => {
     try {
         const response = await getHomePosts();
         dispatch({
-            type: types.SET_POSTS,
+            type: types.SET_POSTSLIST,
             payload: { posts: response.data.data },
         });
     } catch (error) {
@@ -137,7 +137,7 @@ export const sendPostRedux = (content) => async (dispatch) => {
     try {
         const response = await sendPost(content);
         dispatch({
-            type: types.SEND_POST,
+            type: types.NEW_POST_IN_LIST,
             payload: { post: response.data.data },
             // payload: { content, author },
         });
@@ -159,7 +159,7 @@ export const deletePostRedux = (post) => async (dispatch) => {
     try {
         const response = await deletePost(post.id);
         dispatch({
-            type: types.DELETE_POST,
+            type: types.DELETE_POST_IN_LIST,
             payload: { post: post },
         });
         dispatch({
@@ -180,7 +180,7 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
     try {
         const response = await updatePost(updatedData.id, updatedData.content);
         dispatch({
-            type: types.UPDATE_POST,
+            type: types.UPDATE_POST_IN_LIST,
             payload: { updatedPost: updatedData },
         });
     } catch (error) {
@@ -201,7 +201,7 @@ export const setPostCommentsRedux = (postId) => async (dispatch) => {
         const response = await getPostComments(postId);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.SET_POST_COMMENTS,
+            type: types.SET_COMMENTSLIST,
             payload: { postComments: response.data.data },
         });
     } catch (error) {
@@ -220,7 +220,7 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
         const response = await setPostComment(postId, content);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.SEND_COMMENT,
+            type: types.NEW_COMMENT_IN_LIST,
             payload: { comment: response.data.data },
         });
         dispatch({
@@ -245,7 +245,7 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
         );
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.UPDATE_COMMENT,
+            type: types.UPDATE_COMMENT_IN_LIST,
             payload: { updatedComment: updatedData },
         });
     } catch (error) {
@@ -264,7 +264,7 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         const response = await deleteComment(comment.id);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.DELETE_COMMENT,
+            type: types.DELETE_COMMENT_IN_LIST,
             payload: { deletedComment: comment },
         });
         dispatch({

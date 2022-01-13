@@ -7,19 +7,25 @@ const initialPostsState = {
 const postsReducer = (state = initialPostsState, { type, payload }) => {
     const newPostsList = {};
     switch (type) {
-        case types.SET_POSTS:
+        case types.SET_POSTSLIST:
             console.log("SET_POSTS in switch");
             return Object.assign({}, state, {
                 postsList: payload.posts,
             });
             break;
-        case types.SEND_POST:
+        // case types.SET_USER_POSTSLIST:
+        //     console.log("SET_USER_POSTS in switch");
+        //     return Object.assign({}, state, {
+        //         postsList: payload.userPosts,
+        //     });
+        //     break;
+        case types.NEW_POST_IN_LIST:
             console.log("SEND_POST in switch");
             return Object.assign({}, state, {
                 postsList: [/* payload &&  */ payload.post, ...state.postsList],
             });
             break;
-        case types.DELETE_POST:
+        case types.DELETE_POST_IN_LIST:
             console.log("DELETE_POST in switch");
             /* const */ newPostsList = state.postsList.filter(
                 (postItem) => postItem.id !== payload.post.id
@@ -28,7 +34,7 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
                 postsList: newPostsList,
             });
             break;
-        case types.UPDATE_POST:
+        case types.UPDATE_POST_IN_LIST:
             console.log("UPDATE_POST in switch");
             /* const  */ newPostsList = state.postsList.map((postItem) =>
                 postItem.id === payload.updatedPost.id
@@ -37,13 +43,6 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
             );
             return Object.assign({}, state, {
                 postsList: newPostsList,
-            });
-            break;
-        case types.SET_USER_POSTS:
-            console.log("SET_USER_POSTS in switch");
-            return Object.assign({}, state, {
-                postsList: payload.userPosts,
-                name: "boss",
             });
             break;
         default:

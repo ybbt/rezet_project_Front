@@ -13,7 +13,7 @@ export const setPostCommentsRedux = (postId) => async (dispatch) => {
         const response = await getPostComments(postId);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.SET_POST_COMMENTS,
+            type: types.SET_COMMENTSLIST,
             payload: { postComments: response.data.data },
         });
     } catch (error) {
@@ -32,7 +32,7 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
         const response = await setPostComment(postId, content);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.SEND_COMMENT,
+            type: types.NEW_COMMENT_IN_LIST,
             payload: { comment: response.data.data },
         });
         dispatch({
@@ -57,7 +57,7 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
         );
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.UPDATE_COMMENT,
+            type: types.UPDATE_COMMENT_IN_LIST,
             payload: { updatedComment: updatedData },
         });
     } catch (error) {
@@ -76,7 +76,7 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         const response = await deleteComment(comment.id);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
-            type: types.DELETE_COMMENT,
+            type: types.DELETE_COMMENT_IN_LIST,
             payload: { deletedComment: comment },
         });
         dispatch({

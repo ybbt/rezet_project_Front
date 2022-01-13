@@ -17,7 +17,7 @@ export const setActivePostRedux = (postId) => async (dispatch) => {
         const response = await getPost(postId);
         // console.log(response.data, "result in setActivePostRedux");
         dispatch({
-            type: types.SET_POST_SINGLE,
+            type: types.SET_ACTIVE_POST,
             payload: { post: response.data.data },
         });
     } catch (error) {
@@ -34,7 +34,7 @@ export const updateActivePostRedux = (updatedData) => async (dispatch) => {
         const response = await updatePost(updatedData.id, updatedData.content);
         // console.log(response.data, "result in updateActivePostRedux");
         dispatch({
-            type: types.UPDATE_POST_SINGLE,
+            type: types.UPDATE_ACTIVE_POST,
             payload: { updatedPost: updatedData },
         });
     } catch (error) {

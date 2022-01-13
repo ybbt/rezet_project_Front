@@ -6,20 +6,21 @@ const initialPostState = {
 
 const postReducer = (state = initialPostState, { type, payload }) => {
     switch (type) {
-        case types.SET_POST_SINGLE:
+        case types.SET_ACTIVE_POST:
             console.log("SET_POST in switch");
             return Object.assign({}, state, {
                 activePost: payload.post,
             });
             break;
-        case types.UPDATE_POST_SINGLE:
+        case types.UPDATE_ACTIVE_POST:
             console.log("UPDATE_POST_SINGLE in switch");
             return Object.assign({}, state, {
-                activePost:
-                    payload.updatedPost /* { ...state.activePost, ...payload.updatedPost }, */,
+                activePost: {
+                    ...payload.updatedPost,
+                } /* { ...state.activePost, ...payload.updatedPost }, */,
             });
             break;
-        case types.DELETE_POST_SINGLE:
+        case types.DELETE_ACTIVE_POST:
             console.log("DELETE_POST_SINGLE in switch");
             return Object.assign({}, state, {
                 activePost: {},

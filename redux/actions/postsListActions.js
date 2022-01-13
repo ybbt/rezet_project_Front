@@ -10,15 +10,11 @@ import {
 import * as types from "../actionsTypes";
 
 export const setUserPostsRedux = (userName) => async (dispatch) => {
-    // console.log(
-    //     userName,
-    //     "userName in setUserPostsRedux in action before fetch"
-    // );
     try {
         const response = await getUserPosts(userName);
         dispatch({
-            type: types.SET_USER_POSTS,
-            payload: { userPosts: response.data.data },
+            type: types.SET_POSTSLIST /* SET_USER_POSTSLIST */,
+            payload: { /* userPosts */ posts: response.data.data },
         });
     } catch (error) {
         // message.error(`${error.response}`);
@@ -35,7 +31,7 @@ export const setPostsRedux = () => async (dispatch) => {
     try {
         const response = await getHomePosts();
         dispatch({
-            type: types.SET_POSTS,
+            type: types.SET_POSTSLIST,
             payload: { posts: response.data.data },
         });
     } catch (error) {
@@ -53,7 +49,7 @@ export const sendPostRedux = (content) => async (dispatch) => {
     try {
         const response = await sendPost(content);
         dispatch({
-            type: types.SEND_POST,
+            type: types.NEW_POST_IN_LIST,
             payload: { post: response.data.data },
             // payload: { content, author },
         });
@@ -75,7 +71,7 @@ export const deletePostRedux = (post) => async (dispatch) => {
     try {
         const response = await deletePost(post.id);
         dispatch({
-            type: types.DELETE_POST,
+            type: types.DELETE_POST_IN_LIST,
             payload: { post: post },
         });
         dispatch({
@@ -96,7 +92,7 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
     try {
         const response = await updatePost(updatedData.id, updatedData.content);
         dispatch({
-            type: types.UPDATE_POST,
+            type: types.UPDATE_POST_IN_LIST,
             payload: { updatedPost: updatedData },
         });
     } catch (error) {

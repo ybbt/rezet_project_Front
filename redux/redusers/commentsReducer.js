@@ -6,14 +6,14 @@ const initialCommentsState = {
 
 const commentsReducer = (state = initialCommentsState, { type, payload }) => {
     switch (type) {
-        case types.SET_POST_COMMENTS:
+        case types.SET_COMMENTSLIST:
             const newState = Object.assign({}, state, {
                 commentsList: payload.postComments,
             });
             // console.log(newState, "SET_POST_COMMENTS in switch");
             return newState;
             break;
-        case types.SEND_COMMENT:
+        case types.NEW_COMMENT_IN_LIST:
             console.log(payload, "payload SEND_COMMENT in switch");
             return Object.assign({}, state, {
                 commentsList: [
@@ -22,7 +22,7 @@ const commentsReducer = (state = initialCommentsState, { type, payload }) => {
                 ],
             });
             break;
-        case types.UPDATE_COMMENT:
+        case types.UPDATE_COMMENT_IN_LIST:
             const newCommentsListUpdated = state.commentsList.map(
                 (commentItem) =>
                     commentItem.id === payload.updatedComment.id
@@ -33,7 +33,7 @@ const commentsReducer = (state = initialCommentsState, { type, payload }) => {
             return Object.assign({}, state, {
                 commentsList: newCommentsListUpdated,
             });
-        case types.DELETE_COMMENT:
+        case types.DELETE_COMMENT_IN_LIST:
             const newCommentsListDeleted = state.commentsList.filter(
                 (commentItem) => commentItem.id !== payload.deletedComment.id
             );
