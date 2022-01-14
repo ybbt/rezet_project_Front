@@ -8,10 +8,7 @@ import "antd/dist/antd.css";
 import { getPost } from "../../libs/postService";
 import { getPostComments } from "../../libs/commentService";
 
-import { PageTemplate } from "../../components/PageTemplate";
-import { SignBanner } from "../../components/SignBanner";
-import { UserBanner } from "../../components/UserBanner";
-import { MainMenu } from "../../components/MainMenu";
+import { PageLayout } from "../../components/PageLayout";
 import { CommentsList } from "../../components/CommentsList";
 import { Post } from "../../components/Post";
 import { EditPostForm } from "../../components/EditPostForm";
@@ -34,40 +31,26 @@ import {
     deleteCommentRedux,
 } from "../../redux/actions/commentsListActions.js";
 
-import {
-    authMeRedux,
-    // logoutRedux,
-} from "../../redux/actions/authorizationActions.js";
+// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 
-export default () => {
+export default function userPost() {
     const dispatch = useDispatch();
     const commentsListStore = useSelector(
         (state) => state.commentsReducer.commentsList
     );
     const postStore = useSelector((state) => state.postReducer.activePost);
-    // const signedUserStore = useSelector(
-    //     (state) => state.authReducer.signedUser
-    // );
+
     const {
         signedUser: signedUserStore,
         isAuth: isAuthStore,
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
 
-    // const errorStore = useSelector((state) => state.errorReducer.error);
-    // const statusTextStore = useSelector(
-    //     (state) => state.errorReducer.statusText
-    // );
+    // useAuthStatus();
 
-    useAuthStatus();
-
-    // if (errorStore) {
-    //     return <div>{statusTextStore}</div>;
-    // }
-
-    useErrorStore();
+    // useErrorStore();
 
     async function handleDeletePost(post) {
         await dispatch(deleteActivePostRedux(post));
@@ -88,18 +71,6 @@ export default () => {
     async function handleDeleteComment(comment) {
         await dispatch(deleteCommentRedux(comment));
     }
-
-    // async function handlerLogout() {
-    //     await dispatch(logoutRedux());
-    // }
-
-    const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
-
-    const userBannerDropdown = !!isAuthStore && (
-        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner /* onLogout={handlerLogout} */ />
-        </div>
-    );
 
     const commentsComponentList = commentsListStore && (
         <CommentsList
@@ -133,30 +104,39 @@ export default () => {
         </Space>
     );
 
+    const postComponent = postStore && (
+        <Post
+            post={postStore}
+            key={postStore.id}
+            onDeletePost={handleDeletePost}
+            onUpdatePost={handleUpdatePost}
+        />
+    );
+
+    // const headerContent = (
+    //     <>
+    //         <div>Thread</div>
+    //         <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
+    //     </>
+    // );
+
     return (
-        <PageTemplate signBanner={signBanner}>
-            <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu />
-            </div>
-            {userBannerDropdown}
-            <header className="border border-[#949494] h-12 font-bold text-lg flex flex-col justify-center pl-4">
-                Thread
+        <>
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+                <div>Thread</div>
                 <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
             </header>
-
-            <Post
-                post={postStore}
-                key={postStore.id}
-                onDeletePost={handleDeletePost}
-                onUpdatePost={handleUpdatePost}
-            />
-
+            {postComponent}
             {addCommentComponent}
             <div className="h-10 border border-[#949494] border-t-0"></div>
             {beTheFirstComponent}
             {commentsComponentList}
-        </PageTemplate>
+        </>
     );
+}
+
+userPost.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
 };
 
 export const withRedux = (getServerSideProps) => async (ctx) => {

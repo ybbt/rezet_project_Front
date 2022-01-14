@@ -4,13 +4,10 @@ import { useEffect } from "react";
 // import { message } from "antd";
 import "antd/dist/antd.css";
 
-import { PageTemplate } from "../components/PageTemplate";
-import { SignBanner } from "../components/SignBanner";
-import { MainMenu } from "../components/MainMenu";
+import { PageLayout } from "../components/PageLayout";
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
 import { UserWrapper } from "../components/UserWrapper";
-import { UserBanner } from "../components/UserBanner";
 
 import useAuthStatus from "../hooks/useAuthStatus";
 import useErrorStore from "../hooks/useErrorStore";
@@ -26,11 +23,11 @@ import {
     updatePostRedux,
 } from "../redux/actions/postsListActions.js";
 
-import { authMeRedux } from "../redux/actions/authorizationActions.js";
+// import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
-export default ({ error, user, postsList }) => {
+export default function userName({ error, user, postsList }) {
     const router = useRouter();
 
     const dispatch = useDispatch();
@@ -43,18 +40,12 @@ export default ({ error, user, postsList }) => {
     } = useSelector((state) => state.authReducer);
     const activeUserStore = useSelector((state) => state.userReducer.user);
 
-    // const errorStore = useSelector((state) => state.errorReducer.error);
-    // const statusTextStore = useSelector(
-    //     (state) => state.errorReducer.statusText
-    // );
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in [name]");
 
-    useAuthStatus();
+    // useAuthStatus();
 
-    // if (errorStore) {
-    //     return <div>{statusTextStore}</div>;
-    // }
-
-    useErrorStore();
+    // useErrorStore();
 
     async function handleAddPost(postContent) {
         await dispatch(sendPostRedux(postContent));
@@ -67,14 +58,6 @@ export default ({ error, user, postsList }) => {
     async function handleUpdatePost(updatedData) {
         await dispatch(updatePostRedux(updatedData));
     }
-
-    const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
-
-    const userBannerDropdown = !!isAuthStore && (
-        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner />
-        </div>
-    );
 
     const addPostComponent = activeUserStore.name === signedUserStore.name && (
         <div className="border border-t-0 border-[#949494] p-2">
@@ -89,25 +72,36 @@ export default ({ error, user, postsList }) => {
         />
     );
 
+    // const headerContent = (
+    //     <>
+    //         <div className="font-bold text-lg">{`${
+    //             activeUserStore.first_name
+    //         } ${activeUserStore.last_name || ""}`}</div>
+    //         <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div>
+    //     </>
+    // );
+
     return (
-        <PageTemplate signBanner={signBanner}>
-            <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu />
-            </div>
-            {userBannerDropdown}
-            <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
-                <div className="font-bold text-lg">{`${
-                    activeUserStore.first_name
-                } ${activeUserStore.last_name || ""}`}</div>
+        <>
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+                <div className="font-bold text-lg">
+                    {`${activeUserStore.first_name} ${
+                        activeUserStore.last_name || ""
+                    }`}
+                </div>
                 <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div>
             </header>
             <div className="h-64 w-full border border-[#949494] border-t-0">
-                <UserWrapper user={/* user */ activeUserStore} />
+                <UserWrapper user={activeUserStore} />
             </div>
             {addPostComponent}
             {postsComponentList}
-        </PageTemplate>
+        </>
     );
+}
+
+userName.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
 };
 
 export const withRedux = (getServerSideProps) => async (ctx) => {

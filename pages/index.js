@@ -5,10 +5,8 @@ import "antd/dist/antd.css";
 
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
-import { MainMenu } from "../components/MainMenu";
-import { PageTemplate } from "../components/PageTemplate";
-import { SignBanner } from "../components/SignBanner";
-import { UserBanner } from "../components/UserBanner";
+
+import { PageLayout } from "../components/PageLayout";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -17,7 +15,7 @@ import {
     deletePostRedux,
     updatePostRedux,
 } from "../redux/actions/postsListActions.js";
-import { authMeRedux } from "../redux/actions/authorizationActions.js";
+// import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import useAuthStatus from "../hooks/useAuthStatus";
 import useErrorStore from "../hooks/useErrorStore";
@@ -26,6 +24,7 @@ import { initializeStore } from "../redux/store"; // ---  для серверн�
 
 export default function Index() {
     const dispatch = useDispatch();
+
     const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
     const {
@@ -33,23 +32,13 @@ export default function Index() {
         isAuth: isAuthStore,
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
-    // const errorStore = useSelector((state) => state.errorReducer.error);
-    // const statusTextStore = useSelector(
-    //     (state) => state.errorReducer.statusText
-    // );
 
-    useAuthStatus();
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in index");
 
-    // useEffect(() => {
-    //     errorStore && message.error(`${errorStore}`);
-    //     console.log(errorStore, "errorStore in useEffect");
-    // }, [errorStore]);
+    // useAuthStatus();
 
-    // if (errorStore) {
-    //     return <div>{statusTextStore}</div>;
-    // }
-
-    useErrorStore();
+    // useErrorStore();
 
     async function handleAddPost(postContent) {
         await dispatch(sendPostRedux(postContent));
@@ -69,14 +58,6 @@ export default function Index() {
         </div>
     );
 
-    const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
-
-    const userBannerDropdown = isAuthStore && (
-        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <UserBanner />
-        </div>
-    );
-
     const postsComponentList = postsListStore && (
         <PostsList
             onDeletePost={handleDeletePost}
@@ -84,20 +65,22 @@ export default function Index() {
         />
     );
 
+    // const headerContent = <span>Explore</span>;
+
     return (
-        <PageTemplate signBanner={signBanner}>
-            <div className="w-32 h-40 fixed top-0 -translate-x-[calc(100%_+_2rem)] translate-y-11 border border-gray text-xl font-medium flex flex-col">
-                <MainMenu />
-            </div>
-            {userBannerDropdown}
-            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
-                Explore
+        <>
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+                <span>Explore</span>
             </header>
             {addPostComponent}
             {postsComponentList}
-        </PageTemplate>
+        </>
     );
 }
+
+Index.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
+};
 
 export const withRedux = (getStaticProps) => async () => {
     const store = initializeStore();

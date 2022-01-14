@@ -8,9 +8,11 @@ import React, { useState } from "react";
 function MyApp({ Component, pageProps }) {
     const store = useStore(pageProps.initialReduxState);
 
+    const getLayout = Component.getLayout || ((page) => page);
+
     return (
         <Provider store={store}>
-            <Component {...pageProps} />
+            {getLayout(<Component {...pageProps} />)}
         </Provider>
     );
 }

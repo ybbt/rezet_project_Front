@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
@@ -5,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { logoutRedux } from "../../redux/actions/authorizationActions.js";
 
-export function DropdownUserMenu({ children }) {
+export function DropdownUserMenu(/* { children } */) {
     const dispatch = useDispatch();
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
@@ -53,7 +55,16 @@ export function DropdownUserMenu({ children }) {
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    {children}
+                    {/* {children} */}
+                    <div className="flex w-full">
+                        <div className="pr-4 ">
+                            <Image src="/avatar.png" width="40" height="40" />
+                        </div>
+                        <div className="">
+                            <div className="font-medium text-xs">{`${signedUserStore.first_name}`}</div>
+                            <div className="text-[#949494] text-[0.625rem]">{`@${signedUserStore.name}`}</div>
+                        </div>
+                    </div>
                 </Button>
             </Dropdown>
         </Space>
