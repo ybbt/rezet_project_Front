@@ -6,6 +6,8 @@ import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 import { useSelector, useDispatch } from "react-redux";
 // import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 
+import ErrorPage from "next/error";
+
 import useAuthStatus from "../../hooks/useAuthStatus";
 import useErrorStore from "../../hooks/useErrorStore";
 
@@ -16,14 +18,13 @@ export function PageLayout({ children, headerContent }) {
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
 
-    const errorStore = useSelector((state) => state.errorReducer.error);
+    // const errorStore = useSelector((state) => state.errorReducer.error);
 
     useAuthStatus();
 
-    useErrorStore();
-
-    if (errorStore) {
-        return <div>ERROR</div>;
+    const errorStatus = useErrorStore();
+    if (errorStatus) {
+        return <ErrorPage statusCode={errorStatus} />;
     }
 
     const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
