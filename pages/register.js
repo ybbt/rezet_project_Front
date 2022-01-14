@@ -22,6 +22,8 @@ import {
 
 import useAuthStatus from "../hooks/useAuthStatus";
 
+import useErrorStore from "../hooks/useErrorStore";
+
 export default function Register() {
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
     const isLoadStore = useSelector((state) => state.authReducer.isLoad);
@@ -37,6 +39,8 @@ export default function Register() {
             Router.push("/");
         }
     }, [isAuthStore]);
+
+    useErrorStore();
 
     async function handleSubmitData(
         {
@@ -56,17 +60,18 @@ export default function Register() {
                 userName,
                 email,
                 password,
-                passwordConfirmation
+                passwordConfirmation,
+                resetForm
             )
         );
     }
 
     if (!isLoadStore || isAuthStore) {
         return (
-            <div class="flex items-center justify-center space-x-2 animate-bounce h-screen">
-                <div class="w-8 h-8 bg-blue-400 rounded-full"></div>
-                <div class="w-8 h-8 bg-green-400 rounded-full"></div>
-                <div class="w-8 h-8 bg-black rounded-full"></div>
+            <div className="flex items-center justify-center space-x-2 animate-bounce h-screen">
+                <div className="w-8 h-8 bg-blue-400 rounded-full"></div>
+                <div className="w-8 h-8 bg-green-400 rounded-full"></div>
+                <div className="w-8 h-8 bg-black rounded-full"></div>
             </div>
         );
     }

@@ -20,6 +20,7 @@ import {
 import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import useAuthStatus from "../hooks/useAuthStatus";
+import useErrorStore from "../hooks/useErrorStore";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
@@ -32,21 +33,23 @@ export default function Index() {
         isAuth: isAuthStore,
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
-    const errorStore = useSelector((state) => state.errorReducer.error);
-    const statusTextStore = useSelector(
-        (state) => state.errorReducer.statusText
-    );
+    // const errorStore = useSelector((state) => state.errorReducer.error);
+    // const statusTextStore = useSelector(
+    //     (state) => state.errorReducer.statusText
+    // );
 
     useAuthStatus();
 
-    useEffect(() => {
-        errorStore && message.error(`${errorStore}`);
-        console.log(errorStore, "errorStore in useEffect");
-    }, [errorStore]);
+    // useEffect(() => {
+    //     errorStore && message.error(`${errorStore}`);
+    //     console.log(errorStore, "errorStore in useEffect");
+    // }, [errorStore]);
 
-    if (errorStore) {
-        return <div>{statusTextStore}</div>;
-    }
+    // if (errorStore) {
+    //     return <div>{statusTextStore}</div>;
+    // }
+
+    useErrorStore();
 
     async function handleAddPost(postContent) {
         await dispatch(sendPostRedux(postContent));
@@ -128,6 +131,11 @@ export const getStaticProps = withRedux(async (store) => {
         };
     } catch (error) {
         console.log(error, "Error in getStaticProps");
-        store.dispatch(setErrorRedux(error));
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: true,
+        //     },
+        // };
     }
 });

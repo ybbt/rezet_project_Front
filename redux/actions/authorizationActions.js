@@ -33,12 +33,22 @@ export const authMeRedux = () => async (dispatch) => {
                 isLoad: true,
             },
         });
-        Cookies.remove("token_mytweeter");
+        if (error.response && error.response.status === 401) {
+            Cookies.remove("token_mytweeter");
+        }
     }
 };
 
 export const registerRedux =
-    (firstName, lastName, userName, email, password, passwordConfirmation) =>
+    (
+        firstName,
+        lastName,
+        userName,
+        email,
+        password,
+        passwordConfirmation,
+        resetForm
+    ) =>
     async (dispatch) => {
         console.log("registrRedux in action before fetch");
         try {
@@ -64,12 +74,16 @@ export const registerRedux =
             console.log(error, "error in logoutRedux");
             dispatch({
                 type: types.SET_ERROR,
-                payload: { error: error.message && error.response },
+                payload: {
+                    error: error.response || null,
+                    errorMessage: error.message || null,
+                },
             });
+            resetForm();
         }
     };
 
-export const loginRedux = (login, password) => async (dispatch) => {
+export const loginRedux = (login, password, resetForm) => async (dispatch) => {
     console.log("loginRedux in action before fetch");
     try {
         const result = await fetchSignIn(login, password);
@@ -84,11 +98,15 @@ export const loginRedux = (login, password) => async (dispatch) => {
         });
     } catch (error) {
         // message.error(`${error.response}`);
-        console.log(error, "error in logoutRedux");
+        console.log(error.response.data.errors, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
+        resetForm();
     }
 };
 
@@ -109,7 +127,10 @@ export const logoutRedux = () => async (dispatch) => {
         console.log(error, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };

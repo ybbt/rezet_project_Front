@@ -21,7 +21,10 @@ export const setPostCommentsRedux = (postId) => async (dispatch) => {
         console.log(error.message, "error in setPostCommentsRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -43,7 +46,10 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
         console.log(error.message, "error in sendCommentRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -65,7 +71,10 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
         console.log(error.message, "error in sendCommentRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -87,7 +96,10 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         console.log(error.message, "error in sendCommentRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };

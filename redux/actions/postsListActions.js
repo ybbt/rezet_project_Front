@@ -21,7 +21,10 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
         console.log(error.message, "error in setUserPostsRedux");
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -39,7 +42,10 @@ export const setPostsRedux = () => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -61,7 +67,10 @@ export const sendPostRedux = (content) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -82,7 +91,10 @@ export const deletePostRedux = (post) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -100,7 +112,10 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };

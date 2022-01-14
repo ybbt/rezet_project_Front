@@ -17,8 +17,8 @@ import { Post } from "../../components/Post";
 import { EditPostForm } from "../../components/EditPostForm";
 
 import useAuthStatus from "../../hooks/useAuthStatus";
+import useErrorStore from "../../hooks/useErrorStore";
 
-// ********
 import { useSelector, useDispatch } from "react-redux";
 
 import {
@@ -56,16 +56,18 @@ export default () => {
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
 
-    const errorStore = useSelector((state) => state.errorReducer.error);
-    const statusTextStore = useSelector(
-        (state) => state.errorReducer.statusText
-    );
+    // const errorStore = useSelector((state) => state.errorReducer.error);
+    // const statusTextStore = useSelector(
+    //     (state) => state.errorReducer.statusText
+    // );
 
     useAuthStatus();
 
-    if (errorStore) {
-        return <div>{statusTextStore}</div>;
-    }
+    // if (errorStore) {
+    //     return <div>{statusTextStore}</div>;
+    // }
+
+    useErrorStore();
 
     async function handleDeletePost(post) {
         await dispatch(deleteActivePostRedux(post));
@@ -193,12 +195,11 @@ export const getServerSideProps = withRedux(async (context, store) => {
             },
         };
     } catch (error) {
-        store.dispatch(setErrorRedux(error));
-
-        return {
-            props: {
-                error: error.message,
-            },
-        };
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: error.message,
+        //     },
+        // };
     }
 });

@@ -23,7 +23,10 @@ export const setActivePostRedux = (postId) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -40,7 +43,10 @@ export const updateActivePostRedux = (updatedData) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };
@@ -58,7 +64,10 @@ export const deleteActivePostRedux = (post) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };

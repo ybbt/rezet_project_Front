@@ -15,7 +15,10 @@ export const setUserRedux = (userName) => async (dispatch) => {
         // console.log(error);
         dispatch({
             type: types.SET_ERROR,
-            payload: { error: error.message && error.response },
+            payload: {
+                error: error.response || null,
+                errorMessage: error.message || null,
+            },
         });
     }
 };

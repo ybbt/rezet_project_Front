@@ -13,8 +13,8 @@ import { UserWrapper } from "../components/UserWrapper";
 import { UserBanner } from "../components/UserBanner";
 
 import useAuthStatus from "../hooks/useAuthStatus";
+import useErrorStore from "../hooks/useErrorStore";
 
-// ********
 import { useSelector, useDispatch } from "react-redux";
 
 import { setUserRedux } from "../redux/actions/activeUserActions.js";
@@ -29,12 +29,10 @@ import {
 import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
-// ********
 
 export default ({ error, user, postsList }) => {
     const router = useRouter();
 
-    // *******
     const dispatch = useDispatch();
     const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
@@ -45,16 +43,18 @@ export default ({ error, user, postsList }) => {
     } = useSelector((state) => state.authReducer);
     const activeUserStore = useSelector((state) => state.userReducer.user);
 
-    const errorStore = useSelector((state) => state.errorReducer.error);
-    const statusTextStore = useSelector(
-        (state) => state.errorReducer.statusText
-    );
+    // const errorStore = useSelector((state) => state.errorReducer.error);
+    // const statusTextStore = useSelector(
+    //     (state) => state.errorReducer.statusText
+    // );
 
     useAuthStatus();
 
-    if (errorStore) {
-        return <div>{statusTextStore}</div>;
-    }
+    // if (errorStore) {
+    //     return <div>{statusTextStore}</div>;
+    // }
+
+    useErrorStore();
 
     async function handleAddPost(postContent) {
         await dispatch(sendPostRedux(postContent));
@@ -146,11 +146,11 @@ export const getServerSideProps = withRedux(async (context, store) => {
         };
     } catch (error) {
         console.log(error, "error in getServerSideProps");
-        store.dispatch(setErrorRedux(error));
-        return {
-            props: {
-                error: error.message,
-            },
-        };
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: true,
+        //     },
+        // };
     }
 });
