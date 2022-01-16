@@ -6,7 +6,7 @@ import Router from "next/router";
 import signedUserContext from "../../context/signedUserContext";
 
 export function DropdownUserMenu({ children, onLogout }) {
-    const [signedUser] = useContext(signedUserContext);
+    const [/* signedUser */ { signedUser }] = useContext(signedUserContext);
     const menuKey = {
         profile: "1",
         logout: "2",

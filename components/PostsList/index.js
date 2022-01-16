@@ -5,7 +5,7 @@ import { Post } from "../Post/index";
 import signedUserContext from "../../context/signedUserContext";
 
 export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
-    const [signedUser] = useContext(signedUserContext);
+    const [/* signedUser */ { signedUser }] = useContext(signedUserContext);
     return postsList.map((postItem) => {
         return (
             <Post

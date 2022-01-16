@@ -5,11 +5,15 @@ import React, { useState } from "react";
 import signedUserContext from "../context/signedUserContext";
 
 function MyApp({ Component, pageProps }) {
-    var [signedUser, setSignedUser] = useState({});
+    const [auth, setAuth] = useState({ signedUser: {}, isLoaded: false });
+
+    const getLayout = Component.getLayout || ((page) => page);
 
     return (
-        <signedUserContext.Provider value={[signedUser, setSignedUser]}>
-            <Component {...pageProps} />
+        <signedUserContext.Provider
+            value={[auth, setAuth] /* [signedUser, setSignedUser] */}
+        >
+            {getLayout(<Component {...pageProps} />)}
         </signedUserContext.Provider>
     );
 }

@@ -4,7 +4,7 @@ import { useContext } from "react";
 import signedUserContext from "../../context/signedUserContext";
 
 export function MainMenu() {
-    const [signedUser] = useContext(signedUserContext);
+    const [/* signedUser */ { signedUser }] = useContext(signedUserContext);
 
     const authUserMenu = !!Object.keys(signedUser).length && (
         <>

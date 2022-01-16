@@ -1,4 +1,4 @@
-export default function SignInUp({ children, title }) {
+export default function SignLayout({ children, title }) {
     return (
         <div className=" flex justify-center w-96 border-[#949494] border-2">
             <div className="w-52 flex items-center flex-col">
