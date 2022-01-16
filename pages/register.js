@@ -10,7 +10,7 @@ import Router from "next/router";
 
 import Link from "next/link";
 
-import SignInUpLayout from "../components/SignInUpLayout";
+import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
 
 import { useDispatch } from "react-redux";
@@ -106,7 +106,7 @@ export default function Register() {
 Register.getLayout = function getLayout(page) {
     return (
         <div className="w-full h-screen flex justify-center items-center">
-            <SignInUpLayout>{page}</SignInUpLayout>
+            <SignLayout>{page}</SignLayout>
         </div>
     );
 };

@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Router from "next/router";
 
-export default function SignInUpLayout({ children, title }) {
+export default function SignLayout({ children, title }) {
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
     const isLoadStore = useSelector((state) => state.authReducer.isLoad);
 

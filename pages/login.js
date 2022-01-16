@@ -12,7 +12,7 @@ import Link from "next/link";
 
 import { useDispatch } from "react-redux";
 
-import SignInUpLayout from "../components/SignInUpLayout";
+import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
 import { loginRedux } from "../redux/actions/authorizationActions.js";
 
@@ -67,7 +67,7 @@ export default function Login(errors, touched) {
 Login.getLayout = function getLayout(page) {
     return (
         <div className="w-full h-screen flex justify-center items-center">
-            <SignInUpLayout>{page}</SignInUpLayout>
+            <SignLayout>{page}</SignLayout>
         </div>
     );
 };
