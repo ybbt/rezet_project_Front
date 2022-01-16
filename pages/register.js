@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-import { Alert /* , message  */ } from "antd";
+import { Alert, Input /* , message  */ } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
@@ -75,12 +75,14 @@ export default function Register() {
                     <AuthorizationElement
                         formName="password"
                         title="Password"
-                        type="password"
+                        type="assword"
+                        as={Input.Password}
                     />
                     <AuthorizationElement
                         formName="passwordConfirmation"
                         title="Password confirmation"
                         type="password"
+                        as={Input.Password}
                     />
                     <button
                         type="submit"
