@@ -88,7 +88,12 @@ export function Comment({
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
             <Link href={`/${comment.author.name}`}>
                 <a className="block min-w-[60px] mx-4">
-                    <Image src="/avatar.png" width="60" height="60" />
+                    <Image
+                        className="rounded-full"
+                        src={`${process.env.NEXT_PUBLIC_SERV_URL}/${comment.author.avatar_path}`}
+                        width="60"
+                        height="60"
+                    />
                 </a>
             </Link>
 

@@ -71,7 +71,7 @@ export const registerRedux =
             });
         } catch (error) {
             // message.error(`${error.response}`);
-            console.log(error, "error in logoutRedux");
+            console.log(error.request, "error in registerRedux");
             dispatch({
                 type: types.SET_ERROR,
                 payload: {

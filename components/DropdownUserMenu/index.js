@@ -58,7 +58,12 @@ export function DropdownUserMenu(/* { children } */) {
                     {/* {children} */}
                     <div className="flex w-full">
                         <div className="pr-4 ">
-                            <Image src="/avatar.png" width="40" height="40" />
+                            <Image
+                                className="rounded-full"
+                                src={`${process.env.NEXT_PUBLIC_SERV_URL}/${signedUserStore.avatar_path}`}
+                                width="40"
+                                height="40"
+                            />
                         </div>
                         <div className="">
                             <div className="font-medium text-xs">{`${signedUserStore.first_name}`}</div>
