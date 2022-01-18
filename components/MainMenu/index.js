@@ -47,7 +47,7 @@ export function MainMenu(/* { isAuth } */) {
                     </Space>
                 </a>
             </Link>
-            <Link href="#">
+            <Link href="/settings">
                 <a className="text-black">
                     <Space>
                         <SettingOutlined />

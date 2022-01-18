@@ -10,7 +10,7 @@ import Router from "next/router";
 
 import Link from "next/link";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
@@ -18,6 +18,9 @@ import { loginRedux } from "../redux/actions/authorizationActions.js";
 
 export default function Login(errors, touched) {
     const dispatch = useDispatch();
+
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in login");
 
     async function handleSubmitData({ login, password }, { resetForm }) {
         dispatch(loginRedux(login, password, resetForm));
