@@ -21,7 +21,6 @@ export default function Login(errors, touched) {
 
     async function handleSubmitData({ login, password }, { resetForm }) {
         dispatch(loginRedux(login, password, resetForm));
-        // Router.push("/");
     }
 
     return (
