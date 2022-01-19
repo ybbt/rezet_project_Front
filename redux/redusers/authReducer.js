@@ -18,7 +18,7 @@ const authReducer = (state = initialAuthState, { type, payload }) => {
             });
             break;
         case types.LOGIN:
-            console.log("LOGIN in switch");
+            console.log(payload.isAuth, "LOGIN in switch");
 
             return Object.assign({}, state, {
                 isAuth: payload.isAuth,
