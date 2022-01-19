@@ -112,12 +112,13 @@ export default function Settings() {
                                 onChange={(e) => handleImageChange(e)}
                             />
 
-                            <Button
-                                type="primary"
+                            <button
+                                className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
+                                // type="primary"
                                 onClick={() => setModalVisible(true)}
                             >
-                                Vertically centered modal dialog
-                            </Button>
+                                Preview
+                            </button>
                             <Modal
                                 /* title="Vertically centered modal dialog" */
                                 centered
@@ -126,7 +127,8 @@ export default function Settings() {
                                 visible={modalVisible}
                                 // onOk={() => this.setModal2Visible(false)}
                                 onCancel={() => setModalVisible(false)}
-                                width={876}
+                                width={848}
+                                closable={false}
                             >
                                 <UserWrapper user={signedUserStore} />
                             </Modal>
