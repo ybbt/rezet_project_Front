@@ -13,12 +13,16 @@ export default function useErrorStore() {
         serverResponse: serverResponseStore,
     } = useSelector((state) => state.errorReducer);
 
-    // const dispatch = useDispatch();
-    return statusStore;
+    useEffect(
+        () => {
+            errorStore &&
+                message.error({
+                    content: `${serverResponseStore || errorMessageStore}`,
+                    duration: 5,
+                });
+            // dispatch(clearErrorRedux());
+        } /*, [errorStore] */
+    );
 
-    useEffect(() => {
-        errorStore &&
-            message.error(`${serverResponseStore || errorMessageStore}`);
-        // dispatch(clearErrorRedux());
-    }, [errorStore]);
+    return statusStore;
 }
