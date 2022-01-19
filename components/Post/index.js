@@ -84,7 +84,12 @@ export function Post({
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
             <Link href={`/${post.author.name}`}>
                 <a className="block min-w-[60px] mx-4">
-                    <Image src="/avatar.png" width="60" height="60" />
+                    <Image
+                        src="/avatar.png"
+                        width="60"
+                        height="60"
+                        className="rounded-full"
+                    />
                 </a>
             </Link>
 
