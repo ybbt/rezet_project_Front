@@ -6,7 +6,7 @@ import axiosConfigured from "../libs/axiosInstance"; //! прибрати
 import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
 
-import { Modal, Button } from "antd";
+import { Modal, Upload, Button } from "antd";
 
 import { /*  useEffect,  */ useState } from "react";
 
@@ -22,19 +22,19 @@ export default function Settings() {
     );
 
     async function handleSubmitData({ firstName, lastName }) {
-        let formData = new FormData();
-        formData.append("avatar", file);
-        formData.append("first_name", firstName);
-        formData.append("last_name", lastName);
+        // let formData = new FormData();
+        // formData.append("avatar", file);
+        // formData.append("first_name", firstName);
+        // formData.append("last_name", lastName);
         try {
             const result = await axiosConfigured.post(
                 "/me",
-                formData
-                //     {
-                //     first_name: firstName,
-                //     last_name: lastName,
-                //     avatar: file,
-                // }
+                // formData
+                {
+                    first_name: firstName,
+                    last_name: lastName,
+                    // avatar: file,
+                }
             );
 
             // const response = result.data;
@@ -49,28 +49,39 @@ export default function Settings() {
         }
     }
 
-    function handleImageChange(e) {
+    async function handleImageChange(e) {
         console.log("handleImageChange");
         e.preventDefault();
 
         let formFile = e.target.files[0];
 
-        setFile(formFile);
+        // setFile(formFile);
 
-        // --- Для відображення превью
-        let reader = new FileReader();
+        console.log(formFile, "formFile in input");
 
-        reader.onloadend = () => {
-            setImagePreviewUrl(reader.result);
-        };
+        let formData = new FormData();
+        formData.append("avatar", formFile /* file */);
 
-        reader.readAsDataURL(formFile);
-        // ---
+        try {
+            const result = await axiosConfigured.post("/me/avatar", formData);
+
+            // const response = result.data;
+
+            console.log(result, "response result");
+
+            alert("submit");
+        } catch (error) {
+            // message.error(`${error.response.data.errors[0]}`);
+            console.log(error.response, "error catch");
+        }
     }
 
-    // function setModalVisible(modalVisible) {
-    //     setModalVisible({ modalVisible });
-    // }
+    function handleUploadImageChange({ file }) {
+        console.log(file.originFileObj, "file.originFileObj in Upload");
+        let formFile = file.originFileObj;
+
+        setFile(formFile);
+    }
 
     return (
         <>
@@ -99,42 +110,45 @@ export default function Settings() {
                             />
                             <button
                                 type="submit"
-                                className="bg-[#54C1FF] text-white h-7"
+                                className="bg-[#54C1FF] text-white text-xs h-7"
                             >
                                 Save
                             </button>
                         </div>
-                        <div className="border border-t-[#949494]">
-                            <input
-                                className="fileInput"
-                                type="file"
-                                name="avatar"
-                                onChange={(e) => handleImageChange(e)}
-                            />
-
-                            <button
-                                className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
-                                // type="primary"
-                                onClick={() => setModalVisible(true)}
-                            >
-                                Preview
-                            </button>
-                            <Modal
-                                /* title="Vertically centered modal dialog" */
-                                centered
-                                keyboard
-                                footer={null}
-                                visible={modalVisible}
-                                // onOk={() => this.setModal2Visible(false)}
-                                onCancel={() => setModalVisible(false)}
-                                width={848}
-                                closable={false}
-                            >
-                                <UserWrapper user={signedUserStore} />
-                            </Modal>
-                        </div>
                     </Form>
                 </Formik>
+                <div className="border border-t-[#949494]">
+                    <label className="flex justify-center cursor-pointer bg-[#54C1FF] border-[#54C1FF] border text-white p-1 m-1 h-7 text-xs">
+                        <input
+                            className="hidden"
+                            type="file"
+                            name="avatar"
+                            onChange={(e) => handleImageChange(e)}
+                        />
+                        Upload avatar
+                    </label>
+
+                    <button
+                        className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
+                        // type="primary"
+                        onClick={() => setModalVisible(true)}
+                    >
+                        Preview
+                    </button>
+                    <Modal
+                        /* title="Vertically centered modal dialog" */
+                        centered
+                        keyboard
+                        footer={null}
+                        visible={modalVisible}
+                        // onOk={() => this.setModal2Visible(false)}
+                        onCancel={() => setModalVisible(false)}
+                        width={848}
+                        closable={false}
+                    >
+                        <UserWrapper user={signedUserStore} />
+                    </Modal>
+                </div>
             </div>
         </>
     );
