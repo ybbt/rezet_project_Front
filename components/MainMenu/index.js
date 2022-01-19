@@ -1,24 +1,59 @@
 import Link from "next/link";
-import { useContext } from "react";
+// import { useContext } from "react";
 
-import signedUserContext from "../../context/signedUserContext";
+// import signedUserContext from "../../context/signedUserContext";
+import {
+    HomeOutlined,
+    MailOutlined,
+    TeamOutlined,
+    UserOutlined,
+    SettingOutlined,
+} from "@ant-design/icons";
+import { Space } from "antd";
 
-export function MainMenu() {
-    const [/* signedUser */ { signedUser }] = useContext(signedUserContext);
+import { useSelector } from "react-redux";
 
-    const authUserMenu = !!Object.keys(signedUser).length && (
+export function MainMenu(/* { isAuth } */) {
+    // const [signedUserAppContext, setSignedUserAppContext] =
+    //     useContext(signedUserContext);
+
+    const { signedUser: signedUserStore, isAuth: isAuthStore } = useSelector(
+        (state) => state.authReducer
+    );
+
+    const authUserMenu = isAuthStore && (
         <>
-            <Link href="#">
-                <a className="text-black">Messages</a>
+            <Link href="/login" className="">
+                <a className="text-black ">
+                    <Space>
+                        <MailOutlined />
+                        Messages
+                    </Space>
+                </a>
             </Link>
             <Link href="#">
-                <a className="text-black">Users</a>
+                <a className="text-black">
+                    <Space>
+                        <TeamOutlined />
+                        Users
+                    </Space>
+                </a>
             </Link>
-            <Link href={`/${signedUser.name}`}>
-                <a className="text-black">Profile</a>
+            <Link href={`/${/* signedUserAppContext */ signedUserStore.name}`}>
+                <a className="text-black">
+                    <Space>
+                        <UserOutlined />
+                        Profile
+                    </Space>
+                </a>
             </Link>
             <Link href="#">
-                <a className="text-black">Settings</a>
+                <a className="text-black">
+                    <Space>
+                        <SettingOutlined />
+                        Settings
+                    </Space>
+                </a>
             </Link>
         </>
     );
@@ -26,7 +61,12 @@ export function MainMenu() {
     return (
         <>
             <Link href="/">
-                <a className="text-black">Home</a>
+                <a className="text-black ">
+                    <Space>
+                        <HomeOutlined />
+                        Home
+                    </Space>
+                </a>
             </Link>
             {authUserMenu}
         </>

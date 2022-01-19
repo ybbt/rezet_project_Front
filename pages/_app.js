@@ -1,20 +1,19 @@
 import "../styles/globals.css";
 
+import { Provider } from "react-redux";
+import { useStore } from "../redux/store";
+
 import React, { useState } from "react";
 
-import signedUserContext from "../context/signedUserContext";
-
 function MyApp({ Component, pageProps }) {
-    const [auth, setAuth] = useState({ signedUser: {}, isLoaded: false });
+    const store = useStore(pageProps.initialReduxState);
 
     const getLayout = Component.getLayout || ((page) => page);
 
     return (
-        <signedUserContext.Provider
-            value={[auth, setAuth] /* [signedUser, setSignedUser] */}
-        >
+        <Provider store={store}>
             {getLayout(<Component {...pageProps} />)}
-        </signedUserContext.Provider>
+        </Provider>
     );
 }
 

@@ -8,23 +8,23 @@ import { useSelector } from "react-redux";
 import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
-<<<<<<< HEAD
-import useFormatDate from "../../hooks/useFormatDate";
-=======
 import { Tooltip } from "antd";
 import { MessageOutlined, EditOutlined } from "@ant-design/icons";
->>>>>>> stage-3--stage-4_comments__with-redux-thunk___refact-redux
 
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
 
-export function Post({
-    post,
-    onDeletePost,
-    onUpdatePost /* , signedUserName */,
+export function Comment({
+    /* post */ comment,
+    onDeleteComment,
+    onUpdateComment,
+    // signedUserName,
 }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
+    const commentsListStore = useSelector(
+        (state) => state.commentsReducer.commentsList
+    );
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
@@ -36,12 +36,12 @@ export function Post({
     async function handleUdate(content) {
         setComponentEditCondition(false);
 
-        const newPost = { ...post };
+        const newComment = { ...comment };
 
-        newPost.content = content;
-        newPost.updated_at = DateTime.now();
+        newComment.content = content;
+        newComment.updated_at = DateTime.now();
 
-        onUpdatePost(newPost);
+        onUpdateComment(newComment);
     }
 
     function handleCancel() {
@@ -50,27 +50,27 @@ export function Post({
 
     const displayContent = componentEditCondition ? (
         <EditPostForm
-            editContent={post.content}
+            editContent={comment.content}
             onSave={handleUdate}
             onCancel={handleCancel}
-            contentKind="post"
+            contentKind="comment"
         />
     ) : (
-        <div className="max-w-2xl min-w-[32rem]">{post.content}</div>
+        <div className="max-w-2xl min-w-[32rem]">{comment.content}</div>
     );
 
     const dropdownMenu = /* signedUserName */ signedUserStore.name ===
-        post.author.name && (
+        comment.author.name && (
         <DropdownPostMenu
-            onDeletePost={() => onDeletePost(post)}
+            onDeletePost={() => onDeleteComment(/* post */ comment)}
             onEditPost={handleEdit}
         />
     );
 
-    const createdAt = useFormatDate(post.created_at, "dd LLL y"); //moment(post.created_at).format("D MMM YYYY");
-    const updatedAt = useFormatDate(post.updated_at, "dd LLL y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(comment.created_at, "dd MMM y"); //moment(comment.created_at).format("D MMM YYYY");
+    const updatedAt = useFormatDate(comment.updated_at, "dd MMM y"); //moment(comment.updated_at).format("D MMM YYYY HH:mm");
 
-    const updatedAtComponent = post.created_at !== post.updated_at && (
+    const updatedAtComponent = comment.created_at !== comment.updated_at && (
         <Tooltip
             placement="right"
             title={updatedAt}
@@ -86,31 +86,26 @@ export function Post({
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
-            <Link href={`/${post.author.name}`}>
+            <Link href={`/${comment.author.name}`}>
                 <a className="block min-w-[60px] mx-4">
-                    <Image
-                        src="/avatar.png"
-                        width="60"
-                        height="60"
-                        className="rounded-full"
-                    />
+                    <Image src="/avatar.png" width="60" height="60" />
                 </a>
             </Link>
 
             <div className="w-full">
                 <div className="w-full flex justify-between items-center">
                     <div className="flex ">
-                        <Link href={`/${post.author.name}`}>
+                        <Link href={`/${comment.author.name}`}>
                             <a className="text-black no-underline">
                                 <div className="font-bold text-base pr-2">{`${
-                                    post.author.first_name
-                                } ${post.author.last_name || ""}`}</div>
+                                    comment.author.first_name
+                                } ${comment.author.last_name || ""}`}</div>
                             </a>
                         </Link>
                         <div className="after:content-['*'] after:w-[10px] after:mx-[3px] text-[#949494] no-underline">
-                            <Link href={`/${post.author.name}`}>
+                            <Link href={`/${comment.author.name}`}>
                                 <a className="text-inherit">
-                                    <span className="text-inherit">{`@${post.author.name}`}</span>
+                                    <span className="text-inherit">{`@${comment.author.name}`}</span>
                                 </a>
                             </Link>
                         </div>
@@ -120,12 +115,6 @@ export function Post({
                     {dropdownMenu}
                 </div>
                 {displayContent}
-                <Link href={`/posts/${post.id}`}>
-                    <a className="flex">
-                        <MessageOutlined />
-                        <div>{post.comments_count}</div>
-                    </a>
-                </Link>
             </div>
         </div>
     );

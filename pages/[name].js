@@ -1,106 +1,98 @@
 import { useRouter } from "next/router";
-import { useState, useEffect, useContext } from "react";
+import { useEffect } from "react";
 
-import {
-    getUserPosts,
-    deletePost,
-    sendPost,
-    updatePost,
-} from "../libs/postService";
-
-import { getUser } from "../libs/userService";
-
-import signedUserContext from "../context/signedUserContext";
+// import { message } from "antd";
+import "antd/dist/antd.css";
 
 import { PageLayout } from "../components/PageLayout";
-
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
 import { UserWrapper } from "../components/UserWrapper";
 
+import useAuthStatus from "../hooks/useAuthStatus";
+import useErrorStore from "../hooks/useErrorStore";
+
+import { useSelector, useDispatch } from "react-redux";
+
+import { setUserRedux } from "../redux/actions/activeUserActions.js";
+
+import {
+    setUserPostsRedux,
+    sendPostRedux,
+    deletePostRedux,
+    updatePostRedux,
+} from "../redux/actions/postsListActions.js";
+
+// import { authMeRedux } from "../redux/actions/authorizationActions.js";
+
+import { initializeStore } from "../redux/store"; // ---  для серверного запросу
+
 export default function userName({ error, user, postsList }) {
-    const [posts, setPosts] = useState(postsList);
-
-    const [{ signedUser, isLoaded }] = useContext(signedUserContext);
-
     const router = useRouter();
 
-    useEffect(() => {
-        error && message.error(`${error}`);
-    });
+    const dispatch = useDispatch();
+    const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
-    useEffect(() => {
-        setPosts(postsList);
-    }, [postsList]);
+    const {
+        signedUser: signedUserStore,
+        isAuth: isAuthStore,
+        isLoad: isLoadStore,
+    } = useSelector((state) => state.authReducer);
+    const activeUserStore = useSelector((state) => state.userReducer.user);
+
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in [name]");
+
+    // useAuthStatus();
+
+    // useErrorStore();
 
     async function handleAddPost(postContent) {
-        try {
-            const response = await sendPost(postContent);
-
-            setPosts([response.data.data, ...posts]);
-        } catch (error) {
-            message.error(`${error}`);
-            console.log(error, "error addpost");
-        }
+        await dispatch(sendPostRedux(postContent));
     }
 
     async function handleDeletePost(post) {
-        try {
-            const response = await deletePost(post.id);
-
-            const newPosts = posts.filter(
-                (postItem) => postItem.id !== post.id
-            );
-            setPosts(newPosts);
-        } catch (error) {
-            message.error(`${error}`);
-            console.log(error);
-        }
+        await dispatch(deletePostRedux(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        try {
-            const response = await updatePost(
-                updatedData.id,
-                updatedData.content
-            );
-
-            const newPostList = posts.map((postItem) =>
-                postItem.id === updatedData.id
-                    ? { ...postItem, ...updatedData }
-                    : postItem
-            );
-            setPosts(newPostList);
-        } catch (error) {
-            console.log(error, "error");
-            message.error(`${error}`);
-        }
+        await dispatch(updatePostRedux(updatedData));
     }
 
-    const addPostComponent = user.name === signedUser.name && (
+    const addPostComponent = activeUserStore.name === signedUserStore.name && (
         <div className="border border-t-0 border-[#949494] p-2">
-            <EditPostForm onSave={handleAddPost} />
+            <EditPostForm onSave={handleAddPost} contentKind="post" />
         </div>
     );
 
-    const postsComponentList = posts && (
+    const postsComponentList = postsListStore && (
         <PostsList
-            postsList={posts}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
         />
     );
 
+    // const headerContent = (
+    //     <>
+    //         <div className="font-bold text-lg">{`${
+    //             activeUserStore.first_name
+    //         } ${activeUserStore.last_name || ""}`}</div>
+    //         <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div>
+    //     </>
+    // );
+
     return (
         <>
-            <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
-                <div className="font-bold text-lg">{`${user.first_name} ${
-                    user.last_name || ""
-                }`}</div>
-                <div className="text-xs text-[#949494]">{`${postsList.length} posts`}</div>
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+                <div className="font-bold text-lg">
+                    {`${activeUserStore.first_name} ${
+                        activeUserStore.last_name || ""
+                    }`}
+                </div>
+                <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div>
             </header>
             <div className="h-64 w-full border border-[#949494] border-t-0">
-                <UserWrapper user={user} />
+                <UserWrapper user={activeUserStore} />
             </div>
             {addPostComponent}
             {postsComponentList}
@@ -112,24 +104,47 @@ userName.getLayout = function getLayout(page) {
     return <PageLayout>{page}</PageLayout>;
 };
 
-export async function getServerSideProps({ params }) {
+export const withRedux = (getServerSideProps) => async (ctx) => {
+    const store = initializeStore();
     try {
-        const result = await Promise.all([
-            getUser(params.name),
-            getUserPosts(params.name),
-        ]);
+        const result = await getServerSideProps(ctx, store);
 
         return {
+            ...result,
+
             props: {
-                user: result[0].data.data,
-                postsList: result[1].data.data,
+                initialReduxState: store.getState(),
+                ...result.props,
             },
         };
     } catch (error) {
         return {
             props: {
-                error: error.message,
+                error: true,
             },
         };
     }
-}
+};
+
+export const getServerSideProps = withRedux(async (context, store) => {
+    try {
+        /* const result =  */ await Promise.all([
+            store.dispatch(setUserRedux(context.params.name)),
+            store.dispatch(setUserPostsRedux(context.params.name)),
+        ]);
+
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        console.log(error, "error in getServerSideProps");
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: true,
+        //     },
+        // };
+    }
+});

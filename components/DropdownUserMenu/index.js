@@ -1,12 +1,18 @@
-import { useContext } from "react";
+import Image from "next/image";
 
 import { Menu, Dropdown, Button, Space } from "antd";
 import Router from "next/router";
 
-import signedUserContext from "../../context/signedUserContext";
+import { useSelector, useDispatch } from "react-redux";
 
-export function DropdownUserMenu({ children, onLogout }) {
-    const [/* signedUser */ { signedUser }] = useContext(signedUserContext);
+import { logoutRedux } from "../../redux/actions/authorizationActions.js";
+
+export function DropdownUserMenu(/* { children } */) {
+    const dispatch = useDispatch();
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -15,10 +21,10 @@ export function DropdownUserMenu({ children, onLogout }) {
     function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/${signedUser.name}`);
+                Router.push(`/${signedUserStore.name}`);
                 break;
             case menuKey.logout:
-                onLogout();
+                dispatch(logoutRedux());
                 break;
         }
     }
@@ -49,7 +55,21 @@ export function DropdownUserMenu({ children, onLogout }) {
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    {children}
+                    {/* {children} */}
+                    <div className="flex w-full">
+                        <div className="pr-4 ">
+                            <Image
+                                src="/avatar.png"
+                                width="40"
+                                height="40"
+                                className="rounded-full"
+                            />
+                        </div>
+                        <div className="">
+                            <div className="font-medium text-xs">{`${signedUserStore.first_name}`}</div>
+                            <div className="text-[#949494] text-[0.625rem]">{`@${signedUserStore.name}`}</div>
+                        </div>
+                    </div>
                 </Button>
             </Dropdown>
         </Space>
