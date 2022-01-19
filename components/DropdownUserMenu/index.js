@@ -29,6 +29,10 @@ export function DropdownUserMenu(/* { children } */) {
         }
     }
 
+    const avatarPath = signedUserStore.avatar_path
+        ? `${process.env.NEXT_PUBLIC_SERV_URL}/${signedUserStore.avatar_path}`
+        : "/avatar.png";
+
     const menu = (
         <Menu
             onClick={handleMenuClick}
@@ -60,7 +64,7 @@ export function DropdownUserMenu(/* { children } */) {
                         <div className="pr-4 ">
                             <Image
                                 className="rounded-full"
-                                src={`${process.env.NEXT_PUBLIC_SERV_URL}/${signedUserStore.avatar_path}`}
+                                src={avatarPath}
                                 width="40"
                                 height="40"
                             />

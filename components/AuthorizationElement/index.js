@@ -31,7 +31,11 @@ export default function AuthorizationElement({
                         message={msg}
                         type="error"
                         showIcon
-                        style={{ height: "auto", fontSize: "12px" }}
+                        style={{
+                            height: "auto",
+                            fontSize: "12px",
+                            zIndex: "10",
+                        }}
                     ></Alert>
                 )}
             />

@@ -8,6 +8,10 @@ const userReducer = (state = initialUserState, { type, payload }) => {
     switch (type) {
         case types.SET_USER:
             console.log("SET_USER in switch");
+            // TODO продумати доцільність такого варіанту
+            // if (!payload.user.avatar_path) {
+            //     payload.user.avatar_path = "/avatar"
+            // }
             return Object.assign({}, state, {
                 user: payload.user,
             });
