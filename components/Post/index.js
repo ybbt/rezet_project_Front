@@ -8,12 +8,8 @@ import { useSelector } from "react-redux";
 import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
-<<<<<<< HEAD
-import useFormatDate from "../../hooks/useFormatDate";
-=======
 import { Tooltip } from "antd";
 import { MessageOutlined, EditOutlined } from "@ant-design/icons";
->>>>>>> stage-3--stage-4_comments__with-redux-thunk___refact-redux
 
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
