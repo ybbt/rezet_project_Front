@@ -1,27 +1,37 @@
+import { useRouter } from "next/router";
 import { useState, useEffect, useContext } from "react";
 
 import {
-    getHomePosts,
+    getUserPosts,
     deletePost,
     sendPost,
     updatePost,
 } from "../libs/postService";
 
-import { PostsList } from "../components/PostsList";
-import { EditPostForm } from "../components/EditPostForm";
-
-import { PageLayout } from "../components/PageLayout";
+import { getUser } from "../libs/userService";
 
 import signedUserContext from "../context/signedUserContext";
 
-export default function Index({ postsList, error }) {
+import { PageLayout } from "../components/PageLayout";
+
+import { PostsList } from "../components/PostsList";
+import { EditPostForm } from "../components/EditPostForm";
+import { UserWrapper } from "../components/UserWrapper";
+
+export default function userName({ error, user, postsList }) {
     const [posts, setPosts] = useState(postsList);
 
     const [{ signedUser, isLoaded }] = useContext(signedUserContext);
 
+    const router = useRouter();
+
     useEffect(() => {
         error && message.error(`${error}`);
     });
+
+    useEffect(() => {
+        setPosts(postsList);
+    }, [postsList]);
 
     async function handleAddPost(postContent) {
         try {
@@ -43,7 +53,7 @@ export default function Index({ postsList, error }) {
             );
             setPosts(newPosts);
         } catch (error) {
-            message.error(`${error.response}`);
+            message.error(`${error}`);
             console.log(error);
         }
     }
@@ -67,7 +77,7 @@ export default function Index({ postsList, error }) {
         }
     }
 
-    const addPostComponent = !!Object.keys(signedUser).length && (
+    const addPostComponent = user.name === signedUser.name && (
         <div className="border border-t-0 border-[#949494] p-2">
             <EditPostForm onSave={handleAddPost} />
         </div>
@@ -83,25 +93,37 @@ export default function Index({ postsList, error }) {
 
     return (
         <>
-            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
-                Explore
+            <header className="border border-[#949494] h-12  flex flex-col justify-center pl-4">
+                <div className="font-bold text-lg">{`${user.first_name} ${
+                    user.last_name || ""
+                }`}</div>
+                <div className="text-xs text-[#949494]">{`${postsList.length} posts`}</div>
             </header>
+            <div className="h-64 w-full border border-[#949494] border-t-0">
+                <UserWrapper user={user} />
+            </div>
             {addPostComponent}
             {postsComponentList}
         </>
     );
 }
 
-Index.getLayout = function getLayout(page) {
+userName.getLayout = function getLayout(page) {
     return <PageLayout>{page}</PageLayout>;
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({ params }) {
     try {
-        const res = await getHomePosts();
+        const result = await Promise.all([
+            getUser(params.name),
+            getUserPosts(params.name),
+        ]);
 
         return {
-            props: { postsList: res.data.data },
+            props: {
+                user: result[0].data.data,
+                postsList: result[1].data.data,
+            },
         };
     } catch (error) {
         return {
