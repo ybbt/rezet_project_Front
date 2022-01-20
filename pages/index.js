@@ -18,7 +18,7 @@ import {
 import useAuthStatus from "../hooks/useAuthStatus";
 import useErrorStore from "../hooks/useErrorStore";
 
-import { initializeStore } from "../redux/store"; // ---  для серверного запросу
+import { initializeStore } from "../redux/store";
 
 export default function Index() {
     const dispatch = useDispatch();
