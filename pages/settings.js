@@ -1,5 +1,6 @@
 import { PageLayout } from "../components/PageLayout";
 import { UserWrapper } from "../components/UserWrapper";
+import Map from "../components/Map";
 import "antd/dist/antd.css";
 import axiosConfigured from "../libs/axiosInstance"; //! прибрати
 
@@ -147,6 +148,26 @@ export default function Settings() {
                         closable={false}
                     >
                         <UserWrapper user={signedUserStore} />
+                    </Modal>
+                    <button
+                        className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
+                        // type="primary"
+                        onClick={() => setModalVisible(true)}
+                    >
+                        Set location
+                    </button>
+                    <Modal
+                        /* title="Vertically centered modal dialog" */
+                        centered
+                        keyboard
+                        footer={null}
+                        visible={modalVisible}
+                        // onOk={() => this.setModal2Visible(false)}
+                        onCancel={() => setModalVisible(false)}
+                        width={848}
+                        closable={false}
+                    >
+                        <Map />
                     </Modal>
                 </div>
             </div>
