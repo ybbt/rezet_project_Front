@@ -14,16 +14,14 @@ import useErrorStore from "../hooks/useErrorStore";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { getUserAsync } from "../redux/actions/activeUserActions.js";
+import { getUserAsync } from "../redux/activeUser/activeUserActions.js";
 
 import {
     getUserPostsListAsync,
     newPostAsync,
     deletePostAsync,
     updatePostAsync,
-} from "../redux/actions/postsListActions.js";
-
-// import { authMeRedux } from "../redux/actions/authorizationActions.js";
+} from "../redux/postsList/postsListActions.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
@@ -33,19 +31,11 @@ export default function userName({ error, user, postsList }) {
     const dispatch = useDispatch();
     const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
-    const {
-        signedUser: signedUserStore,
-        isAuth: isAuthStore,
-        isLoad: isLoadStore,
-    } = useSelector((state) => state.authReducer);
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
     const activeUserStore = useSelector((state) => state.userReducer.user);
-
-    const stateStore = useSelector((state) => state);
-    console.log(stateStore, "state in [name]");
-
-    // useAuthStatus();
-
-    // useErrorStore();
 
     async function handleAddPost(postContent) {
         await dispatch(newPostAsync(postContent));
@@ -71,15 +61,6 @@ export default function userName({ error, user, postsList }) {
             onUpdatePost={handleUpdatePost}
         />
     );
-
-    // const headerContent = (
-    //     <>
-    //         <div className="font-bold text-lg">{`${
-    //             activeUserStore.first_name
-    //         } ${activeUserStore.last_name || ""}`}</div>
-    //         <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div>
-    //     </>
-    // );
 
     return (
         <>
@@ -139,12 +120,6 @@ export const getServerSideProps = withRedux(async (context, store) => {
             },
         };
     } catch (error) {
-        console.log(error, "error in getServerSideProps");
-        store.dispatch(setErrorRedux(error.response, error.message));
-        // return {
-        //     props: {
-        //         error: true,
-        //     },
-        // };
+        store.dispatch(setError(error.response, error.message));
     }
 });

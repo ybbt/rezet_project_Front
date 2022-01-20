@@ -15,7 +15,7 @@ import AuthorizationElement from "../components/AuthorizationElement";
 
 import { useDispatch } from "react-redux";
 
-import { registerAsync } from "../redux/actions/authorizationActions.js";
+import { registerAsync } from "../redux/authorization/authorizationActions.js";
 
 export default function Register() {
     const dispatch = useDispatch();

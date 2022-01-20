@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { useSelector } from "react-redux";
 
-// import moment from "moment";
 import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
@@ -14,11 +13,7 @@ import { MessageOutlined, EditOutlined } from "@ant-design/icons";
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
 
-export function Post({
-    post,
-    onDeletePost,
-    onUpdatePost /* , signedUserName */,
-}) {
+export function Post({ post, onDeletePost, onUpdatePost }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
     const signedUserStore = useSelector(
@@ -55,8 +50,7 @@ export function Post({
         <div className="max-w-2xl min-w-[32rem]">{post.content}</div>
     );
 
-    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
-        post.author.name && (
+    const dropdownMenu = signedUserStore.name === post.author.name && (
         <DropdownPostMenu
             onDeletePost={() => onDeletePost(post)}
             onEditPost={handleEdit}

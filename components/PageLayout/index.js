@@ -1,10 +1,9 @@
 import { SignBanner } from "../../components/SignBanner";
 import { MainMenu } from "../../components/MainMenu";
-// import { UserBanner } from "../../components/UserBanner";
+
 import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 
 import { useSelector, useDispatch } from "react-redux";
-// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 
 import ErrorPage from "next/error";
 
@@ -17,8 +16,6 @@ export function PageLayout({ children, headerContent }) {
         isAuth: isAuthStore,
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
-
-    // const errorStore = useSelector((state) => state.errorReducer.error);
 
     useAuthStatus();
 
@@ -43,9 +40,6 @@ export function PageLayout({ children, headerContent }) {
                         <MainMenu />
                     </div>
                     {userBannerDropdown}
-                    {/* <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
-                        {headerContent}
-                    </header> */}
                     {children}
                 </div>
             </div>

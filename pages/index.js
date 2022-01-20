@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-// import { message } from "antd";
 import "antd/dist/antd.css";
 
 import { PostsList } from "../components/PostsList";
@@ -14,8 +13,7 @@ import {
     newPostAsync,
     deletePostAsync,
     updatePostAsync,
-} from "../redux/actions/postsListActions.js";
-// import { authMeRedux } from "../redux/actions/authorizationActions.js";
+} from "../redux/postsList/postsListActions.js";
 
 import useAuthStatus from "../hooks/useAuthStatus";
 import useErrorStore from "../hooks/useErrorStore";
@@ -27,18 +25,11 @@ export default function Index() {
 
     const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
-    const {
-        signedUser: signedUserStore,
-        isAuth: isAuthStore,
-        isLoad: isLoadStore,
-    } = useSelector((state) => state.authReducer);
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
 
-    const stateStore = useSelector((state) => state);
-    console.log(stateStore, "state in index");
-
-    // useAuthStatus();
-
-    // useErrorStore();
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
     async function handleAddPost(postContent) {
         await dispatch(newPostAsync(postContent));
@@ -64,8 +55,6 @@ export default function Index() {
             onUpdatePost={handleUpdatePost}
         />
     );
-
-    // const headerContent = <span>Explore</span>;
 
     return (
         <>
@@ -113,12 +102,6 @@ export const getStaticProps = withRedux(async (store) => {
             },
         };
     } catch (error) {
-        console.log(error, "Error in getStaticProps");
-        store.dispatch(setErrorRedux(error.response, error.message));
-        // return {
-        //     props: {
-        //         error: true,
-        //     },
-        // };
+        store.dispatch(setError(error.response, error.message));
     }
 });

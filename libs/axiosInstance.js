@@ -6,13 +6,12 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-    /* async */ (config) => {
+    (config) => {
         config.headers = {
             ...config.headers,
             Authorization: Cookies.get("token_mytweeter")
                 ? `Bearer ${Cookies.get("token_mytweeter")}`
                 : "",
-            // Accept: "application/json",
         };
         return config;
     },

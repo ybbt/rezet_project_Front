@@ -12,14 +12,13 @@ export function CommentsList({
         (state) => state.commentsReducer.commentsList
     );
 
-    return /* commentsList */ commentsListStore.map((commentItem) => {
+    return commentsListStore.map((commentItem) => {
         return (
             <Comment
                 comment={commentItem}
                 key={commentItem.id}
                 onDeleteComment={onDeleteComment}
                 onUpdateComment={onUpdateComment}
-                // signedUserName={signedUser.name}
             />
         );
     });

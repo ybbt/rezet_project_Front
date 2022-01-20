@@ -22,18 +22,18 @@ import {
     getActivePostAsinc,
     updateActivePostAsync,
     deleteActivePostAsync,
-} from "../../redux/actions/activePostActions.js";
+} from "../../redux/activePost/activePostActions.js";
 
 import {
     getCommentsListAsync,
     newCommentAsync,
     updateCommentAsync,
     deleteCommentAsync,
-} from "../../redux/actions/commentsListActions.js";
+} from "../../redux/commentsList/commentsListActions.js";
 
-// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
+import Router from "next/router";
 
-import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
+import { initializeStore } from "../../redux/store";
 
 export default function userPost() {
     const dispatch = useDispatch();
@@ -41,6 +41,7 @@ export default function userPost() {
         (state) => state.commentsReducer.commentsList
     );
     const postStore = useSelector((state) => state.postReducer.activePost);
+    const isDelitedStore = useSelector((state) => state.postReducer.isDelited);
 
     const {
         signedUser: signedUserStore,
@@ -48,9 +49,11 @@ export default function userPost() {
         isLoad: isLoadStore,
     } = useSelector((state) => state.authReducer);
 
-    // useAuthStatus();
-
-    // useErrorStore();
+    useEffect(() => {
+        if (isDelitedStore) {
+            Router.push("/");
+        }
+    }, [isDelitedStore]);
 
     async function handleDeletePost(post) {
         await dispatch(deleteActivePostAsync(post));
@@ -97,7 +100,7 @@ export default function userPost() {
         </>
     );
 
-    const beTheFirstComponent = !postStore.comments_count && (
+    const beTheFirstComponent = postStore && !postStore.comments_count && (
         <Space className="border border-[#949494] border-t-0 p-3">
             No comments yet... Be the first!
             {beTheFirstSigninSignUpComponent}
@@ -112,13 +115,6 @@ export default function userPost() {
             onUpdatePost={handleUpdatePost}
         />
     );
-
-    // const headerContent = (
-    //     <>
-    //         <div>Thread</div>
-    //         <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
-    //     </>
-    // );
 
     return (
         <>
@@ -175,11 +171,6 @@ export const getServerSideProps = withRedux(async (context, store) => {
             },
         };
     } catch (error) {
-        store.dispatch(setErrorRedux(error.response, error.message));
-        // return {
-        //     props: {
-        //         error: error.message,
-        //     },
-        // };
+        store.dispatch(setError(error.response, error.message));
     }
 });

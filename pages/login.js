@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 
 import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { loginAsync } from "../redux/actions/authorizationActions.js";
+import { loginAsync } from "../redux/authorization/authorizationActions.js";
 
 export default function Login(errors, touched) {
     const dispatch = useDispatch();

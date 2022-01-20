@@ -22,19 +22,11 @@ export default function SignLayout({ children, title }) {
 
     if (!isLoadStore || isAuthStore) {
         return (
-            // <div className="w-full flex justify-center h-screen">
-            //     <Spin size="large" />;
-            // </div>
-
             <div className="flex items-center justify-center space-x-2 animate-bounce h-screen">
                 <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
                 <div className="w-8 h-8 bg-green-400 rounded-full "></div>
                 <div className="w-8 h-8 bg-black rounded-full"></div>
             </div>
-
-            // <div class=" flex justify-center items-center">
-            //     <div class="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-            // </div>
         );
     }
 

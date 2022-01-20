@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 
-import authorizationReducer from "./redusers/authorizationReducer";
-import activeUserReducer from "./redusers/activeUserReducer";
-import postsListReducer from "./redusers/postsListReducer";
-import activePostReducer from "./redusers/activePostReducer";
-import commentsListReducer from "./redusers/commentsListReducer";
-import errorReducer from "./redusers/errorReducer";
+import authorizationReducer from "./authorization/authorizationReducer";
+import activeUserReducer from "./activeUser/activeUserReducer";
+import postsListReducer from "./postsList/postsListReducer";
+import activePostReducer from "./activePost/activePostReducer";
+import commentsListReducer from "./commentsList/commentsListReducer";
+import errorReducer from "./error/errorReducer";
 
 const reducers = {
     commentsReducer: commentsListReducer,

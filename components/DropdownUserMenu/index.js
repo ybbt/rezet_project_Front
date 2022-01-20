@@ -5,9 +5,9 @@ import Router from "next/router";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { logoutAsync } from "../../redux/actions/authorizationActions.js";
+import { logoutAsync } from "../../redux/authorization/authorizationActions.js";
 
-export function DropdownUserMenu(/* { children } */) {
+export function DropdownUserMenu() {
     const dispatch = useDispatch();
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
@@ -55,7 +55,6 @@ export function DropdownUserMenu(/* { children } */) {
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    {/* {children} */}
                     <div className="flex w-full">
                         <div className="pr-4 ">
                             <Image
