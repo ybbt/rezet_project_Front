@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-// import { message } from "antd";
 import "antd/dist/antd.css";
 
 import { PageLayout } from "../components/PageLayout";
@@ -23,7 +22,7 @@ import {
     updatePostAsync,
 } from "../redux/postsList/postsListActions.js";
 
-import { initializeStore } from "../redux/store"; // ---  для серверного запросу
+import { initializeStore } from "../redux/store";
 
 export default function userName({ error, user, postsList }) {
     const router = useRouter();
@@ -109,7 +108,7 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
 
 export const getServerSideProps = withRedux(async (context, store) => {
     try {
-        /* const result =  */ await Promise.all([
+        await Promise.all([
             store.dispatch(getUserAsync(context.params.name)),
             store.dispatch(getUserPostsListAsync(context.params.name)),
         ]);
