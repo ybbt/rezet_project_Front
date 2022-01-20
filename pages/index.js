@@ -10,10 +10,10 @@ import { PageLayout } from "../components/PageLayout";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-    setPostsRedux,
-    sendPostRedux,
-    deletePostRedux,
-    updatePostRedux,
+    getAllPostsListAsync,
+    newPostAsync,
+    deletePostAsync,
+    updatePostAsync,
 } from "../redux/actions/postsListActions.js";
 // import { authMeRedux } from "../redux/actions/authorizationActions.js";
 
@@ -41,15 +41,15 @@ export default function Index() {
     // useErrorStore();
 
     async function handleAddPost(postContent) {
-        await dispatch(sendPostRedux(postContent));
+        await dispatch(newPostAsync(postContent));
     }
 
     async function handleDeletePost(post) {
-        await dispatch(deletePostRedux(post));
+        await dispatch(deletePostAsync(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updatePostRedux(updatedData));
+        await dispatch(updatePostAsync(updatedData));
     }
 
     const addPostComponent = isAuthStore && (
@@ -106,7 +106,7 @@ export const withRedux = (getStaticProps) => async () => {
 
 export const getStaticProps = withRedux(async (store) => {
     try {
-        await store.dispatch(setPostsRedux());
+        await store.dispatch(getAllPostsListAsync());
         return {
             props: {
                 message: "hello world",

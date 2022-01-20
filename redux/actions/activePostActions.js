@@ -1,25 +1,28 @@
 import {
     // getHomePosts,
     // getUserPosts,
-    deletePost,
+    deletePostService,
     // sendPost,
-    updatePost,
-    getPost,
+    updatePostService,
+    getPostService,
 } from "../../libs/postService";
 
 import * as types from "../actionsTypes";
 
 import Router from "next/router";
 
-export const setActivePostRedux = (postId) => async (dispatch) => {
+export const getActivePostAsinc = (postId) => async (dispatch) => {
     console.log(postId, "postId in  setActivePostRedux");
     try {
-        const response = await getPost(postId);
+        const response = await getPostService(postId);
         // console.log(response.data, "result in setActivePostRedux");
-        dispatch({
-            type: types.SET_ACTIVE_POST,
+        dispatch(
+            setActivePost(response.data.data)
+            /*             {
+            type: types.SET_ACTIVEPOST,
             payload: { post: response.data.data },
-        });
+        } */
+        );
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
@@ -31,15 +34,26 @@ export const setActivePostRedux = (postId) => async (dispatch) => {
     }
 };
 
-export const updateActivePostRedux = (updatedData) => async (dispatch) => {
+const setActivePost = (post) => ({
+    type: types.SET_ACTIVEPOST,
+    payload: { post },
+});
+
+export const updateActivePostAsync = (updatedData) => async (dispatch) => {
     console.log(updatedData, "postId in  updateActivePostRedux");
     try {
-        const response = await updatePost(updatedData.id, updatedData.content);
+        /*const response = await */ updatePostService(
+            updatedData.id,
+            updatedData.content
+        );
         // console.log(response.data, "result in updateActivePostRedux");
-        dispatch({
-            type: types.UPDATE_ACTIVE_POST,
+        dispatch(
+            updateActivePost(updatedData)
+            /*  {
+            type: types.UPDATE_ACTIVEPOST,
             payload: { updatedPost: updatedData },
-        });
+        } */
+        );
     } catch (error) {
         dispatch({
             type: types.SET_ERROR,
@@ -51,10 +65,15 @@ export const updateActivePostRedux = (updatedData) => async (dispatch) => {
     }
 };
 
-export const deleteActivePostRedux = (post) => async (dispatch) => {
+const updateActivePost = (updatedPost) => ({
+    type: types.UPDATE_ACTIVEPOST,
+    payload: { updatedPost },
+});
+
+export const deleteActivePostAsync = (post) => async (dispatch) => {
     console.log(post, "postId in  deleteActivePostRedux");
     try {
-        const response = await deletePost(post.id);
+        const response = await deletePostService(post.id);
         // console.log(response.data, "result in updateActivePostRedux");
         // dispatch({
         //     type: types.DELETE_POST_SINGLE,
@@ -71,3 +90,8 @@ export const deleteActivePostRedux = (post) => async (dispatch) => {
         });
     }
 };
+
+// const deleteActivePost = (delitedPost) => ({
+//     type: types.DELETE_ACTIVEPOST,
+//     payload: { delitedPost },
+// });

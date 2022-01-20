@@ -30,14 +30,14 @@ export function Post({
     }
 
     async function handleUdate(content) {
-        setComponentEditCondition(false);
-
         const newPost = { ...post };
 
         newPost.content = content;
         newPost.updated_at = DateTime.now();
 
         onUpdatePost(newPost);
+
+        setComponentEditCondition(false);
     }
 
     function handleCancel() {

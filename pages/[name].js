@@ -14,13 +14,13 @@ import useErrorStore from "../hooks/useErrorStore";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { setUserRedux } from "../redux/actions/activeUserActions.js";
+import { getUserAsync } from "../redux/actions/activeUserActions.js";
 
 import {
-    setUserPostsRedux,
-    sendPostRedux,
-    deletePostRedux,
-    updatePostRedux,
+    getUserPostsListAsync,
+    newPostAsync,
+    deletePostAsync,
+    updatePostAsync,
 } from "../redux/actions/postsListActions.js";
 
 // import { authMeRedux } from "../redux/actions/authorizationActions.js";
@@ -48,15 +48,15 @@ export default function userName({ error, user, postsList }) {
     // useErrorStore();
 
     async function handleAddPost(postContent) {
-        await dispatch(sendPostRedux(postContent));
+        await dispatch(newPostAsync(postContent));
     }
 
     async function handleDeletePost(post) {
-        await dispatch(deletePostRedux(post));
+        await dispatch(deletePostAsync(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updatePostRedux(updatedData));
+        await dispatch(updatePostAsync(updatedData));
     }
 
     const addPostComponent = activeUserStore.name === signedUserStore.name && (
@@ -129,8 +129,8 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
 export const getServerSideProps = withRedux(async (context, store) => {
     try {
         /* const result =  */ await Promise.all([
-            store.dispatch(setUserRedux(context.params.name)),
-            store.dispatch(setUserPostsRedux(context.params.name)),
+            store.dispatch(getUserAsync(context.params.name)),
+            store.dispatch(getUserPostsListAsync(context.params.name)),
         ]);
 
         return {

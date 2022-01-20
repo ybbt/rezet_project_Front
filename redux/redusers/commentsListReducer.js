@@ -4,7 +4,7 @@ const initialCommentsState = {
     commentsList: [],
 };
 
-const commentsReducer = (state = initialCommentsState, { type, payload }) => {
+const commentsListReducer = (state = initialCommentsState, { type, payload }) => {
     switch (type) {
         case types.SET_COMMENTSLIST:
             const newState = Object.assign({}, state, {
@@ -47,4 +47,4 @@ const commentsReducer = (state = initialCommentsState, { type, payload }) => {
     }
 };
 
-export default commentsReducer;
+export default commentsListReducer;

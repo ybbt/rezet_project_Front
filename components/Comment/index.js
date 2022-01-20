@@ -34,14 +34,14 @@ export function Comment({
     }
 
     async function handleUdate(content) {
-        setComponentEditCondition(false);
-
         const newComment = { ...comment };
 
         newComment.content = content;
         newComment.updated_at = DateTime.now();
 
         onUpdateComment(newComment);
+
+        setComponentEditCondition(false);
     }
 
     function handleCancel() {

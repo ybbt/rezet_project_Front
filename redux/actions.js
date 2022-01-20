@@ -1,22 +1,22 @@
 import * as types from "./actionsTypes";
 
 import {
-    getHomePosts,
-    getUserPosts,
-    deletePost,
-    sendPost,
-    updatePost,
-    getPost,
+    getHomePostsService,
+    getUserPostsService,
+    deletePostService,
+    sendPostService,
+    updatePostService,
+    getPostService,
 } from "../libs/postService";
 
 import {
-    getPostComments,
-    setPostComment,
-    updateComment,
-    deleteComment,
+    getPostCommentsService,
+    setPostCommentService,
+    updateCommentService,
+    deleteCommentService,
 } from "../libs/commentService";
-import { getUser } from "../libs/userService";
-import { fetchAuth, fetchSignOut } from "../libs/authorizeService";
+import { getUserService } from "../libs/userService";
+import { fetchAuthService, fetchSignOutService } from "../libs/authorizeService";
 
 import Cookies from "js-cookie";
 import Router from "next/router";
@@ -24,7 +24,7 @@ import Router from "next/router";
 export const setUserRedux = (userName) => async (dispatch) => {
     console.log("setUserRedux in action before fetch");
     try {
-        const response = await getUser(userName);
+        const response = await getUserService(userName);
         dispatch({
             type: types.SET_USER,
             payload: { user: response.data.data },
@@ -42,10 +42,10 @@ export const setUserRedux = (userName) => async (dispatch) => {
 export const setActivePostRedux = (postId) => async (dispatch) => {
     console.log(postId, "postId in  setActivePostRedux");
     try {
-        const response = await getPost(postId);
+        const response = await getPostService(postId);
         // console.log(response.data, "result in setActivePostRedux");
         dispatch({
-            type: types.SET_ACTIVE_POST,
+            type: types.SET_ACTIVEPOST,
             payload: { post: response.data.data },
         });
     } catch (error) {
@@ -59,10 +59,10 @@ export const setActivePostRedux = (postId) => async (dispatch) => {
 export const updateActivePostRedux = (updatedData) => async (dispatch) => {
     console.log(updatedData, "postId in  updateActivePostRedux");
     try {
-        const response = await updatePost(updatedData.id, updatedData.content);
+        const response = await updatePostService(updatedData.id, updatedData.content);
         // console.log(response.data, "result in updateActivePostRedux");
         dispatch({
-            type: types.UPDATE_ACTIVE_POST,
+            type: types.UPDATE_ACTIVEPOST,
             payload: { updatedPost: updatedData },
         });
     } catch (error) {
@@ -76,7 +76,7 @@ export const updateActivePostRedux = (updatedData) => async (dispatch) => {
 export const deleteActivePostRedux = (post) => async (dispatch) => {
     console.log(post, "postId in  deleteActivePostRedux");
     try {
-        const response = await deletePost(post.id);
+        const response = await deletePostService(post.id);
         // console.log(response.data, "result in updateActivePostRedux");
         // dispatch({
         //     type: types.DELETE_POST_SINGLE,
@@ -99,7 +99,7 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
     //     "userName in setUserPostsRedux in action before fetch"
     // );
     try {
-        const response = await getUserPosts(userName);
+        const response = await getUserPostsService(userName);
         dispatch({
             type: types.SET_USER_POSTSLIST,
             payload: { userPosts: response.data.data },
@@ -117,7 +117,7 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
 export const setPostsRedux = () => async (dispatch) => {
     console.log("setPostsRedux in action before fetch");
     try {
-        const response = await getHomePosts();
+        const response = await getHomePostsService();
         dispatch({
             type: types.SET_POSTSLIST,
             payload: { posts: response.data.data },
@@ -135,7 +135,7 @@ export const setPostsRedux = () => async (dispatch) => {
 export const sendPostRedux = (content) => async (dispatch) => {
     console.log("sendPostsRedux in action before fetch");
     try {
-        const response = await sendPost(content);
+        const response = await sendPostService(content);
         dispatch({
             type: types.NEW_POST_IN_LIST,
             payload: { post: response.data.data },
@@ -157,7 +157,7 @@ export const sendPostRedux = (content) => async (dispatch) => {
 export const deletePostRedux = (post) => async (dispatch) => {
     console.log("deletePostsRedux in action before fetch");
     try {
-        const response = await deletePost(post.id);
+        const response = await deletePostService(post.id);
         dispatch({
             type: types.DELETE_POST_IN_LIST,
             payload: { post: post },
@@ -178,7 +178,7 @@ export const deletePostRedux = (post) => async (dispatch) => {
 export const updatePostRedux = (updatedData) => async (dispatch) => {
     console.log("updatePostsRedux in action before fetch");
     try {
-        const response = await updatePost(updatedData.id, updatedData.content);
+        const response = await updatePostService(updatedData.id, updatedData.content);
         dispatch({
             type: types.UPDATE_POST_IN_LIST,
             payload: { updatedPost: updatedData },
@@ -198,7 +198,7 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
 export const setPostCommentsRedux = (postId) => async (dispatch) => {
     console.log(postId, "setPostCommentsRedux in action before fetch");
     try {
-        const response = await getPostComments(postId);
+        const response = await getPostCommentsService(postId);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
             type: types.SET_COMMENTSLIST,
@@ -217,7 +217,7 @@ export const setPostCommentsRedux = (postId) => async (dispatch) => {
 export const sendCommentRedux = (postId, content) => async (dispatch) => {
     console.log(postId, "setPostCommentsRedux in action before fetch");
     try {
-        const response = await setPostComment(postId, content);
+        const response = await setPostCommentService(postId, content);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
             type: types.NEW_COMMENT_IN_LIST,
@@ -239,7 +239,7 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
 export const updateCommentRedux = (updatedData) => async (dispatch) => {
     console.log(/* updatedData, */ "updateCommentRedux in action before fetch");
     try {
-        const response = await updateComment(
+        const response = await updateCommentService(
             updatedData.id,
             updatedData.content
         );
@@ -261,7 +261,7 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
 export const deleteCommentRedux = (comment) => async (dispatch) => {
     console.log(/* comment, */ "deleteCommentRedux in action before fetch");
     try {
-        const response = await deleteComment(comment.id);
+        const response = await deleteCommentService(comment.id);
         // console.log(response.data.data, "response in setPostCommentsRedux");
         dispatch({
             type: types.DELETE_COMMENT_IN_LIST,
@@ -285,9 +285,9 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
 export const authMeRedux = () => async (dispatch) => {
     console.log("authMe in action before fetch");
     try {
-        const response = await fetchAuth();
+        const response = await fetchAuthService();
         dispatch({
-            type: types.AUTH_ME,
+            type: types.SET_AUTH,
             payload: { signedUser: response.data.data },
         });
     } catch (error) {
@@ -295,7 +295,7 @@ export const authMeRedux = () => async (dispatch) => {
         // console.log(error);
         console.log("authMe in action Error");
         dispatch({
-            type: types.AUTH_ME,
+            type: types.SET_AUTH,
             payload: {
                 signedUser: {
                     /* fakap: "XXX" */
@@ -309,7 +309,7 @@ export const authMeRedux = () => async (dispatch) => {
 export const logoutRedux = () => async (dispatch) => {
     console.log("logout in action before fetch");
     try {
-        const response = await fetchSignOut();
+        const response = await fetchSignOutService();
         dispatch({
             type: types.LOGOUT,
             payload: { signedUser: {} },

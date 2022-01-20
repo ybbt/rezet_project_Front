@@ -14,13 +14,13 @@ import { useDispatch } from "react-redux";
 
 import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { loginRedux } from "../redux/actions/authorizationActions.js";
+import { loginAsync } from "../redux/actions/authorizationActions.js";
 
 export default function Login(errors, touched) {
     const dispatch = useDispatch();
 
     async function handleSubmitData({ login, password }, { resetForm }) {
-        dispatch(loginRedux(login, password, resetForm));
+        dispatch(loginAsync(login, password, resetForm));
     }
 
     return (

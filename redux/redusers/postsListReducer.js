@@ -4,7 +4,7 @@ const initialPostsState = {
     postsList: [],
 };
 
-const postsReducer = (state = initialPostsState, { type, payload }) => {
+const postsListReducer = (state = initialPostsState, { type, payload }) => {
     const newPostsList = {};
     switch (type) {
         case types.SET_POSTSLIST:
@@ -50,4 +50,4 @@ const postsReducer = (state = initialPostsState, { type, payload }) => {
     }
 };
 
-export default postsReducer;
+export default postsListReducer;

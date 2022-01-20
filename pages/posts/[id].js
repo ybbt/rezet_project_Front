@@ -5,8 +5,8 @@ import Link from "next/link";
 import { Space } from "antd";
 import "antd/dist/antd.css";
 
-import { getPost } from "../../libs/postService";
-import { getPostComments } from "../../libs/commentService";
+import { getPostService } from "../../libs/postService";
+import { getPostCommentsService } from "../../libs/commentService";
 
 import { PageLayout } from "../../components/PageLayout";
 import { CommentsList } from "../../components/CommentsList";
@@ -19,16 +19,16 @@ import useErrorStore from "../../hooks/useErrorStore";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
-    setActivePostRedux,
-    updateActivePostRedux,
-    deleteActivePostRedux,
+    getActivePostAsinc,
+    updateActivePostAsync,
+    deleteActivePostAsync,
 } from "../../redux/actions/activePostActions.js";
 
 import {
-    setPostCommentsRedux,
-    sendCommentRedux,
-    updateCommentRedux,
-    deleteCommentRedux,
+    getCommentsListAsync,
+    newCommentAsync,
+    updateCommentAsync,
+    deleteCommentAsync,
 } from "../../redux/actions/commentsListActions.js";
 
 // import { authMeRedux } from "../../redux/actions/authorizationActions.js";
@@ -53,23 +53,23 @@ export default function userPost() {
     // useErrorStore();
 
     async function handleDeletePost(post) {
-        await dispatch(deleteActivePostRedux(post));
+        await dispatch(deleteActivePostAsync(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updateActivePostRedux(updatedData));
+        await dispatch(updateActivePostAsync(updatedData));
     }
 
     async function handleAddComment(commentContent) {
-        await dispatch(sendCommentRedux(postStore.id, commentContent));
+        await dispatch(newCommentAsync(postStore.id, commentContent));
     }
 
     async function handleUpdateComment(updatedData) {
-        await dispatch(updateCommentRedux(updatedData));
+        await dispatch(updateCommentAsync(updatedData));
     }
 
     async function handleDeleteComment(comment) {
-        await dispatch(deleteCommentRedux(comment));
+        await dispatch(deleteCommentAsync(comment));
     }
 
     const commentsComponentList = commentsListStore && (
@@ -163,8 +163,8 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
 export const getServerSideProps = withRedux(async (context, store) => {
     try {
         const result = await Promise.all([
-            store.dispatch(setActivePostRedux(context.params.id)),
-            store.dispatch(setPostCommentsRedux(context.params.id)),
+            store.dispatch(getActivePostAsinc(context.params.id)),
+            store.dispatch(getCommentsListAsync(context.params.id)),
         ]);
 
         const res = JSON.parse(JSON.stringify(result));

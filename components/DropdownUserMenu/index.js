@@ -5,7 +5,7 @@ import Router from "next/router";
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { logoutRedux } from "../../redux/actions/authorizationActions.js";
+import { logoutAsync } from "../../redux/actions/authorizationActions.js";
 
 export function DropdownUserMenu(/* { children } */) {
     const dispatch = useDispatch();
@@ -24,7 +24,7 @@ export function DropdownUserMenu(/* { children } */) {
                 Router.push(`/${signedUserStore.name}`);
                 break;
             case menuKey.logout:
-                dispatch(logoutRedux());
+                dispatch(logoutAsync());
                 break;
         }
     }

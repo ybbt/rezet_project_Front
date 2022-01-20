@@ -1,21 +1,24 @@
 import {
-    getPostComments,
-    setPostComment,
-    updateComment,
-    deleteComment,
+    getPostCommentsService,
+    setPostCommentService,
+    updateCommentService,
+    deleteCommentService,
 } from "../../libs/commentService";
 
 import * as types from "../actionsTypes";
 
-export const setPostCommentsRedux = (postId) => async (dispatch) => {
+export const getCommentsListAsync = (postId) => async (dispatch) => {
     console.log(postId, "setPostCommentsRedux in action before fetch");
     try {
-        const response = await getPostComments(postId);
+        const response = await getPostCommentsService(postId);
         // console.log(response.data.data, "response in setPostCommentsRedux");
-        dispatch({
+        dispatch(
+            setPostComments(response.data.data)
+            /*  {
             type: types.SET_COMMENTSLIST,
             payload: { postComments: response.data.data },
-        });
+        } */
+        );
     } catch (error) {
         // message.error(`${error.response}`);
         console.log(error.message, "error in setPostCommentsRedux");
@@ -29,15 +32,23 @@ export const setPostCommentsRedux = (postId) => async (dispatch) => {
     }
 };
 
-export const sendCommentRedux = (postId, content) => async (dispatch) => {
+const setPostComments = (postComments) => ({
+    type: types.SET_COMMENTSLIST,
+    payload: { postComments },
+});
+
+export const newCommentAsync = (postId, content) => async (dispatch) => {
     console.log(postId, "setPostCommentsRedux in action before fetch");
     try {
-        const response = await setPostComment(postId, content);
+        const response = await setPostCommentService(postId, content);
         // console.log(response.data.data, "response in setPostCommentsRedux");
-        dispatch({
-            type: types.NEW_COMMENT_IN_LIST,
-            payload: { comment: response.data.data },
-        });
+        dispatch(
+            newComment(response.data.data)
+            // {
+            //     type: types.NEW_COMMENT_IN_LIST,
+            //     payload: { comment: response.data.data },
+            // }
+        );
         dispatch({
             type: types.INCREMENT_COMMENTS_COUNT,
         });
@@ -54,18 +65,26 @@ export const sendCommentRedux = (postId, content) => async (dispatch) => {
     }
 };
 
-export const updateCommentRedux = (updatedData) => async (dispatch) => {
+const newComment = (comment) => ({
+    type: types.NEW_COMMENT_IN_LIST,
+    payload: { comment },
+});
+
+export const updateCommentAsync = (updatedData) => async (dispatch) => {
     console.log(/* updatedData, */ "updateCommentRedux in action before fetch");
     try {
-        const response = await updateComment(
+        /*const response = await */ updateCommentService(
             updatedData.id,
             updatedData.content
         );
         // console.log(response.data.data, "response in setPostCommentsRedux");
-        dispatch({
+        dispatch(
+            updateComment(updatedData)
+            /*  {
             type: types.UPDATE_COMMENT_IN_LIST,
             payload: { updatedComment: updatedData },
-        });
+        } */
+        );
     } catch (error) {
         // message.error(`${error.response}`);
         console.log(error.message, "error in sendCommentRedux");
@@ -79,15 +98,23 @@ export const updateCommentRedux = (updatedData) => async (dispatch) => {
     }
 };
 
-export const deleteCommentRedux = (comment) => async (dispatch) => {
+const updateComment = (updatedComment) => ({
+    type: types.UPDATE_COMMENT_IN_LIST,
+    payload: { updatedComment },
+});
+
+export const deleteCommentAsync = (comment) => async (dispatch) => {
     console.log(/* comment, */ "deleteCommentRedux in action before fetch");
     try {
-        const response = await deleteComment(comment.id);
+        /*const response = await */ deleteCommentService(comment.id);
         // console.log(response.data.data, "response in setPostCommentsRedux");
-        dispatch({
-            type: types.DELETE_COMMENT_IN_LIST,
-            payload: { deletedComment: comment },
-        });
+        dispatch(
+            deleteComment(comment)
+            //     {
+            //     type: types.DELETE_COMMENT_IN_LIST,
+            //     payload: { deletedComment: comment },
+            // }
+        );
         dispatch({
             type: types.DECREMENT_COMMENTS_COUNT,
         });
@@ -103,3 +130,8 @@ export const deleteCommentRedux = (comment) => async (dispatch) => {
         });
     }
 };
+
+const deleteComment = (deletedComment) => ({
+    type: types.DELETE_COMMENT_IN_LIST,
+    payload: { deletedComment },
+});

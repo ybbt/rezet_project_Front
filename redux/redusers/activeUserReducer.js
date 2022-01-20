@@ -4,7 +4,7 @@ const initialUserState = {
     user: {},
 };
 
-const userReducer = (state = initialUserState, { type, payload }) => {
+const activeUserReducer = (state = initialUserState, { type, payload }) => {
     switch (type) {
         case types.SET_USER:
             console.log("SET_USER in switch");
@@ -37,4 +37,4 @@ const userReducer = (state = initialUserState, { type, payload }) => {
     }
 };
 
-export default userReducer;
+export default activeUserReducer;

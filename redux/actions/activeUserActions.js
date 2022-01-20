@@ -1,15 +1,18 @@
-import { getUser } from "../../libs/userService";
+import { getUserService } from "../../libs/userService";
 
 import * as types from "../actionsTypes";
 
-export const setUserRedux = (userName) => async (dispatch) => {
+export const getUserAsync = (userName) => async (dispatch) => {
     console.log("setUserRedux in action before fetch");
     try {
-        const response = await getUser(userName);
-        dispatch({
+        const response = await getUserService(userName);
+        dispatch(
+            setUser(response.data.data)
+            /* {
             type: types.SET_USER,
             payload: { user: response.data.data },
-        });
+        } */
+        );
     } catch (error) {
         // message.error(`${error.response}`);
         // console.log(error);
@@ -22,3 +25,8 @@ export const setUserRedux = (userName) => async (dispatch) => {
         });
     }
 };
+
+const setUser = (user) => ({
+    type: types.SET_USER,
+    payload: { user },
+});

@@ -15,7 +15,7 @@ import AuthorizationElement from "../components/AuthorizationElement";
 
 import { useDispatch } from "react-redux";
 
-import { registerRedux } from "../redux/actions/authorizationActions.js";
+import { registerAsync } from "../redux/actions/authorizationActions.js";
 
 export default function Register() {
     const dispatch = useDispatch();
@@ -32,7 +32,7 @@ export default function Register() {
         { resetForm }
     ) {
         dispatch(
-            registerRedux(
+            registerAsync(
                 firstName,
                 lastName,
                 userName,

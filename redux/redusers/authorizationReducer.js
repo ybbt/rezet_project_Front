@@ -6,9 +6,9 @@ const initialAuthState = {
     isLoad: false,
 };
 
-const authReducer = (state = initialAuthState, { type, payload }) => {
+const authorizationReducer = (state = initialAuthState, { type, payload }) => {
     switch (type) {
-        case types.AUTH_ME:
+        case types.SET_AUTH:
             console.log("AUTH_ME in switch");
 
             return Object.assign({}, state, {
@@ -36,4 +36,4 @@ const authReducer = (state = initialAuthState, { type, payload }) => {
     }
 };
 
-export default authReducer;
+export default authorizationReducer;

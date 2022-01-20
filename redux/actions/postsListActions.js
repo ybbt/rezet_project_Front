@@ -1,21 +1,24 @@
 import {
-    getHomePosts,
-    getUserPosts,
-    deletePost,
-    sendPost,
-    updatePost,
-    getPost,
+    getHomePostsService,
+    getUserPostsService,
+    deletePostService,
+    sendPostService,
+    updatePostService,
+    getPostService,
 } from "../../libs/postService";
 
 import * as types from "../actionsTypes";
 
-export const setUserPostsRedux = (userName) => async (dispatch) => {
+export const getUserPostsListAsync = (userName) => async (dispatch) => {
     try {
-        const response = await getUserPosts(userName);
-        dispatch({
-            type: types.SET_POSTSLIST /* SET_USER_POSTSLIST */,
-            payload: { /* userPosts */ posts: response.data.data },
-        });
+        const response = await getUserPostsService(userName);
+        dispatch(
+            setUserPostsList(response.data.data)
+            // {
+            //     type: types.SET_POSTSLIST /* SET_USER_POSTSLIST */,
+            //     payload: { /* userPosts */ posts: response.data.data },
+            // }
+        );
     } catch (error) {
         // message.error(`${error.response}`);
         console.log(error.message, "error in setUserPostsRedux");
@@ -29,10 +32,10 @@ export const setUserPostsRedux = (userName) => async (dispatch) => {
     }
 };
 
-export const setPostsRedux = () => async (dispatch) => {
+export const getAllPostsListAsync = () => async (dispatch) => {
     console.log("setPostsRedux in action before fetch");
     try {
-        const response = await getHomePosts();
+        const response = await getHomePostsService();
         dispatch({
             type: types.SET_POSTSLIST,
             payload: { posts: response.data.data },
@@ -50,15 +53,23 @@ export const setPostsRedux = () => async (dispatch) => {
     }
 };
 
-export const sendPostRedux = (content) => async (dispatch) => {
+const setUserPostsList = (posts) => ({
+    type: types.SET_POSTSLIST,
+    payload: { posts },
+});
+
+export const newPostAsync = (content) => async (dispatch) => {
     console.log("sendPostsRedux in action before fetch");
     try {
-        const response = await sendPost(content);
-        dispatch({
+        const response = await sendPostService(content);
+        dispatch(
+            newPost(response.data.data)
+            /*  {
             type: types.NEW_POST_IN_LIST,
             payload: { post: response.data.data },
             // payload: { content, author },
-        });
+        } */
+        );
         dispatch({
             type: types.INCREMENT_POSTS_COUNT,
         });
@@ -75,14 +86,22 @@ export const sendPostRedux = (content) => async (dispatch) => {
     }
 };
 
-export const deletePostRedux = (post) => async (dispatch) => {
+const newPost = (post) => ({
+    type: types.NEW_POST_IN_LIST,
+    payload: { post },
+});
+
+export const deletePostAsync = (post) => async (dispatch) => {
     console.log("deletePostsRedux in action before fetch");
     try {
-        const response = await deletePost(post.id);
-        dispatch({
+        /*const response = await */ deletePostService(post.id);
+        dispatch(
+            deletePost(post)
+            /* {
             type: types.DELETE_POST_IN_LIST,
             payload: { post: post },
-        });
+        } */
+        );
         dispatch({
             type: types.DECREMENT_POSTS_COUNT,
         });
@@ -99,14 +118,25 @@ export const deletePostRedux = (post) => async (dispatch) => {
     }
 };
 
-export const updatePostRedux = (updatedData) => async (dispatch) => {
+const deletePost = (posts) => ({
+    type: types.DELETE_POST_IN_LIST,
+    payload: { posts },
+});
+
+export const updatePostAsync = (updatedData) => async (dispatch) => {
     console.log("updatePostsRedux in action before fetch");
     try {
-        const response = await updatePost(updatedData.id, updatedData.content);
-        dispatch({
+        /*const response = await */ updatePostService(
+            updatedData.id,
+            updatedData.content
+        );
+        dispatch(
+            updatePost(updatedData)
+            /*     {
             type: types.UPDATE_POST_IN_LIST,
             payload: { updatedPost: updatedData },
-        });
+        } */
+        );
     } catch (error) {
         // message.error(`${error.response}`);
         // console.log(error);
@@ -119,3 +149,8 @@ export const updatePostRedux = (updatedData) => async (dispatch) => {
         });
     }
 };
+
+const updatePost = (updatedData) => ({
+    type: types.UPDATE_POST_IN_LIST,
+    payload: { updatedData },
+});
