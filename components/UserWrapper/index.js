@@ -1,10 +1,25 @@
 import Link from "next/link";
 import Image from "next/image";
 
+import { useState, useEffect } from "react";
+import Geocode from "react-geocode";
+
 export function UserWrapper({ user }) {
+    const [address, setAddress] = useState("");
     const avatarPath = user.avatar_path
         ? `${process.env.NEXT_PUBLIC_SERV_URL}/${user.avatar_path}`
         : "/avatar.png";
+
+    //TODO винести в ХУК
+    useEffect(async () => {
+        console.log(user);
+        const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
+        Geocode.setApiKey(API_KEY);
+        const response = await Geocode.fromLatLng(user.lat, user.lng);
+        console.log(response, "response");
+        const address = response.results[0].formatted_address;
+        setAddress(address);
+    }, [user]);
 
     return (
         <div className="flex flex-col relative">
@@ -28,7 +43,7 @@ export function UserWrapper({ user }) {
                         </Link>
                     </div>
                     <div className="my-4 text-[0.625rem] text-[#5f5f5f]">
-                        address
+                        {address}
                     </div>
                     <div className="text-[0.625rem] ">
                         Following & Followers

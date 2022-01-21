@@ -17,6 +17,7 @@ export default function Settings() {
     const [file, setFile] = useState("");
     const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisibleMap, setModalVisibleMap] = useState(false);
 
     const { signedUser: signedUserStore } = useSelector(
         (state) => state.authReducer
@@ -152,7 +153,7 @@ export default function Settings() {
                     <button
                         className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
                         // type="primary"
-                        onClick={() => setModalVisible(true)}
+                        onClick={() => setModalVisibleMap(true)}
                     >
                         Set location
                     </button>
@@ -161,9 +162,9 @@ export default function Settings() {
                         centered
                         keyboard
                         footer={null}
-                        visible={modalVisible}
+                        visible={modalVisibleMap}
                         // onOk={() => this.setModal2Visible(false)}
-                        onCancel={() => setModalVisible(false)}
+                        onCancel={() => setModalVisibleMap(false)}
                         width={848}
                         closable={false}
                     >

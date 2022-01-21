@@ -7,6 +7,8 @@ import Geocode from "react-geocode";
 import Autocomplete from "react-google-autocomplete";
 import { DirectionsRenderer } from "@react-google-maps/api";
 
+import axiosConfigured from "../../libs/axiosInstance"; //! прибрати
+
 const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
 
 Geocode.setApiKey(API_KEY);
@@ -175,6 +177,16 @@ function Map({ onMarkerDragEnd }) {
         } catch (error) {
             console.log(error);
         }
+
+        const result = await axiosConfigured.put(
+            "/me/location",
+            // formData
+            {
+                lat: args[0].latLng.lat(),
+                lng: args[0].latLng.lng(),
+                // avatar: file,
+            }
+        );
     };
 
     const { isLoaded, loadError, url } = useLoadScript({
