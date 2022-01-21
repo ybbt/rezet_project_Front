@@ -84,13 +84,15 @@ export function Comment({
         </Tooltip>
     );
 
+    const avatarPath = comment.author.avatar_path ?? "/avatar.png";
+
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
             <Link href={`/${comment.author.name}`}>
                 <a className="block min-w-[60px] mx-4">
                     <Image
                         className="rounded-full"
-                        src={`${process.env.NEXT_PUBLIC_SERV_URL}/${comment.author.avatar_path}`}
+                        src={`${avatarPath}`}
                         width="60"
                         height="60"
                     />

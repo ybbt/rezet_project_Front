@@ -29,9 +29,7 @@ export function DropdownUserMenu(/* { children } */) {
         }
     }
 
-    const avatarPath = signedUserStore.avatar_path
-        ? `${process.env.NEXT_PUBLIC_SERV_URL}/${signedUserStore.avatar_path}`
-        : "/avatar.png";
+    const avatarPath = signedUserStore.avatar_path ?? "/avatar.png";
 
     const menu = (
         <Menu

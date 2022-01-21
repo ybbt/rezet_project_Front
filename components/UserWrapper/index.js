@@ -6,9 +6,8 @@ import Geocode from "react-geocode";
 
 export function UserWrapper({ user }) {
     const [address, setAddress] = useState("");
-    const avatarPath = user.avatar_path
-        ? `${process.env.NEXT_PUBLIC_SERV_URL}/${user.avatar_path}`
-        : "/avatar.png";
+
+    const avatarPath = user.avatar_path ?? "/avatar.png";
 
     //TODO винести в ХУК
     useEffect(async () => {
@@ -24,7 +23,7 @@ export function UserWrapper({ user }) {
     return (
         <div className="flex flex-col relative">
             <Image src="/cover.png" width="720" height="120" />
-            <div className="w-[140px] h-[140px] absolute left-[50%] ml-[-70px] top-[50px]">
+            <div className="w-[140px] h-[140px] absolute left-[50%] ml-[-70px] top-[50px] bg-white rounded-full">
                 <Image
                     src={avatarPath}
                     width="140"

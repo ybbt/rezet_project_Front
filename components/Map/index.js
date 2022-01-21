@@ -9,6 +9,8 @@ import { DirectionsRenderer } from "@react-google-maps/api";
 
 import axiosConfigured from "../../libs/axiosInstance"; //! прибрати
 
+import { useSelector /* , useDispatch */ } from "react-redux";
+
 const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
 
 Geocode.setApiKey(API_KEY);
@@ -111,16 +113,20 @@ function getState(addressArray) {
 // const AutocompleteMemo = /* React.memo */ useMemo(AutocompleteTest);
 
 function Map({ onMarkerDragEnd }) {
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
     const [state, setState] = /* React. */ useState({
         address: "",
         city: "",
         area: "",
         state: "",
         country: "",
-        mapPositionLat: defaultLat,
-        mapPositionLng: defaultLng,
-        markerPositionLat: defaultLat,
-        markerPositionLng: defaultLng,
+        mapPositionLat: signedUserStore.lat,
+        mapPositionLng: signedUserStore.lng,
+        markerPositionLat: signedUserStore.lat,
+        markerPositionLng: signedUserStore.lng,
     });
 
     const [map, setMap] = useState(null);
