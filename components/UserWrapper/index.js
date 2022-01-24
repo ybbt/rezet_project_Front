@@ -41,9 +41,13 @@ export function UserWrapper({ user }) {
                             <a className="text-inherit">{`@${user.name}`}</a>
                         </Link>
                     </div>
-                    <div className="my-4 text-[0.625rem] text-[#5f5f5f]">
+                    <a
+                        className="my-4 text-[0.625rem] text-[#5f5f5f]"
+                        target="_blank"
+                        href={`http://maps.google.com/maps?q=${user.lat},${user.lng}`}
+                    >
                         {address}
-                    </div>
+                    </a>
                     <div className="text-[0.625rem] ">
                         Following & Followers
                     </div>
