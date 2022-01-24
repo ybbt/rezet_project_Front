@@ -14,6 +14,8 @@ export function UserWrapper({ user }) {
         console.log(user);
         const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
         Geocode.setApiKey(API_KEY);
+
+        // TODO - перевірка на наявність кооординат
         const response = await Geocode.fromLatLng(user.lat, user.lng);
         console.log(response, "response");
         const address = response.results[0].formatted_address;

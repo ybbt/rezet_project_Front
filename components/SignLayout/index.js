@@ -7,6 +7,8 @@ import { useSelector } from "react-redux";
 import Router from "next/router";
 
 export default function SignLayout({ children, title }) {
+    // const state = useSelector((state) => state);
+    // console.log(state, "state in SignLayout");
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
     const isLoadStore = useSelector((state) => state.authReducer.isLoad);
 

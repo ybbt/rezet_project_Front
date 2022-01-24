@@ -1,6 +1,8 @@
 import { combineReducers } from "redux";
 
-import authReducer from "./redusers/authReducer";
+// import authReducer from "./redusers/authReducer";
+import { reducer as authReducer } from "./slices/authSlice.";
+
 import userReducer from "./redusers/userReducer";
 import postsReducer from "./redusers/postsReducer";
 import postReducer from "./redusers/postReducer";
@@ -12,7 +14,10 @@ const reducers = {
     postReducer,
     userReducer,
     postsReducer,
+
     authReducer,
+    // reducer,
+
     errorReducer,
 };
 
