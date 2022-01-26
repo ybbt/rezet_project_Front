@@ -15,6 +15,18 @@ export const api = createApi({
             // keepUnusedDataFor: 5,
         }),
     }),
+    endpoints: (build) => ({
+        getPostsList: build.query({
+            query: () => `posts`,
+            // keepUnusedDataFor: 5,
+        }),
+    }),
+    endpoints: (build) => ({
+        getPostsListByUsername: build.query({
+            query: (name) => `/users/${name}/posts`,
+            // keepUnusedDataFor: 5,
+        }),
+    }),
 });
 
 // export const { useGetPostByIdQuery } = api;
@@ -22,9 +34,11 @@ export const api = createApi({
 // Export hooks for usage in functional components
 export const {
     useGetPostByIdQuery,
-    //   useGetPokemonListQuery,
+    useGetPostsListQuery,
+    useGetPostsListByUsernameQuery,
     util: { getRunningOperationPromises },
 } = api;
 
 // export endpoints for use in SSR
-export const { getPostById /* , getPokemonList */ } = api.endpoints;
+export const { getPostById, getPostsList, getPostsListByUsername } =
+    api.endpoints;

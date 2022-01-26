@@ -36,14 +36,13 @@ import {
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 
 // **********************************
-import { useGetPostByIdQuery } from "../../redux/api";
-import { skipToken } from "@reduxjs/toolkit/query";
-import { wrapper } from "../../redux/store";
 import {
+    useGetPostByIdQuery,
     getPostById,
-    //   getPokemonList,
     getRunningOperationPromises,
-} from "../../redux/api.js";
+} from "../../redux/api";
+// import { skipToken } from "@reduxjs/toolkit/query";
+import { wrapper } from "../../redux/store";
 
 import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 // **********************************
@@ -183,7 +182,7 @@ export const getServerSideProps = wrapper.getStaticProps(
         const id = context.params?.id;
         // const id = "1";
         if (typeof id === "string") {
-            console.log(store, "store");
+            console.log(getPostById, "getPostById");
             store.dispatch(getPostById.initiate(id));
         }
 

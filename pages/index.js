@@ -23,12 +23,11 @@ import useErrorStore from "../hooks/useErrorStore";
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
 // *******************************
-import { useGetPostByIdQuery } from "../redux/api";
-import { skipToken } from "@reduxjs/toolkit/query";
+// import { skipToken } from "@reduxjs/toolkit/query";
 import { wrapper } from "../redux/store";
 import {
-    getPostById,
-    //   getPokemonList,
+    useGetPostsListQuery,
+    getPostsList,
     getRunningOperationPromises,
 } from "../redux/api.js";
 
@@ -40,13 +39,13 @@ import { RootState } from "../redux/store";
 export default function Index() {
     const dispatch = useDispatch();
 
-    const { data, isError, error, isLoading } = useGetPostByIdQuery("10");
+    const { data, isError, error, isLoading } = useGetPostsListQuery();
 
-    // console.log(data ?? "null");
+    console.log(data ?? "null");
 
     // const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
-    const router = useRouter();
+    // const router = useRouter();
     // const name = router.query.name;
     // const name = "10";
     // const result = useGetPostByIdQuery(
@@ -87,29 +86,32 @@ export default function Index() {
         await dispatch(updatePostRedux(updatedData));
     }
 
+    //! поки не авторизації через rtkq
     // const addPostComponent = isAuthStore && (
     //     <div className="border border-t-0 border-[#949494] p-2">
     //         <EditPostForm onSave={handleAddPost} contentKind="post" />
     //     </div>
     // );
 
-    // const postsComponentList = postsListStore && (
-    //     <PostsList
-    //         onDeletePost={handleDeletePost}
-    //         onUpdatePost={handleUpdatePost}
-    //     />
-    // );
+    const postsComponentList = data && (
+        <PostsList
+            postsList={data.data}
+            onDeletePost={handleDeletePost}
+            onUpdatePost={handleUpdatePost}
+        />
+    );
 
     // const headerContent = <span>Explore</span>;
 
     return (
         <>
-            {/* <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
                 <span>Explore</span>
             </header>
-            {addPostComponent}
-            {postsComponentList} */}
-            <div>
+            {/* {addPostComponent} */}
+            {/* //! поки не авторизації через rtkq */}
+            {postsComponentList}
+            {/* <div>
                 {error ? (
                     <>Oh no, there was an error</>
                 ) : isLoading ? (
@@ -123,8 +125,8 @@ export default function Index() {
                         />
                     </>
                 ) : null}
-                {/* hi */}
-            </div>
+                hi
+            </div> */}
         </>
     );
 }
@@ -135,7 +137,7 @@ export const getStaticProps = wrapper.getStaticProps(
         const id = "10";
         if (typeof id === "string") {
             console.log(store, "store");
-            store.dispatch(getPostById.initiate(id));
+            store.dispatch(getPostsList.initiate());
         }
 
         await Promise.all(getRunningOperationPromises());
