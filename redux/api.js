@@ -1,6 +1,7 @@
-// import Cookies from "js-cookie";
+import Cookies from "js-cookie";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { HYDRATE } from "next-redux-wrapper";
+// import useCookies from "../hooks/useCookies";
 
 export const api = createApi({
     baseQuery: fetchBaseQuery({
@@ -8,10 +9,11 @@ export const api = createApi({
         prepareHeaders: (headers, { getState }) => {
             const token = "85|9Sh7n0jEAPZ6cYytQkNZYH8tf1AzDt5cLW7pmsDN"; //getState().auth.token;
             // const token = Cookies.get("token_mytweeter");
+            // const token = useCookies();
 
             // If we have a token set in state, let's assume that we should be passing it.
             if (token) {
-                console.log("потрапив в токен", "color: green");
+                // console.log("потрапив в токен");
                 headers.set("authorization", `Bearer ${token}`);
             }
 

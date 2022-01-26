@@ -131,64 +131,64 @@ export default function Index() {
     );
 }
 
-export const getStaticProps = wrapper.getStaticProps(
-    (store) => async (context) => {
-        // const id = context.params?.id;
-        // const id = "10";
-        if (typeof id === "string") {
-            // console.log(store, "store");
-            store.dispatch(getPostsList.initiate());
-        }
+Index.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
+};
 
-        await Promise.all(getRunningOperationPromises());
+// export const getStaticProps = wrapper.getStaticProps(
+//     (store) => async (context) => {
+//         // const id = context.params?.id;
+//         // const id = "10";
+//         if (typeof id === "string") {
+//             // console.log(store, "store");
+//             store.dispatch(getPostsList.initiate());
+//         }
+
+//         await Promise.all(getRunningOperationPromises());
+
+//         return {
+//             props: {},
+//         };
+//     }
+// );
+
+export const withRedux = (getStaticProps) => async () => {
+    const store = initializeStore();
+    try {
+        const result = await getStaticProps(store);
 
         return {
-            props: {},
+            ...result,
+
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                error: true,
+            },
         };
     }
-);
+};
 
-// Index.getLayout = function getLayout(page) {
-//     return <PageLayout>{page}</PageLayout>;
-// };
-
-// export const withRedux = (getStaticProps) => async () => {
-//     const store = initializeStore();
-//     try {
-//         const result = await getStaticProps(store);
-
-//         return {
-//             ...result,
-
-//             props: {
-//                 initialReduxState: store.getState(),
-//                 ...result.props,
-//             },
-//         };
-//     } catch (error) {
-//         return {
-//             props: {
-//                 error: true,
-//             },
-//         };
-//     }
-// };
-
-// export const getStaticProps = withRedux(async (store) => {
-//     try {
-//         await store.dispatch(setPostsRedux());
-//         return {
-//             props: {
-//                 message: "hello world",
-//             },
-//         };
-//     } catch (error) {
-//         console.log(error, "Error in getStaticProps");
-//         store.dispatch(setErrorRedux(error.response, error.message));
-//         // return {
-//         //     props: {
-//         //         error: true,
-//         //     },
-//         // };
-//     }
-// });
+export const getStaticProps = withRedux(async (store) => {
+    try {
+        await store.dispatch(getPostsList.initiate() /* setPostsRedux() */);
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        console.log(error, "Error in getStaticProps");
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: true,
+        //     },
+        // };
+    }
+});

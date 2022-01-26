@@ -119,70 +119,74 @@ export default function userName({ user /* , postsList */ }) {
     );
 }
 
-// userName.getLayout = function getLayout(page) {
-//     return <PageLayout>{page}</PageLayout>;
-// };
+userName.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
+};
 
 // *****************************
-export const getServerSideProps = wrapper.getStaticProps(
-    (store) => async (context) => {
-        const name = context.params?.name;
-        // const id = "1";
-        if (typeof id === "string") {
-            console.log(store, "store");
-            store.dispatch(getPostsListByUsername.initiate(name));
-        }
+// export const getServerSideProps = wrapper.getStaticProps(
+//     (store) => async (context) => {
+//         const name = context.params?.name;
+//         // const id = "1";
+//         if (typeof id === "string") {
+//             console.log(store, "store");
+//             store.dispatch(getPostsListByUsername.initiate(name));
+//         }
 
-        await Promise.all(getRunningOperationPromises());
+//         await Promise.all(getRunningOperationPromises());
+
+//         return {
+//             props: {},
+//         };
+//     }
+// );
+// *****************************
+
+export const withRedux = (getServerSideProps) => async (ctx) => {
+    const store = initializeStore();
+    try {
+        const result = await getServerSideProps(ctx, store);
 
         return {
-            props: {},
+            ...result,
+
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                error: true,
+            },
         };
     }
-);
-// *****************************
+};
 
-// export const withRedux = (getServerSideProps) => async (ctx) => {
-//     const store = initializeStore();
-//     try {
-//         const result = await getServerSideProps(ctx, store);
+export const getServerSideProps = withRedux(async (context, store) => {
+    try {
+        /* const result =  */ await Promise.all([
+            // store.dispatch(setUserRedux(context.params.name)),
+            store.dispatch(
+                /* setUserPostsRedux */ getPostsListByUsername.initiate(
+                    context.params.name
+                )
+            ),
+        ]);
 
-//         return {
-//             ...result,
-
-//             props: {
-//                 initialReduxState: store.getState(),
-//                 ...result.props,
-//             },
-//         };
-//     } catch (error) {
-//         return {
-//             props: {
-//                 error: true,
-//             },
-//         };
-//     }
-// };
-
-// export const getServerSideProps = withRedux(async (context, store) => {
-//     try {
-//         /* const result =  */ await Promise.all([
-//             store.dispatch(setUserRedux(context.params.name)),
-//             store.dispatch(setUserPostsRedux(context.params.name)),
-//         ]);
-
-//         return {
-//             props: {
-//                 message: "hello world",
-//             },
-//         };
-//     } catch (error) {
-//         console.log(error, "error in getServerSideProps");
-//         store.dispatch(setErrorRedux(error.response, error.message));
-//         // return {
-//         //     props: {
-//         //         error: true,
-//         //     },
-//         // };
-//     }
-// });
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        console.log(error, "error in getServerSideProps");
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: true,
+        //     },
+        // };
+    }
+});

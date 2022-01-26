@@ -175,70 +175,76 @@ export default function userPost() {
 }
 
 // *****************************
-export const getServerSideProps = wrapper.getStaticProps(
-    (store) => async (context) => {
-        const id = context.params?.id;
-        // const id = "1";
-        if (typeof id === "string") {
-            // console.log(getPostById, "getPostById");
-            store.dispatch(getPostById.initiate(id));
-            store.dispatch(getCommentsListByPostid.initiate(id));
-        }
+// export const getServerSideProps = wrapper.getStaticProps(
+//     (store) => async (context) => {
+//         const id = context.params?.id;
+//         // const id = "1";
+//         if (typeof id === "string") {
+//             // console.log(getPostById, "getPostById");
+//             store.dispatch(getPostById.initiate(id));
+//             store.dispatch(getCommentsListByPostid.initiate(id));
+//         }
 
-        await Promise.all(getRunningOperationPromises());
+//         await Promise.all(getRunningOperationPromises());
 
-        return {
-            props: {},
-        };
-    }
-);
+//         return {
+//             props: {},
+//         };
+//     }
+// );
 // *****************************
 
-// userPost.getLayout = function getLayout(page) {
-//     return <PageLayout>{page}</PageLayout>;
-// };
+userPost.getLayout = function getLayout(page) {
+    return <PageLayout>{page}</PageLayout>;
+};
 
-// export const withRedux = (getServerSideProps) => async (ctx) => {
-//     const store = initializeStore();
-//     try {
-//         const result = await getServerSideProps(ctx, store);
+export const withRedux = (getServerSideProps) => async (ctx) => {
+    const store = initializeStore();
+    try {
+        const result = await getServerSideProps(ctx, store);
 
-//         return {
-//             ...result,
-//             props: {
-//                 initialReduxState: store.getState(),
-//                 ...result.props,
-//             },
-//         };
-//     } catch (error) {
-//         return {
-//             props: {
-//                 error: true,
-//             },
-//         };
-//     }
-// };
+        return {
+            ...result,
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                error: true,
+            },
+        };
+    }
+};
 
-// export const getServerSideProps = withRedux(async (context, store) => {
-//     try {
-//         const result = await Promise.all([
-//             store.dispatch(setActivePostRedux(context.params.id)),
-//             store.dispatch(setPostCommentsRedux(context.params.id)),
-//         ]);
+export const getServerSideProps = withRedux(async (context, store) => {
+    try {
+        const result = await Promise.all([
+            store.dispatch(
+                /* setActivePostRedux */ getPostById.initiate(context.params.id)
+            ),
+            store.dispatch(
+                /* setPostCommentsRedux */ getCommentsListByPostid.initiate(
+                    context.params.id
+                )
+            ),
+        ]);
 
-//         const res = JSON.parse(JSON.stringify(result));
+        const res = JSON.parse(JSON.stringify(result));
 
-//         return {
-//             props: {
-//                 message: "hello world",
-//             },
-//         };
-//     } catch (error) {
-//         store.dispatch(setErrorRedux(error.response, error.message));
-//         // return {
-//         //     props: {
-//         //         error: error.message,
-//         //     },
-//         // };
-//     }
-// });
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        store.dispatch(setErrorRedux(error.response, error.message));
+        // return {
+        //     props: {
+        //         error: error.message,
+        //     },
+        // };
+    }
+});
