@@ -40,7 +40,7 @@ import { RootState } from "../redux/store";
 export default function Index() {
     const dispatch = useDispatch();
 
-    // const { data, isError, isLoading } = useGetPostByIdQuery("1");
+    const { data, isError, error, isLoading } = useGetPostByIdQuery("10");
 
     // console.log(data ?? "null");
 
@@ -48,7 +48,7 @@ export default function Index() {
 
     const router = useRouter();
     // const name = router.query.name;
-    const name = "10";
+    // const name = "10";
     // const result = useGetPostByIdQuery(
     //     typeof name === "string" ? name : skipToken,
     //     {
@@ -59,10 +59,13 @@ export default function Index() {
     // );
     // const { isLoading, error, data } = result;
 
-    const state = useSelector((state) => state);
-    const result = api.endpoints.getPostById.select("10")(state);
-    const { data, isLoading, status, error } = result;
-    console.log(result, "result");
+    // --- Використання без хука (мені ререндерс)
+    // dispatch(api.endpoints.getPostById.initiate());
+    // const state = useSelector((state) => state);
+    // const result = api.endpoints.getPostById.select("10")(state);
+    // const { data, isLoading, status, error } = result;
+    // console.log(result, "result");
+    // --- -----------------------
 
     // const {
     //     signedUser: signedUserStore,

@@ -12,6 +12,7 @@ export const api = createApi({
     endpoints: (build) => ({
         getPostById: build.query({
             query: (id) => `posts/${id}`,
+            // keepUnusedDataFor: 5,
         }),
     }),
 });

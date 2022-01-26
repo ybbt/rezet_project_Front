@@ -63,18 +63,20 @@ export default function userPost() {
 
     // ****************************************
     const router = useRouter();
-    const name = router.query.name;
-    console.log(name, "color: green");
-    // const name = "1";
+
+    const id = router.query.id;
+
     const result = useGetPostByIdQuery(
-        typeof name === "string" ? name : skipToken,
+        id
+        /* typeof id === "string" ? id : skipToken,
         {
             // If the page is not yet generated, router.isFallback will be true
             // initially until getStaticProps() finishes running
             skip: router.isFallback,
-        }
+        } */
     );
     const { isLoading, error, data } = result;
+    console.log(data.data.comments_count, "data");
     // ****************************************
 
     async function handleDeletePost(post) {
@@ -129,14 +131,14 @@ export default function userPost() {
     //     </Space>
     // );
 
-    // const postComponent = postStore && (
-    //     <Post
-    //         post={postStore}
-    //         key={postStore.id}
-    //         onDeletePost={handleDeletePost}
-    //         onUpdatePost={handleUpdatePost}
-    //     />
-    // );
+    const postComponent = data && (
+        <Post
+            post={data.data}
+            key={data.data.id}
+            onDeletePost={handleDeletePost}
+            onUpdatePost={handleUpdatePost}
+        />
+    );
 
     // const headerContent = (
     //     <>
@@ -147,16 +149,16 @@ export default function userPost() {
 
     return (
         <>
-            {/* <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
                 <div>Thread</div>
-                <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
+                <div className="text-xs text-[#949494]">{`${data.data.comments_count} replies`}</div>
             </header>
             {postComponent}
-            {addCommentComponent}
+            {/* {addCommentComponent}
             <div className="h-10 border border-[#949494] border-t-0"></div>
             {beTheFirstComponent}
             {commentsComponentList} */}
-            <div>
+            {/* <div>
                 {error ? (
                     <>Oh no, there was an error</>
                 ) : isLoading ? (
@@ -170,7 +172,7 @@ export default function userPost() {
                         />
                     </>
                 ) : null}
-            </div>
+            </div> */}
         </>
     );
 }

@@ -21,9 +21,10 @@ export function Post({
 }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
-    const signedUserStore = useSelector(
-        (state) => state.authReducer.signedUser
-    );
+    // ! Поки не зробив аутентифікацію на rtkq
+    // const signedUserStore = useSelector(
+    //     (state) => state.authReducer.signedUser
+    // );
 
     function handleEdit() {
         setComponentEditCondition(true);
@@ -55,13 +56,14 @@ export function Post({
         <div className="max-w-2xl min-w-[32rem]">{post.content}</div>
     );
 
-    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
-        post.author.name && (
-        <DropdownPostMenu
-            onDeletePost={() => onDeletePost(post)}
-            onEditPost={handleEdit}
-        />
-    );
+    // ! Поки не зробив аутентифікацію на rtkq
+    // const dropdownMenu = /* signedUserName */ signedUserStore.name ===
+    //     post.author.name && (
+    //     <DropdownPostMenu
+    //         onDeletePost={() => onDeletePost(post)}
+    //         onEditPost={handleEdit}
+    //     />
+    // );
 
     const createdAt = useFormatDate(post.created_at, "dd LLL y"); //moment(post.created_at).format("D MMM YYYY");
     const updatedAt = useFormatDate(post.updated_at, "dd LLL y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
@@ -118,7 +120,8 @@ export function Post({
                         <div className="text-[#949494] mr-3">{createdAt}</div>
                         {updatedAtComponent}
                     </div>
-                    {dropdownMenu}
+                    {/* {dropdownMenu} */}
+                    {/* // ! Поки не зробив аутентифікацію на rtkq */}
                 </div>
                 {displayContent}
                 <Link href={`/posts/${post.id}`}>
