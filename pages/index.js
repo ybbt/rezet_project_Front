@@ -22,6 +22,7 @@ import useErrorStore from "../hooks/useErrorStore";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
+// *******************************
 import { useGetPostByIdQuery } from "../redux/api";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { wrapper } from "../redux/store";
@@ -32,6 +33,9 @@ import {
 } from "../redux/api.js";
 
 import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
+import { api } from "../redux/api";
+import { RootState } from "../redux/store";
+// ********************************
 
 export default function Index() {
     const dispatch = useDispatch();
@@ -44,16 +48,21 @@ export default function Index() {
 
     const router = useRouter();
     // const name = router.query.name;
-    const name = "1";
-    const result = useGetPostByIdQuery(
-        typeof name === "string" ? name : skipToken,
-        {
-            // If the page is not yet generated, router.isFallback will be true
-            // initially until getStaticProps() finishes running
-            skip: router.isFallback,
-        }
-    );
-    const { isLoading, error, data } = result;
+    const name = "10";
+    // const result = useGetPostByIdQuery(
+    //     typeof name === "string" ? name : skipToken,
+    //     {
+    //         // If the page is not yet generated, router.isFallback will be true
+    //         // initially until getStaticProps() finishes running
+    //         skip: router.isFallback,
+    //     }
+    // );
+    // const { isLoading, error, data } = result;
+
+    const state = useSelector((state) => state);
+    const result = api.endpoints.getPostById.select("10")(state);
+    const { data, isLoading, status, error } = result;
+    console.log(result, "result");
 
     // const {
     //     signedUser: signedUserStore,
@@ -111,6 +120,7 @@ export default function Index() {
                         />
                     </>
                 ) : null}
+                {/* hi */}
             </div>
         </>
     );
@@ -119,7 +129,7 @@ export default function Index() {
 export const getStaticProps = wrapper.getStaticProps(
     (store) => async (context) => {
         // const id = context.params?.id;
-        const id = "1";
+        const id = "10";
         if (typeof id === "string") {
             console.log(store, "store");
             store.dispatch(getPostById.initiate(id));
