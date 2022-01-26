@@ -14,15 +14,19 @@ export function PostsList({
 
     // const { data, isError, error, isLoading } = useGetPostsListQuery();
 
-    return postsList.map((postItem) => {
-        return (
-            <Post
-                post={postItem}
-                key={postItem.id}
-                onDeletePost={onDeletePost}
-                onUpdatePost={onUpdatePost}
-                // signedUserName={signedUser.name}
-            />
-        );
-    });
+    return postsList ? (
+        postsList.map((postItem) => {
+            return (
+                <Post
+                    post={postItem}
+                    key={postItem.id}
+                    onDeletePost={onDeletePost}
+                    onUpdatePost={onUpdatePost}
+                    // signedUserName={signedUser.name}
+                />
+            );
+        })
+    ) : (
+        <div>null</div>
+    );
 }

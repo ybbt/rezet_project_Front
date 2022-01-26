@@ -38,7 +38,7 @@ import {
 // import { useRouter } from "next/dist/client/router";
 // **********************************
 
-export default function userName({ user, postsList }) {
+export default function userName({ user /* , postsList */ }) {
     const router = useRouter();
 
     // const dispatch = useDispatch();
@@ -55,9 +55,14 @@ export default function userName({ user, postsList }) {
     // console.log(stateStore, "state in [name]");
 
     const name = router.query.name;
+    console.log(name);
 
     const result = useGetPostsListByUsernameQuery(name);
     const { isLoading, error, data } = result;
+    // const postsList = data?.data;
+
+    // console.log(postsList, "postsList in [name]");
+    console.log(data && data.data, "data in [name]");
 
     async function handleAddPost(postContent) {
         await dispatch(sendPostRedux(postContent));
@@ -80,7 +85,7 @@ export default function userName({ user, postsList }) {
 
     const postsComponentList = data && (
         <PostsList
-            postList={data.data}
+            postsList={data.data}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
         />

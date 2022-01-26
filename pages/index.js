@@ -134,9 +134,9 @@ export default function Index() {
 export const getStaticProps = wrapper.getStaticProps(
     (store) => async (context) => {
         // const id = context.params?.id;
-        const id = "10";
+        // const id = "10";
         if (typeof id === "string") {
-            console.log(store, "store");
+            // console.log(store, "store");
             store.dispatch(getPostsList.initiate());
         }
 

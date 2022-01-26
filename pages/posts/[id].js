@@ -38,7 +38,9 @@ import { initializeStore } from "../../redux/store"; // ---  для сервер
 // **********************************
 import {
     useGetPostByIdQuery,
+    useGetCommentsListByPostidQuery,
     getPostById,
+    getCommentsListByPostid,
     getRunningOperationPromises,
 } from "../../redux/api";
 // import { skipToken } from "@reduxjs/toolkit/query";
@@ -65,17 +67,12 @@ export default function userPost() {
 
     const id = router.query.id;
 
-    const result = useGetPostByIdQuery(
-        id
-        /* typeof id === "string" ? id : skipToken,
-        {
-            // If the page is not yet generated, router.isFallback will be true
-            // initially until getStaticProps() finishes running
-            skip: router.isFallback,
-        } */
-    );
-    const { isLoading, error, data } = result;
-    console.log(data.data.comments_count, "data");
+    const resultPost = useGetPostByIdQuery(id);
+    const resultCommensList = useGetCommentsListByPostidQuery(id);
+
+    const { isLoading, error, data } = resultPost;
+    const { /* isLoading, error, */ data: dataComments } = resultCommensList;
+    // console.log(data.data.comments_count, "data");
     // ****************************************
 
     async function handleDeletePost(post) {
@@ -98,12 +95,13 @@ export default function userPost() {
         await dispatch(deleteCommentRedux(comment));
     }
 
-    // const commentsComponentList = commentsListStore && (
-    //     <CommentsList
-    //         onDeleteComment={handleDeleteComment}
-    //         onUpdateComment={handleUpdateComment}
-    //     />
-    // );
+    const commentsComponentList = dataComments && (
+        <CommentsList
+            commentsList={dataComments.data}
+            onDeleteComment={handleDeleteComment}
+            onUpdateComment={handleUpdateComment}
+        />
+    );
 
     // const addCommentComponent = !!isAuthStore && (
     //     <div className="border border-t-0 border-[#949494] p-2 ">
@@ -150,13 +148,13 @@ export default function userPost() {
         <>
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
                 <div>Thread</div>
-                <div className="text-xs text-[#949494]">{`${data.data.comments_count} replies`}</div>
+                <div className="text-xs text-[#949494]">{`${data?.data.comments_count} replies`}</div>
             </header>
             {postComponent}
-            {/* {addCommentComponent}
+            {/* {addCommentComponent}*/}
             <div className="h-10 border border-[#949494] border-t-0"></div>
-            {beTheFirstComponent}
-            {commentsComponentList} */}
+            {/* {beTheFirstComponent} */}
+            {commentsComponentList}
             {/* <div>
                 {error ? (
                     <>Oh no, there was an error</>
@@ -182,8 +180,9 @@ export const getServerSideProps = wrapper.getStaticProps(
         const id = context.params?.id;
         // const id = "1";
         if (typeof id === "string") {
-            console.log(getPostById, "getPostById");
+            // console.log(getPostById, "getPostById");
             store.dispatch(getPostById.initiate(id));
+            store.dispatch(getCommentsListByPostid.initiate(id));
         }
 
         await Promise.all(getRunningOperationPromises());

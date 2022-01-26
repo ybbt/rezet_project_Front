@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 
 import { Provider } from "react-redux";
-import { useStore } from "../redux/store";
+// import { useStore } from "../redux/store";
 // import { store } from "../redux/store"; //rtqQuery client-side
 const { wrapper } = require("../redux/store");
 

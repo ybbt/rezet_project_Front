@@ -8,11 +8,11 @@ export function CommentsList({
     onUpdateComment,
     signedUser,
 }) {
-    const commentsListStore = useSelector(
-        (state) => state.commentsReducer.commentsList
-    );
+    // const commentsListStore = useSelector(
+    //     (state) => state.commentsReducer.commentsList
+    // );
 
-    return /* commentsList */ commentsListStore.map((commentItem) => {
+    return commentsList.map((commentItem) => {
         return (
             <Comment
                 comment={commentItem}
