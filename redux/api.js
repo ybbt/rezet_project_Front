@@ -7,13 +7,14 @@ export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://127.0.0.1:8000/api/",
         prepareHeaders: (headers, { getState }) => {
-            const token = "85|9Sh7n0jEAPZ6cYytQkNZYH8tf1AzDt5cLW7pmsDN"; //getState().auth.token;
-            // const token = Cookies.get("token_mytweeter");
+            // const token = "3|2Kma7djEs3J6IgOEdWdjIDxmfsXo7Yu9iyhR42wL"; //getState().auth.token;
+            const token = Cookies.get("token_mytweeter");
+            console.log(token, "DO в токен");
             // const token = useCookies();
 
             // If we have a token set in state, let's assume that we should be passing it.
             if (token) {
-                // console.log("потрапив в токен");
+                console.log(token, "потрапив в токен");
                 headers.set("authorization", `Bearer ${token}`);
             }
 
@@ -30,6 +31,20 @@ export const api = createApi({
         getPostById: build.query({
             query: (id) => `posts/${id}`,
             // keepUnusedDataFor: 5,
+        }),
+        updatePostById: build.mutation({
+            query: ({ id, data }) => ({
+                url: `posts/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+        }),
+        addPost: build.mutation({
+            query: ({ data }) => ({
+                url: `posts`,
+                method: "POST",
+                body: data,
+            }),
         }),
         getPostsList: build.query({
             query: () => `posts`,
@@ -57,6 +72,8 @@ export const api = createApi({
 // Export hooks for usage in functional components
 export const {
     useGetPostByIdQuery,
+    useUpdatePostByIdMutation,
+    useAddPostMutation,
     useGetPostsListQuery,
     useGetPostsListByUsernameQuery,
     useGetCommentsListByPostidQuery,

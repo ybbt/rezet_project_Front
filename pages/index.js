@@ -27,6 +27,8 @@ import { initializeStore } from "../redux/store"; // ---  для серверн�
 import { wrapper } from "../redux/store";
 import {
     useGetPostsListQuery,
+    useAddPostMutation,
+    useUpdatePostByIdMutation,
     getPostsList,
     getRunningOperationPromises,
 } from "../redux/api.js";
@@ -38,6 +40,8 @@ import { RootState } from "../redux/store";
 
 export default function Index() {
     const dispatch = useDispatch();
+
+    const [addPost] = useAddPostMutation();
 
     const { data, isError, error, isLoading } = useGetPostsListQuery();
 
@@ -66,16 +70,14 @@ export default function Index() {
     // console.log(result, "result");
     // --- -----------------------
 
-    // const {
-    //     signedUser: signedUserStore,
-    //     isAuth: isAuthStore,
-    //     isLoad: isLoadStore,
-    // } = useSelector((state) => state.authReducer);
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
-    // const stateStore = useSelector((state) => state);
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in index");
 
     async function handleAddPost(postContent) {
-        await dispatch(sendPostRedux(postContent));
+        // await dispatch(sendPostRedux(postContent));
+        addPost({ data: { content: postContent } });
     }
 
     async function handleDeletePost(post) {
@@ -86,12 +88,12 @@ export default function Index() {
         await dispatch(updatePostRedux(updatedData));
     }
 
-    //! поки не авторизації через rtkq
-    // const addPostComponent = isAuthStore && (
-    //     <div className="border border-t-0 border-[#949494] p-2">
-    //         <EditPostForm onSave={handleAddPost} contentKind="post" />
-    //     </div>
-    // );
+    //! поки нема авторизації через rtkq
+    const addPostComponent = isAuthStore && (
+        <div className="border border-t-0 border-[#949494] p-2">
+            <EditPostForm onSave={handleAddPost} contentKind="post" />
+        </div>
+    );
 
     const postsComponentList = data && (
         <PostsList
@@ -108,7 +110,7 @@ export default function Index() {
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
                 <span>Explore</span>
             </header>
-            {/* {addPostComponent} */}
+            {addPostComponent}
             {/* //! поки не авторизації через rtkq */}
             {postsComponentList}
             {/* <div>
