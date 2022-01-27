@@ -25,9 +25,9 @@ export function Comment({
     // const commentsListStore = useSelector(
     //     (state) => state.commentsReducer.commentsList
     // );
-    // const signedUserStore = useSelector(
-    //     (state) => state.authReducer.signedUser
-    // );
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
 
     function handleEdit() {
         setComponentEditCondition(true);
@@ -60,13 +60,13 @@ export function Comment({
     );
 
     //! до повернення авторизації
-    // const dropdownMenu = /* signedUserName */ signedUserStore.name ===
-    //     comment.author.name && (
-    //     <DropdownPostMenu
-    //         onDeletePost={() => onDeleteComment(/* post */ comment)}
-    //         onEditPost={handleEdit}
-    //     />
-    // );
+    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
+        comment.author.name && (
+        <DropdownPostMenu
+            onDeletePost={() => onDeleteComment(/* post */ comment)}
+            onEditPost={handleEdit}
+        />
+    );
 
     const createdAt = useFormatDate(comment.created_at, "dd MMM y"); //moment(comment.created_at).format("D MMM YYYY");
     const updatedAt = useFormatDate(comment.updated_at, "dd MMM y"); //moment(comment.updated_at).format("D MMM YYYY HH:mm");
@@ -120,7 +120,7 @@ export function Comment({
                         <div className="text-[#949494] mr-3">{createdAt}</div>
                         {updatedAtComponent}
                     </div>
-                    {/* {dropdownMenu} //! */}
+                    {dropdownMenu}
                 </div>
                 {displayContent}
             </div>

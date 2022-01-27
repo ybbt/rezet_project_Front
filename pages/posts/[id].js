@@ -38,7 +38,12 @@ import { initializeStore } from "../../redux/store"; // ---  для сервер
 // **********************************
 import {
     useGetPostByIdQuery,
+    useUpdatePostByIdMutation,
+    useDeletePostByIdMutation,
     useGetCommentsListByPostidQuery,
+    useAddCommentByPostidMutation,
+    useUpdateCommentByIdMutation,
+    useDeleteCommentByIdMutation,
     getPostById,
     getCommentsListByPostid,
     getRunningOperationPromises,
@@ -61,38 +66,63 @@ export default function userPost() {
     //     isAuth: isAuthStore,
     //     isLoad: isLoadStore,
     // } = useSelector((state) => state.authReducer);
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
     // ****************************************
     const router = useRouter();
 
     const id = router.query.id;
 
+    const [updatePost] = useUpdatePostByIdMutation();
+    const [deletePost] = useDeletePostByIdMutation();
+    const [addComment] = useAddCommentByPostidMutation();
+    const [updateComment] = useUpdateCommentByIdMutation();
+    const [deleteComment] = useDeleteCommentByIdMutation();
+
     const resultPost = useGetPostByIdQuery(id);
     const resultCommensList = useGetCommentsListByPostidQuery(id);
 
-    const { isLoading, error, data } = resultPost;
-    const { /* isLoading, error, */ data: dataComments } = resultCommensList;
-    // console.log(data.data.comments_count, "data");
+    const {
+        /* isLoading: isLoadingPost, */ isError: isErrorPost,
+        data: dataPost,
+    } = resultPost;
+    const { /* isLoading, isError, */ data: dataComments } = resultCommensList;
+    // console.log(dataPost.data.id, "data");
     // ****************************************
 
     async function handleDeletePost(post) {
-        await dispatch(deleteActivePostRedux(post));
+        // await dispatch(deleteActivePostRedux(post));
+        const { error } = await deletePost({ id: post.id });
+        !error && router.push("/");
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updateActivePostRedux(updatedData));
+        // await dispatch(updateActivePostRedux(updatedData));
+        updatePost({
+            id: updatedData.id,
+            data: { content: updatedData.content },
+        });
     }
 
     async function handleAddComment(commentContent) {
-        await dispatch(sendCommentRedux(postStore.id, commentContent));
+        // await dispatch(sendCommentRedux(postStore.id, commentContent));
+        addComment({
+            postId: dataPost.data.id,
+            data: { content: commentContent },
+        });
     }
 
     async function handleUpdateComment(updatedData) {
-        await dispatch(updateCommentRedux(updatedData));
+        // await dispatch(updateCommentRedux(updatedData));
+        updateComment({
+            id: updatedData.id,
+            data: { content: updatedData.content },
+        });
     }
 
     async function handleDeleteComment(comment) {
-        await dispatch(deleteCommentRedux(comment));
+        // await dispatch(deleteCommentRedux(comment));
+        deleteComment({ id: comment.id });
     }
 
     const commentsComponentList = dataComments && (
@@ -103,35 +133,35 @@ export default function userPost() {
         />
     );
 
-    // const addCommentComponent = !!isAuthStore && (
-    //     <div className="border border-t-0 border-[#949494] p-2 ">
-    //         <EditPostForm onSave={handleAddComment} contentKind="comment" />
-    //     </div>
-    // );
+    const addCommentComponent = !!isAuthStore && (
+        <div className="border border-t-0 border-[#949494] p-2 ">
+            <EditPostForm onSave={handleAddComment} contentKind="comment" />
+        </div>
+    );
 
-    // const beTheFirstSigninSignUpComponent = !isAuthStore && (
-    //     <>
-    //         <Link href={`/register`}>
-    //             <a>Sign Up</a>
-    //         </Link>
-    //         or
-    //         <Link href={`/login`}>
-    //             <a>Sign In</a>
-    //         </Link>
-    //     </>
-    // );
+    const beTheFirstSigninSignUpComponent = !isAuthStore && (
+        <>
+            <Link href={`/register`}>
+                <a>Sign Up</a>
+            </Link>
+            or
+            <Link href={`/login`}>
+                <a>Sign In</a>
+            </Link>
+        </>
+    );
 
-    // const beTheFirstComponent = !postStore.comments_count && (
-    //     <Space className="border border-[#949494] border-t-0 p-3">
-    //         No comments yet... Be the first!
-    //         {beTheFirstSigninSignUpComponent}
-    //     </Space>
-    // );
+    const beTheFirstComponent = dataPost && !dataPost.data.comments_count && (
+        <Space className="border border-[#949494] border-t-0 p-3">
+            No comments yet... Be the first!
+            {beTheFirstSigninSignUpComponent}
+        </Space>
+    );
 
-    const postComponent = data && (
+    const postComponent = dataPost && (
         <Post
-            post={data.data}
-            key={data.data.id}
+            post={dataPost.data}
+            key={dataPost.data.id}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
         />
@@ -148,28 +178,13 @@ export default function userPost() {
         <>
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
                 <div>Thread</div>
-                <div className="text-xs text-[#949494]">{`${data?.data.comments_count} replies`}</div>
+                <div className="text-xs text-[#949494]">{`${dataPost?.data.comments_count} replies`}</div>
             </header>
             {postComponent}
-            {/* {addCommentComponent}*/}
+            {addCommentComponent}
             <div className="h-10 border border-[#949494] border-t-0"></div>
-            {/* {beTheFirstComponent} */}
+            {beTheFirstComponent}
             {commentsComponentList}
-            {/* <div>
-                {error ? (
-                    <>Oh no, there was an error</>
-                ) : isLoading ? (
-                    <>Loading...</>
-                ) : data ? (
-                    <>
-                        <div>{data.data.content}</div>
-                        <img
-                            src={data.data.author.avatar_path}
-                            alt={"data.species.name"}
-                        />
-                    </>
-                ) : null}
-            </div> */}
         </>
     );
 }

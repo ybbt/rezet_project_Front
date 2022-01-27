@@ -11,14 +11,33 @@ import ErrorPage from "next/error";
 import useAuthStatus from "../../hooks/useAuthStatus";
 import useErrorStore from "../../hooks/useErrorStore";
 
-export function PageLayout({ children, headerContent }) {
-    const {
-        signedUser: signedUserStore,
-        isAuth: isAuthStore,
-        isLoad: isLoadStore,
-    } = useSelector((state) => state.authReducer);
+import {
+    useGetAuthentificationQuery,
+    getRunningOperationPromises,
+} from "../../redux/api.js";
 
-    // const errorStore = useSelector((state) => state.errorReducer.error);
+// import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
+import { api } from "../../redux/api";
+
+export function PageLayout({ children /* , headerContent */ }) {
+    const dispatch = useDispatch();
+    const { isAuth: isAuthStore, isLoad: isLoadStore } = useSelector(
+        (state) => state.authReducer
+    );
+
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in pageLayout");
+
+    const {
+        data: dataAuth,
+        isError: isErrorAuth,
+        error: errorAuth,
+        isLoading: isLoadingAuth,
+        isSuccess: isSuccessAuth,
+    } = useGetAuthentificationQuery();
+
+    const result = useGetAuthentificationQuery();
+    console.log(result, "result useGetAuthentificationQuery PageLayout");
 
     useAuthStatus();
 
@@ -27,13 +46,15 @@ export function PageLayout({ children, headerContent }) {
         return <ErrorPage statusCode={errorStatus} />;
     }
 
-    const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
+    const signBanner = !isAuthStore /* dataAuth && !dataAuth.data */ &&
+        !isLoadingAuth /* isLoadStore */ /* isLoadingAuth */ && <SignBanner />;
 
-    const userBannerDropdown = isAuthStore && (
-        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-            <DropdownUserMenu />
-        </div>
-    );
+    const userBannerDropdown =
+        isSuccessAuth /* isAuthStore */ /* dataAuth && dataAuth?.data */ && (
+            <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
+                <DropdownUserMenu />
+            </div>
+        );
 
     return (
         <div className="w-full flex flex-col items-center">

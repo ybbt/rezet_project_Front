@@ -7,20 +7,16 @@ export const api = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: "http://127.0.0.1:8000/api/",
         prepareHeaders: (headers, { getState }) => {
-            // const token = "3|2Kma7djEs3J6IgOEdWdjIDxmfsXo7Yu9iyhR42wL"; //getState().auth.token;
             const token = Cookies.get("token_mytweeter");
-            console.log(token, "DO в токен");
-            // const token = useCookies();
 
-            // If we have a token set in state, let's assume that we should be passing it.
             if (token) {
-                console.log(token, "потрапив в токен");
                 headers.set("authorization", `Bearer ${token}`);
             }
-
+            headers.set("accept", `application/json`);
             return headers;
         },
     }),
+    tagTypes: ["Post", "Comment", "User"],
     reducerPath: "tweetterAPI",
     extractRehydrationInfo(action, { reducerPath }) {
         if (action.type === HYDRATE) {
@@ -29,43 +25,112 @@ export const api = createApi({
     },
     endpoints: (build) => ({
         getPostById: build.query({
-            query: (id) => `posts/${id}`,
-            // keepUnusedDataFor: 5,
+            query: (id) => `/posts/${id}`,
+            // providesTags: (result, error, id) => [{ type: 'Post', id }],
+            providesTags: ["Post"],
         }),
         updatePostById: build.mutation({
             query: ({ id, data }) => ({
-                url: `posts/${id}`,
+                url: `/posts/${id}`,
                 method: "PUT",
                 body: data,
             }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Post", id: arg.id },
+            ],
+        }),
+        deletePostById: build.mutation({
+            query: ({ id }) => ({
+                url: `/posts/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Post", "User"],
         }),
         addPost: build.mutation({
             query: ({ data }) => ({
-                url: `posts`,
+                url: `/posts`,
                 method: "POST",
                 body: data,
             }),
+            invalidatesTags: ["Post", "User"],
         }),
         getPostsList: build.query({
-            query: () => `posts`,
-            // keepUnusedDataFor: 5,
+            query: () => `/posts`,
+            // providesTags: ["Post"],
+            providesTags: (result, error, arg) =>
+                result
+                    ? [
+                          ...result.data.map(({ id }) => ({
+                              type: "Post",
+                              id,
+                          })),
+                          "Post",
+                      ]
+                    : ["Post"],
         }),
         getPostsListByUsername: build.query({
             query: (name) => `/users/${name}/posts`,
-            // keepUnusedDataFor: 5,
+            providesTags: (result, error, arg) =>
+                result
+                    ? [
+                          ...result.data.map(({ id }) => ({
+                              type: "Post",
+                              id,
+                          })),
+                          "Post",
+                      ]
+                    : ["Post"],
         }),
         getCommentsListByPostid: build.query({
             query: (id) => `/posts/${id}/comments`,
-            // keepUnusedDataFor: 5,
+            // providesTags: ["Comment"],
+            providesTags: (result, error, arg) =>
+                result
+                    ? [
+                          ...result.data.map(({ id }) => ({
+                              type: "Comment",
+                              id,
+                          })),
+                          "Comment",
+                      ]
+                    : ["Comment"],
         }),
-        getCommentsListByPostid: build.query({
-            query: (id) => `/posts/${id}/comments`,
-            // keepUnusedDataFor: 5,
+        addCommentByPostid: build.mutation({
+            query: ({ postId, data }) => ({
+                url: `/posts/${postId}/comments`,
+                method: "POST",
+                body: data,
+            }),
+            invalidatesTags: ["Comment", "Post"],
         }),
-        // getAuthentification: build.query({
+        updateCommentById: build.mutation({
+            query: ({ id, data }) => ({
+                url: `/comments/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: "Comment", id: arg.id },
+            ],
+        }),
+        deleteCommentById: build.mutation({
+            query: ({ id }) => ({
+                url: `/comments/${id}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["Comment", "Post"],
+        }),
+        getUserByUsername: build.query({
+            query: (name) => `/users/${name}`,
+            providesTags: ["User"],
+        }),
+        // getActiveUserByToken: build.query({
         //     query: () => `/me`,
-        //     // keepUnusedDataFor: 5,
+
         // }),
+        getAuthentification: build.query({
+            query: () => `/me`,
+        }),
     }),
 });
 
@@ -73,10 +138,17 @@ export const api = createApi({
 export const {
     useGetPostByIdQuery,
     useUpdatePostByIdMutation,
+    useDeletePostByIdMutation,
     useAddPostMutation,
     useGetPostsListQuery,
     useGetPostsListByUsernameQuery,
     useGetCommentsListByPostidQuery,
+    useAddCommentByPostidMutation,
+    useUpdateCommentByIdMutation,
+    useDeleteCommentByIdMutation,
+    useGetUserByUsernameQuery,
+    useGetActiveUserByToken,
+    useGetAuthentificationQuery,
     util: { getRunningOperationPromises },
 } = api;
 
@@ -86,4 +158,5 @@ export const {
     getPostsList,
     getPostsListByUsername,
     getCommentsListByPostid,
+    getUserByUsername,
 } = api.endpoints;

@@ -24,28 +24,36 @@ import { initializeStore } from "../redux/store"; // ---  для серверн�
 
 // *******************************
 // import { skipToken } from "@reduxjs/toolkit/query";
-import { wrapper } from "../redux/store";
+// import { wrapper } from "../redux/store";
 import {
     useGetPostsListQuery,
     useAddPostMutation,
     useUpdatePostByIdMutation,
+    useDeletePostByIdMutation,
     getPostsList,
     getRunningOperationPromises,
 } from "../redux/api.js";
 
 import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 import { api } from "../redux/api";
-import { RootState } from "../redux/store";
 // ********************************
 
 export default function Index() {
     const dispatch = useDispatch();
 
     const [addPost] = useAddPostMutation();
+    const [updatePost] = useUpdatePostByIdMutation();
+    const [deletePost] = useDeletePostByIdMutation();
 
-    const { data, isError, error, isLoading } = useGetPostsListQuery();
+    const {
+        data: dataPostsList,
+        // isSuccess: isSuccessPostsList,
+        // isError: isErrorPostsList,
+        // error: errorPostsList,
+        // isLoading: isLoadingPostsList,
+    } = useGetPostsListQuery();
 
-    console.log(data ?? "null");
+    // console.log(data ?? "null");
 
     // const postsListStore = useSelector((state) => state.postsReducer.postsList);
 
@@ -77,15 +85,20 @@ export default function Index() {
 
     async function handleAddPost(postContent) {
         // await dispatch(sendPostRedux(postContent));
-        addPost({ data: { content: postContent } });
+        addPost({ dataPostsList: { content: postContent } });
     }
 
     async function handleDeletePost(post) {
-        await dispatch(deletePostRedux(post));
+        // await dispatch(deletePostRedux(post));
+        deletePost({ id: post.id });
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updatePostRedux(updatedData));
+        // await dispatch(updatePostRedux(updatedData));
+        updatePost({
+            id: updatedData.id,
+            data: { content: updatedData.content },
+        });
     }
 
     //! поки нема авторизації через rtkq
@@ -95,9 +108,9 @@ export default function Index() {
         </div>
     );
 
-    const postsComponentList = data && (
+    const postsComponentList = dataPostsList && (
         <PostsList
-            postsList={data.data}
+            postsList={dataPostsList.data}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
         />
@@ -154,6 +167,34 @@ Index.getLayout = function getLayout(page) {
 //     }
 // );
 
+export const withoutAuth = (getServerSidePropsFunc) => {
+    return async (ctx, ...args) => {
+        console.log(ctx, "context withoutAuth");
+        // const { token } = ctx.req.cookies;
+
+        // if (token) {
+        //     axiosInstance.setToken(ctx.req.cookies?.token);
+
+        //     try {
+        //         return {
+        //             redirect: {
+        //                 destination: `/`,
+        //             },
+        //         };
+        //     } catch (e) {
+        //         return getServerSidePropsFunc
+        //             ? await getServerSidePropsFunc(ctx, ...args)
+        //             : { props: {} };
+        //     }
+        // }
+
+        // return getServerSidePropsFunc
+        //     ? await getServerSidePropsFunc(ctx, ...args)
+        //     : { props: {} };
+        return await getServerSidePropsFunc(null, ...args);
+    };
+};
+
 export const withRedux = (getStaticProps) => async () => {
     const store = initializeStore();
     try {
@@ -176,21 +217,23 @@ export const withRedux = (getStaticProps) => async () => {
     }
 };
 
-export const getStaticProps = withRedux(async (store) => {
-    try {
-        await store.dispatch(getPostsList.initiate() /* setPostsRedux() */);
-        return {
-            props: {
-                message: "hello world",
-            },
-        };
-    } catch (error) {
-        console.log(error, "Error in getStaticProps");
-        store.dispatch(setErrorRedux(error.response, error.message));
-        // return {
-        //     props: {
-        //         error: true,
-        //     },
-        // };
-    }
-});
+export const getStaticProps = withoutAuth(
+    withRedux(async (store) => {
+        try {
+            await store.dispatch(getPostsList.initiate() /* setPostsRedux() */);
+            return {
+                props: {
+                    message: "hello world",
+                },
+            };
+        } catch (error) {
+            console.log(error, "Error in getStaticProps");
+            store.dispatch(setErrorRedux(error.response, error.message));
+            return {
+                props: {
+                    error: true,
+                },
+            };
+        }
+    })
+);

@@ -31,7 +31,13 @@ import { initializeStore } from "../redux/store"; // ---  для серверн�
 import { wrapper } from "../redux/store";
 import {
     getPostsListByUsername,
+    getUserByUsername,
+    useAddPostMutation,
+    useUpdatePostByIdMutation,
+    useDeletePostByIdMutation,
     useGetPostsListByUsernameQuery,
+    useGetUserByUsernameQuery,
+    useGetActiveUserByToken,
     getRunningOperationPromises,
 } from "../redux/api.js";
 
@@ -57,31 +63,56 @@ export default function userName({ user /* , postsList */ }) {
     const name = router.query.name;
     console.log(name);
 
+    const [addPost] = useAddPostMutation();
+    const [updatePost] = useUpdatePostByIdMutation();
+    const [deletePost] = useDeletePostByIdMutation();
+
     const result = useGetPostsListByUsernameQuery(name);
     const { isLoading, error, data } = result;
-    // const postsList = data?.data;
 
-    // console.log(postsList, "postsList in [name]");
-    console.log(data && data.data, "data in [name]");
+    // console.log(data && data.data, "data in [name]");
+
+    const resultActiveUser = useGetUserByUsernameQuery(name);
+    const { /* isLoading, error, */ data: dataActiveUser } = resultActiveUser;
+
+    // console.log(
+    //     dataActiveUser && dataActiveUser,
+    //     "name of active user in [name]"
+    // );
+
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
+    const stateStore = useSelector((state) => state);
+    console.log(stateStore, "state in [name]");
 
     async function handleAddPost(postContent) {
-        await dispatch(sendPostRedux(postContent));
+        // await dispatch(sendPostRedux(postContent));
+        addPost({ data: { content: postContent } });
     }
 
     async function handleDeletePost(post) {
-        await dispatch(deletePostRedux(post));
+        // await dispatch(deletePostRedux(post));
+        deletePost({ id: post.id });
     }
 
     async function handleUpdatePost(updatedData) {
-        await dispatch(updatePostRedux(updatedData));
+        // await dispatch(updatePostRedux(updatedData));
+        updatePost({
+            id: updatedData.id,
+            data: { content: updatedData.content },
+        });
     }
 
     //!доки не поверну авторизацію через rtkq
-    // const addPostComponent = activeUserStore.name === signedUserStore.name && (
-    //     <div className="border border-t-0 border-[#949494] p-2">
-    //         <EditPostForm onSave={handleAddPost} contentKind="post" />
-    //     </div>
-    // );
+    const addPostComponent = dataActiveUser &&
+        dataActiveUser.data.name === signedUserStore.name /*  */ && (
+            <div className="border border-t-0 border-[#949494] p-2">
+                <EditPostForm onSave={handleAddPost} contentKind="post" />
+            </div>
+        );
 
     const postsComponentList = data && (
         <PostsList
@@ -103,17 +134,31 @@ export default function userName({ user /* , postsList */ }) {
     return (
         <>
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
-                {/* <div className="font-bold text-lg">
-                    {`${activeUserStore.first_name} ${
-                        activeUserStore.last_name || ""
+                <div className="font-bold text-lg">
+                    {`${
+                        /* activeUserStore */ dataActiveUser &&
+                        dataActiveUser.data.first_name
+                    } ${
+                        /* activeUserStore */ (dataActiveUser &&
+                            dataActiveUser.data.last_name) ||
+                        ""
                     }`}
-                </div> */}
-                {/* <div className="text-xs text-[#949494]">{`${activeUserStore.posts_count} posts`}</div> */}
+                </div>
+                <div className="text-xs text-[#949494]">{`${
+                    /* activeUserStore */ dataActiveUser &&
+                    dataActiveUser.data.posts_count
+                } posts`}</div>
             </header>
-            {/* <div className="h-64 w-full border border-[#949494] border-t-0">
-                <UserWrapper user={activeUserStore} />
-            </div> */}
-            {/* {addPostComponent} */}
+            <div className="h-64 w-full border border-[#949494] border-t-0">
+                <UserWrapper
+                    user={
+                        /* activeUserStore */ dataActiveUser
+                            ? dataActiveUser.data
+                            : {}
+                    }
+                />
+            </div>
+            {addPostComponent}
             {postsComponentList}
         </>
     );
@@ -167,13 +212,18 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
 export const getServerSideProps = withRedux(async (context, store) => {
     try {
         /* const result =  */ await Promise.all([
-            // store.dispatch(setUserRedux(context.params.name)),
+            store.dispatch(
+                /* setUserRedux */ getUserByUsername.initiate(
+                    context.params.name
+                )
+            ),
             store.dispatch(
                 /* setUserPostsRedux */ getPostsListByUsername.initiate(
                     context.params.name
                 )
             ),
         ]);
+        await Promise.all(getRunningOperationPromises());
 
         return {
             props: {

@@ -40,18 +40,18 @@ export function UserWrapper({ user }) {
             </div>
             <div className="flex justify-between px-4 py-3">
                 <div className="flex flex-col">
-                    <div className="font-bold text-lg">{`${user.first_name} ${
-                        user.last_name || ""
+                    <div className="font-bold text-lg">{`${user?.first_name} ${
+                        user?.last_name || ""
                     }`}</div>
                     <div className="text-xs text-[#949494]">
                         <Link href="#">
-                            <a className="text-inherit">{`@${user.name}`}</a>
+                            <a className="text-inherit">{`@${user?.name}`}</a>
                         </Link>
                     </div>
                     <a
                         className="my-4 text-[0.625rem] text-[#5f5f5f]"
                         target="_blank"
-                        href={`http://maps.google.com/maps?q=${user.lat},${user.lng}`}
+                        href={`http://maps.google.com/maps?q=${user?.lat},${user?.lng}`}
                     >
                         {address}
                     </a>
