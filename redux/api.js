@@ -51,7 +51,7 @@ export const api = createApi({
                 url: `posts/${id}`,
                 method: "GET",
             }),
-            providesTags: ["Post"],
+            providesTags: (result, error, id) => [{ type: "Post", id }],
         }),
         updatePostById: build.mutation({
             query: ({ id, data }) => ({
@@ -60,22 +60,33 @@ export const api = createApi({
 
                 /* body: */ data,
             }),
-            // async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
-            //     const patchResult = dispatch(
-            //         api.util.updateQueryData("getPostById", id, (draft) => {
-            //             console.log(first);
-            //             return Object.assign(draft, data);
-            //         })
-            //     );
-            //     try {
-            //         await queryFulfilled;
-            //     } catch {
-            //         patchResult.undo();
-            //     }
-            // },
-            invalidatesTags: (result, error, arg) => [
-                { type: "Post", id: arg.id },
-            ],
+            async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
+                dispatch(
+                    api.util.updateQueryData(
+                        "getPostsList",
+                        undefined,
+                        (draft) => {
+                            const newPostsList = draft.data.map((postItem) =>
+                                postItem.id === id
+                                    ? {
+                                          ...postItem,
+                                          ...data,
+                                      }
+                                    : postItem
+                            );
+                            draft.data = newPostsList;
+                        }
+                    )
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
+            // invalidatesTags: (result, error, arg) => [
+            //     { type: "Post", id: arg.id },
+            // ],
         }),
         deletePostById: build.mutation({
             query: ({ id }) => ({
