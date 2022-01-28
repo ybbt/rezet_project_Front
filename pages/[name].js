@@ -1,3 +1,4 @@
+import axiosInstance from "../libs/axiosInstance";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -28,7 +29,7 @@ import {
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
 // **********************************
-import { wrapper } from "../redux/store";
+// import { wrapper } from "../redux/store";
 import {
     getPostsListByUsername,
     getUserByUsername,
@@ -187,6 +188,35 @@ userName.getLayout = function getLayout(page) {
 // );
 // *****************************
 
+export const withoutAuth = (getServerSidePropsFunc) => {
+    return async (ctx, ...args) => {
+        console.log(ctx, "context withoutAuth");
+        axiosInstance.setToken();
+        const { token } = ctx.req.cookies;
+
+        if (token) {
+            axiosInstance.setToken(ctx.req.cookies?.token);
+
+            try {
+                return {
+                    redirect: {
+                        destination: `/`,
+                    },
+                };
+            } catch (e) {
+                return getServerSidePropsFunc
+                    ? await getServerSidePropsFunc(ctx, ...args)
+                    : { props: {} };
+            }
+        }
+
+        return getServerSidePropsFunc
+            ? await getServerSidePropsFunc(ctx, ...args)
+            : { props: {} };
+        // return await getServerSidePropsFunc(null, ...args);
+    };
+};
+
 export const withRedux = (getServerSideProps) => async (ctx) => {
     const store = initializeStore();
     try {
@@ -209,34 +239,36 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
     }
 };
 
-export const getServerSideProps = withRedux(async (context, store) => {
-    try {
-        /* const result =  */ await Promise.all([
-            store.dispatch(
-                /* setUserRedux */ getUserByUsername.initiate(
-                    context.params.name
-                )
-            ),
-            store.dispatch(
-                /* setUserPostsRedux */ getPostsListByUsername.initiate(
-                    context.params.name
-                )
-            ),
-        ]);
-        await Promise.all(getRunningOperationPromises());
+export const getServerSideProps = withoutAuth(
+    withRedux(async (context, store) => {
+        try {
+            /* const result =  */ await Promise.all([
+                store.dispatch(
+                    /* setUserRedux */ getUserByUsername.initiate(
+                        context.params.name
+                    )
+                ),
+                store.dispatch(
+                    /* setUserPostsRedux */ getPostsListByUsername.initiate(
+                        context.params.name
+                    )
+                ),
+            ]);
+            await Promise.all(getRunningOperationPromises());
 
-        return {
-            props: {
-                message: "hello world",
-            },
-        };
-    } catch (error) {
-        console.log(error, "error in getServerSideProps");
-        store.dispatch(setErrorRedux(error.response, error.message));
-        // return {
-        //     props: {
-        //         error: true,
-        //     },
-        // };
-    }
-});
+            return {
+                props: {
+                    message: "hello world",
+                },
+            };
+        } catch (error) {
+            console.log(error, "error in getServerSideProps");
+            store.dispatch(setErrorRedux(error.response, error.message));
+            // return {
+            //     props: {
+            //         error: true,
+            //     },
+            // };
+        }
+    })
+);

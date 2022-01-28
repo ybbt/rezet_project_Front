@@ -1,8 +1,9 @@
+import axiosInstance from "../libs/axiosInstance";
 import { PageLayout } from "../components/PageLayout";
 import { UserWrapper } from "../components/UserWrapper";
 import Map from "../components/Map";
 import "antd/dist/antd.css";
-import axiosConfigured from "../libs/axiosInstance"; //! прибрати
+// import axiosConfigured from "../libs/axiosInstance"; //! прибрати
 
 import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
@@ -12,6 +13,13 @@ import { Modal, Upload, Button } from "antd";
 import { /*  useEffect,  */ useState } from "react";
 
 import { useSelector /* , useDispatch */ } from "react-redux";
+
+import {
+    getAuthentification,
+    getRunningOperationPromises,
+} from "../redux/api.js";
+
+import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
 export default function Settings() {
     const [file, setFile] = useState("");
@@ -183,3 +191,81 @@ Settings.getLayout = function getLayout(page) {
         </>
     );
 };
+
+export const withoutAuth = (getServerSidePropsFunc) => {
+    return async (ctx, ...args) => {
+        console.log(ctx.req.cookies?.token_mytweeter, "context withoutAuth");
+        // axiosInstance.setToken();
+        const { token } = ctx.req.cookies;
+
+        if (token) {
+            axiosInstance.setToken(ctx.req.cookies?.token_mytweeter);
+
+            try {
+                return {
+                    redirect: {
+                        destination: `/`,
+                    },
+                };
+            } catch (e) {
+                return getServerSidePropsFunc
+                    ? await getServerSidePropsFunc(ctx, ...args)
+                    : { props: {} };
+            }
+        }
+
+        return getServerSidePropsFunc
+            ? await getServerSidePropsFunc(ctx, ...args)
+            : { props: {} };
+        // return await getServerSidePropsFunc(null, ...args);
+    };
+};
+
+export const withRedux = (getServerSideProps) => async (ctx) => {
+    const store = initializeStore();
+    try {
+        const result = await getServerSideProps(ctx, store);
+
+        return {
+            ...result,
+
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
+        };
+    } catch (error) {
+        return {
+            props: {
+                error: true,
+            },
+        };
+    }
+};
+
+export const getServerSideProps = withoutAuth(
+    withRedux(async (context, store) => {
+        try {
+            const result = await store.dispatch(getAuthentification.initiate());
+            console.log(
+                result,
+                "RESULT  from getServerSideProps in SETTING page"
+            );
+            await Promise.all(getRunningOperationPromises());
+
+            return {
+                props: {
+                    message: "hello world",
+                },
+            };
+        } catch (error) {
+            console.log(error, "error in getServerSideProps");
+            store.dispatch(setErrorRedux(error.response, error.message));
+            // return {
+            //     props: {
+            //         error: true,
+            //     },
+            // };
+        }
+    })
+);

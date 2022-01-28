@@ -124,7 +124,7 @@ export default function Index() {
                 <span>Explore</span>
             </header>
             {addPostComponent}
-            {/* //! поки не авторизації через rtkq */}
+
             {postsComponentList}
             {/* <div>
                 {error ? (
@@ -167,34 +167,6 @@ Index.getLayout = function getLayout(page) {
 //     }
 // );
 
-export const withoutAuth = (getServerSidePropsFunc) => {
-    return async (ctx, ...args) => {
-        console.log(ctx, "context withoutAuth");
-        // const { token } = ctx.req.cookies;
-
-        // if (token) {
-        //     axiosInstance.setToken(ctx.req.cookies?.token);
-
-        //     try {
-        //         return {
-        //             redirect: {
-        //                 destination: `/`,
-        //             },
-        //         };
-        //     } catch (e) {
-        //         return getServerSidePropsFunc
-        //             ? await getServerSidePropsFunc(ctx, ...args)
-        //             : { props: {} };
-        //     }
-        // }
-
-        // return getServerSidePropsFunc
-        //     ? await getServerSidePropsFunc(ctx, ...args)
-        //     : { props: {} };
-        return await getServerSidePropsFunc(null, ...args);
-    };
-};
-
 export const withRedux = (getStaticProps) => async () => {
     const store = initializeStore();
     try {
@@ -217,23 +189,21 @@ export const withRedux = (getStaticProps) => async () => {
     }
 };
 
-export const getStaticProps = withoutAuth(
-    withRedux(async (store) => {
-        try {
-            await store.dispatch(getPostsList.initiate() /* setPostsRedux() */);
-            return {
-                props: {
-                    message: "hello world",
-                },
-            };
-        } catch (error) {
-            console.log(error, "Error in getStaticProps");
-            store.dispatch(setErrorRedux(error.response, error.message));
-            return {
-                props: {
-                    error: true,
-                },
-            };
-        }
-    })
-);
+export const getStaticProps = withRedux(async (store) => {
+    try {
+        await store.dispatch(getPostsList.initiate() /* setPostsRedux() */);
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        console.log(error, "Error in getStaticProps");
+        store.dispatch(setErrorRedux(error.response, error.message));
+        return {
+            props: {
+                error: true,
+            },
+        };
+    }
+});
