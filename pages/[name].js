@@ -104,6 +104,7 @@ export default function userName({ user /* , postsList */ }) {
         updatePost({
             id: updatedData.id,
             data: { content: updatedData.content },
+            name: updatedData.author.name,
         });
     }
 

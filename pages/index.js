@@ -24,7 +24,6 @@ import { initializeStore } from "../redux/store"; // ---  для серверн�
 
 // *******************************
 // import { skipToken } from "@reduxjs/toolkit/query";
-// import { wrapper } from "../redux/store";
 import {
     useGetPostsListQuery,
     useAddPostMutation,
@@ -80,8 +79,8 @@ export default function Index() {
 
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
-    const stateStore = useSelector((state) => state);
-    console.log(stateStore, "state in index");
+    // const stateStore = useSelector((state) => state);
+    // console.log(stateStore, "state in index");
 
     async function handleAddPost(postContent) {
         // await dispatch(sendPostRedux(postContent));

@@ -54,24 +54,39 @@ export const api = createApi({
             providesTags: (result, error, id) => [{ type: "Post", id }],
         }),
         updatePostById: build.mutation({
-            query: ({ id, data }) => ({
+            query: ({ id, data, name }) => ({
                 url: `posts/${id}`,
                 method: "PUT",
 
                 /* body: */ data,
             }),
-            async onQueryStarted({ id, data }, { dispatch, queryFulfilled }) {
-                dispatch(
+            async onQueryStarted(
+                { id, data, name },
+                { dispatch, queryFulfilled, getState }
+            ) {
+                console.log(getState(), "state in onQueryStarted");
+                const patchResultAllPosts = dispatch(
                     api.util.updateQueryData(
                         "getPostsList",
                         undefined,
                         (draft) => {
                             const newPostsList = draft.data.map((postItem) =>
                                 postItem.id === id
-                                    ? {
-                                          ...postItem,
-                                          ...data,
-                                      }
+                                    ? { ...postItem, ...data }
+                                    : postItem
+                            );
+                            draft.data = newPostsList;
+                        }
+                    )
+                );
+                const patchResultUserPosts = dispatch(
+                    api.util.updateQueryData(
+                        "getPostsListByUsername",
+                        name,
+                        (draft) => {
+                            const newPostsList = draft.data.map((postItem) =>
+                                postItem.id === id
+                                    ? { ...postItem, ...data }
                                     : postItem
                             );
                             draft.data = newPostsList;
@@ -81,7 +96,8 @@ export const api = createApi({
                 try {
                     await queryFulfilled;
                 } catch {
-                    patchResult.undo();
+                    patchResultAllPosts.undo();
+                    patchResultUserPosts.undo();
                 }
             },
             // invalidatesTags: (result, error, arg) => [
@@ -189,10 +205,6 @@ export const api = createApi({
             }),
             providesTags: ["User"],
         }),
-        // getActiveUserByToken: build.query({
-        //     query: () => `/me`,
-
-        // }),
         getAuthentification: build.query({
             // query: () => `/me`,
             query: () => ({

@@ -1,9 +1,9 @@
-import axiosInstance from "../libs/axiosInstance";
+// import axiosInstance from "../libs/axiosInstance";
 import { PageLayout } from "../components/PageLayout";
 import { UserWrapper } from "../components/UserWrapper";
 import Map from "../components/Map";
 import "antd/dist/antd.css";
-// import axiosConfigured from "../libs/axiosInstance"; //! прибрати
+import axiosConfigured from "../libs/axiosInstance"; //! прибрати
 
 import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
@@ -194,25 +194,28 @@ Settings.getLayout = function getLayout(page) {
 
 export const withoutAuth = (getServerSidePropsFunc) => {
     return async (ctx, ...args) => {
-        console.log(ctx.req.cookies?.token_mytweeter, "context withoutAuth");
-        // axiosInstance.setToken();
-        const { token } = ctx.req.cookies;
+        // console.log("start withoutAuth");
+        // // axiosConfigured.setToken();
+        // const { token_mytweeter } = ctx.req.cookies;
 
-        if (token) {
-            axiosInstance.setToken(ctx.req.cookies?.token_mytweeter);
+        // console.log(token_mytweeter, "token before axiosConfigured.setToken");
+        // if (token_mytweeter) {
+        //     axiosConfigured.setToken(ctx.req.cookies?.token_mytweeter);
 
-            try {
-                return {
-                    redirect: {
-                        destination: `/`,
-                    },
-                };
-            } catch (e) {
-                return getServerSidePropsFunc
-                    ? await getServerSidePropsFunc(ctx, ...args)
-                    : { props: {} };
-            }
-        }
+        //     try {
+        //         console.log("try in withoutAuth");
+        //         return {
+        //             redirect: {
+        //                 destination: `/`,
+        //             },
+        //         };
+        //     } catch (e) {
+        //         console.log("catch in withoutAuth");
+        //         return getServerSidePropsFunc
+        //             ? await getServerSidePropsFunc(ctx, ...args)
+        //             : { props: {} };
+        //     }
+        // }
 
         return getServerSidePropsFunc
             ? await getServerSidePropsFunc(ctx, ...args)
@@ -222,8 +225,10 @@ export const withoutAuth = (getServerSidePropsFunc) => {
 };
 
 export const withRedux = (getServerSideProps) => async (ctx) => {
+    console.log("start withRedux");
     const store = initializeStore();
     try {
+        console.log("try in withRedux");
         const result = await getServerSideProps(ctx, store);
 
         return {
@@ -235,6 +240,7 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
             },
         };
     } catch (error) {
+        console.log("catch in withRedux");
         return {
             props: {
                 error: true,
@@ -243,8 +249,9 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
     }
 };
 
-export const getServerSideProps = withoutAuth(
-    withRedux(async (context, store) => {
+export const getServerSideProps = withRedux(
+    withoutAuth(async (context, store) => {
+        console.log("start in getServerSideProps");
         try {
             const result = await store.dispatch(getAuthentification.initiate());
             console.log(
