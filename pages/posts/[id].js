@@ -71,7 +71,7 @@ export default function userPost() {
     // ****************************************
     const router = useRouter();
 
-    const id = router.query.id;
+    const postId = router.query.id;
 
     const [updatePost] = useUpdatePostByIdMutation();
     const [deletePost] = useDeletePostByIdMutation();
@@ -79,8 +79,8 @@ export default function userPost() {
     const [updateComment] = useUpdateCommentByIdMutation();
     const [deleteComment] = useDeleteCommentByIdMutation();
 
-    const resultPost = useGetPostByIdQuery(id);
-    const resultCommensList = useGetCommentsListByPostidQuery(id);
+    const resultPost = useGetPostByIdQuery(postId);
+    const resultCommensList = useGetCommentsListByPostidQuery(postId);
 
     const {
         /* isLoading: isLoadingPost, */ isError: isErrorPost,
@@ -113,16 +113,18 @@ export default function userPost() {
     }
 
     async function handleUpdateComment(updatedData) {
+        console.log(updatedData, "updatedData");
         // await dispatch(updateCommentRedux(updatedData));
         updateComment({
             id: updatedData.id,
             data: { content: updatedData.content },
+            postId,
         });
     }
 
     async function handleDeleteComment(comment) {
         // await dispatch(deleteCommentRedux(comment));
-        deleteComment({ id: comment.id });
+        deleteComment({ id: comment.id, postId });
     }
 
     const commentsComponentList = dataComments && (

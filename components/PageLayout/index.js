@@ -46,11 +46,14 @@ export function PageLayout({ children /* , headerContent */ }) {
         return <ErrorPage statusCode={errorStatus} />;
     }
 
-    const signBanner = !isAuthStore /* dataAuth && !dataAuth.data */ &&
-        !isLoadingAuth /* isLoadStore */ /* isLoadingAuth */ && <SignBanner />;
+    const signBanner =
+        /* !isSuccessAuth */ !isAuthStore /* dataAuth && !dataAuth.data */ &&
+            /* !isLoadingAuth */ isLoadStore /* isLoadingAuth */ && (
+                <SignBanner />
+            );
 
     const userBannerDropdown =
-        isSuccessAuth /* isAuthStore */ /* dataAuth && dataAuth?.data */ && (
+        /* isSuccessAuth */ isAuthStore /* dataAuth && dataAuth?.data */ && (
             <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
                 <DropdownUserMenu />
             </div>

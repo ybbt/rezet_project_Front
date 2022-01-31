@@ -96,7 +96,7 @@ export default function userName({ user /* , postsList */ }) {
 
     async function handleDeletePost(post) {
         // await dispatch(deletePostRedux(post));
-        deletePost({ id: post.id });
+        deletePost({ id: post.id, name: post.author.name });
     }
 
     async function handleUpdatePost(updatedData) {
@@ -191,25 +191,25 @@ userName.getLayout = function getLayout(page) {
 
 export const withoutAuth = (getServerSidePropsFunc) => {
     return async (ctx, ...args) => {
-        console.log(ctx, "context withoutAuth");
-        axiosInstance.setToken();
-        const { token } = ctx.req.cookies;
+        // console.log(ctx, "context withoutAuth");
+        // axiosInstance.setToken();
+        // const { token } = ctx.req.cookies;
 
-        if (token) {
-            axiosInstance.setToken(ctx.req.cookies?.token);
+        // if (token) {
+        //     axiosInstance.setToken(ctx.req.cookies?.token);
 
-            try {
-                return {
-                    redirect: {
-                        destination: `/`,
-                    },
-                };
-            } catch (e) {
-                return getServerSidePropsFunc
-                    ? await getServerSidePropsFunc(ctx, ...args)
-                    : { props: {} };
-            }
-        }
+        //     try {
+        //         return {
+        //             redirect: {
+        //                 destination: `/`,
+        //             },
+        //         };
+        //     } catch (e) {
+        //         return getServerSidePropsFunc
+        //             ? await getServerSidePropsFunc(ctx, ...args)
+        //             : { props: {} };
+        //     }
+        // }
 
         return getServerSidePropsFunc
             ? await getServerSidePropsFunc(ctx, ...args)

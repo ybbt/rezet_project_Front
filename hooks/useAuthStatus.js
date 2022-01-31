@@ -7,6 +7,12 @@ export default function useAuthStatus() {
 
     const dispatch = useDispatch();
     useEffect(async () => {
+        console.log("%c useEffect for isAuthStore", "color: blue");
         await dispatch(authMeRedux());
     }, [isAuthStore]);
+
+    // useEffect(async () => {
+    //     console.log("%c useEffect single ", "color: green");
+    //     await dispatch(authMeRedux());
+    // }, []);
 }

@@ -64,7 +64,10 @@ export const api = createApi({
                 { id, data, name },
                 { dispatch, queryFulfilled, getState }
             ) {
-                console.log(getState(), "state in onQueryStarted");
+                // console.log(
+                //     Object.values(getState().tweetterAPI.queries)[1].data.data,
+                //     "getState in onQueryStarted in addPost"
+                // );
                 const patchResultAllPosts = dispatch(
                     api.util.updateQueryData(
                         "getPostsList",
@@ -93,11 +96,26 @@ export const api = createApi({
                         }
                     )
                 );
+                const patchResultUserPost = dispatch(
+                    api.util.updateQueryData(
+                        "getPostById",
+                        `${id}`,
+                        (draft) => {
+                            console.log(
+                                JSON.stringify(draft.data),
+                                "DRAFT_DATA"
+                            );
+                            const newPost = { ...draft.data, ...data };
+                            draft.data = newPost;
+                        }
+                    )
+                );
                 try {
                     await queryFulfilled;
                 } catch {
                     patchResultAllPosts.undo();
                     patchResultUserPosts.undo();
+                    patchResultUserPost.undo();
                 }
             },
             // invalidatesTags: (result, error, arg) => [
@@ -105,11 +123,50 @@ export const api = createApi({
             // ],
         }),
         deletePostById: build.mutation({
-            query: ({ id }) => ({
+            query: ({ id, name }) => ({
                 url: `posts/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Post", "User"],
+            async onQueryStarted(
+                { id, name },
+                { dispatch, queryFulfilled, getState }
+            ) {
+                // console.log(
+                //     Object.values(getState().tweetterAPI.queries)[1].data.data,
+                //     "getState in onQueryStarted in addPost"
+                // );
+                const patchResultAllPosts = dispatch(
+                    api.util.updateQueryData(
+                        "getPostsList",
+                        undefined,
+                        (draft) => {
+                            const newPostsList = draft.data.filter(
+                                (postItem) => postItem.id !== id
+                            );
+                            draft.data = newPostsList;
+                        }
+                    )
+                );
+                const patchResultUserPosts = dispatch(
+                    api.util.updateQueryData(
+                        "getPostsListByUsername",
+                        name,
+                        (draft) => {
+                            const newPostsList = draft.data.filter(
+                                (postItem) => postItem.id !== id
+                            );
+                            draft.data = newPostsList;
+                        }
+                    )
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResultAllPosts.undo();
+                    patchResultUserPosts.undo();
+                }
+            },
+            invalidatesTags: [/* "Post",  */ "User"],
         }),
         addPost: build.mutation({
             query: ({ data }) => ({
@@ -117,7 +174,36 @@ export const api = createApi({
                 method: "POST",
                 /* body: */ data,
             }),
-            invalidatesTags: ["Post", "User"],
+            async onQueryStarted({}, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: updatedPost } = await queryFulfilled;
+
+                    const patchResultAllPosts = dispatch(
+                        api.util.updateQueryData(
+                            "getPostsList",
+                            undefined,
+                            (draft) => {
+                                // console.log(
+                                //     JSON.stringify(draft.data),
+                                //     "DRAFT_DATA"
+                                // );
+                                draft.data.unshift(updatedPost.data);
+                            }
+                        )
+                    );
+                    const patchResultUserPosts = dispatch(
+                        api.util.updateQueryData(
+                            "getPostsListByUsername",
+                            updatedPost.data.author.name,
+                            (draft) => {
+                                draft.data.unshift(updatedPost.data);
+                            }
+                        )
+                    );
+                } catch {}
+            },
+
+            invalidatesTags: [/* "Post",  */ "User"],
         }),
         getPostsList: build.query({
             // query: () => `/posts`,
@@ -178,24 +264,88 @@ export const api = createApi({
                 method: "POST",
                 /* body: */ data,
             }),
-            invalidatesTags: ["Comment", "Post"],
+            async onQueryStarted({ postId }, { dispatch, queryFulfilled }) {
+                try {
+                    const { data: updatedComment } = await queryFulfilled;
+
+                    const patchResultUserPosts = dispatch(
+                        api.util.updateQueryData(
+                            "getCommentsListByPostid",
+                            `${postId}`,
+                            (draft) => {
+                                draft.data.unshift(updatedComment.data);
+                            }
+                        )
+                    );
+                } catch {}
+            },
+            invalidatesTags: [/* "Comment", */ "Post"],
         }),
         updateCommentById: build.mutation({
-            query: ({ id, data }) => ({
+            query: ({ id, data, postId }) => ({
                 url: `comments/${id}`,
                 method: "PUT",
                 /* body:  */ data,
             }),
-            invalidatesTags: (result, error, arg) => [
-                { type: "Comment", id: arg.id },
-            ],
+            async onQueryStarted(
+                { id, data, postId },
+                { dispatch, queryFulfilled, getState }
+            ) {
+                const patchResultComments = dispatch(
+                    api.util.updateQueryData(
+                        "getCommentsListByPostid",
+                        `${postId}`,
+                        (draft) => {
+                            const newCommentsList = draft.data.map(
+                                (commentItem) =>
+                                    commentItem.id === id
+                                        ? { ...commentItem, ...data }
+                                        : commentItem
+                            );
+                            draft.data = newCommentsList;
+                        }
+                    )
+                );
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResultAllPosts.undo();
+                }
+            },
+            // invalidatesTags: (result, error, arg) => [
+            //     { type: "Comment", id: arg.id },
+            // ],
         }),
         deleteCommentById: build.mutation({
-            query: ({ id }) => ({
+            query: ({ id, postId }) => ({
                 url: `comments/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["Comment", "Post"],
+            async onQueryStarted(
+                { id, postId },
+                { dispatch, queryFulfilled, getState }
+            ) {
+                const patchResultComments = dispatch(
+                    api.util.updateQueryData(
+                        "getCommentsListByPostid",
+                        `${postId}`,
+                        (draft) => {
+                            const newCommentsList = draft.data.filter(
+                                (commentItem) => commentItem.id !== id
+                            );
+                            draft.data = newCommentsList;
+                        }
+                    )
+                );
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResultComments.undo();
+                }
+            },
+            invalidatesTags: [/* "Comment", */ "Post"],
         }),
         getUserByUsername: build.query({
             // query: (name) => `/users/${name}`,

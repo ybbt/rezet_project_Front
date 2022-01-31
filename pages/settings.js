@@ -194,32 +194,35 @@ Settings.getLayout = function getLayout(page) {
 
 export const withoutAuth = (getServerSidePropsFunc) => {
     return async (ctx, ...args) => {
-        // console.log("start withoutAuth");
-        // // axiosConfigured.setToken();
-        // const { token_mytweeter } = ctx.req.cookies;
+        console.log("start withoutAuth");
 
-        // console.log(token_mytweeter, "token before axiosConfigured.setToken");
-        // if (token_mytweeter) {
-        //     axiosConfigured.setToken(ctx.req.cookies?.token_mytweeter);
+        const { token_mytweeter } = ctx.req.cookies;
 
-        //     try {
-        //         console.log("try in withoutAuth");
-        //         return {
-        //             redirect: {
-        //                 destination: `/`,
-        //             },
-        //         };
-        //     } catch (e) {
-        //         console.log("catch in withoutAuth");
-        //         return getServerSidePropsFunc
-        //             ? await getServerSidePropsFunc(ctx, ...args)
-        //             : { props: {} };
-        //     }
-        // }
+        console.log(token_mytweeter, "token before axiosConfigured.setToken");
+        if (token_mytweeter) {
+            axiosConfigured.setToken(ctx.req.cookies?.token_mytweeter);
+            return getServerSidePropsFunc
+                ? await getServerSidePropsFunc(ctx, ...args)
+                : { props: {} };
+        } else {
+            try {
+                // console.log("try in withoutAuth");
+                return {
+                    redirect: {
+                        destination: `/`,
+                    },
+                };
+            } catch (e) {
+                // console.log("catch in withoutAuth");
+                return getServerSidePropsFunc
+                    ? await getServerSidePropsFunc(ctx, ...args)
+                    : { props: {} };
+            }
+        }
 
-        return getServerSidePropsFunc
-            ? await getServerSidePropsFunc(ctx, ...args)
-            : { props: {} };
+        // return getServerSidePropsFunc
+        //     ? await getServerSidePropsFunc(ctx, ...args)
+        //     : { props: {} };
         // return await getServerSidePropsFunc(null, ...args);
     };
 };
@@ -259,6 +262,14 @@ export const getServerSideProps = withRedux(
                 "RESULT  from getServerSideProps in SETTING page"
             );
             await Promise.all(getRunningOperationPromises());
+
+            if (result.isError) {
+                return {
+                    redirect: {
+                        destination: `/`,
+                    },
+                };
+            }
 
             return {
                 props: {
