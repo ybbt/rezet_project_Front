@@ -85,7 +85,7 @@ export function Post({
     // TODO в ХУК
     const avatarPath = post.author.avatar_path ?? "/avatar.png";
 
-    console.log(avatarPath, "avatarPath");
+    // console.log(avatarPath, "avatarPath");
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">
