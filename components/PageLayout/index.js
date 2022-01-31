@@ -19,6 +19,9 @@ import {
 // import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 import { api } from "../../redux/api";
 
+import { authMeRedux } from "../../redux/actions/authorizationActions.js";
+import { useEffect } from "react";
+
 export function PageLayout({ children /* , headerContent */ }) {
     const dispatch = useDispatch();
     const { isAuth: isAuthStore, isLoad: isLoadStore } = useSelector(
@@ -40,6 +43,11 @@ export function PageLayout({ children /* , headerContent */ }) {
     console.log(result, "result useGetAuthentificationQuery PageLayout");
 
     useAuthStatus();
+
+    // useEffect(async () => {
+    //     console.log("%c useEffect single ", "color: green");
+    //     await dispatch(authMeRedux());
+    // });
 
     const errorStatus = useErrorStore();
     if (errorStatus) {

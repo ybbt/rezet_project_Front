@@ -9,7 +9,7 @@ const authorizationSlice = createSlice({
     },
     reducers: {
         setAuth(state, action) {
-            console.log("setAuth");
+            console.log("%c setAuth", "color:green, background-color:yellow");
             state.signedUser = action.payload.signedUser;
             state.isAuth = action.payload.isAuth;
             state.isLoad = action.payload.isLoad;
