@@ -2,7 +2,7 @@ import * as types from "../actionsTypes";
 
 const initialAuthState = {
     signedUser: {},
-    isAuth: false,
+    isAuth: null,
     isLoad: false,
 };
 
