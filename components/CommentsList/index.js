@@ -8,9 +8,9 @@ export function CommentsList({
     onUpdateComment,
     signedUser,
 }) {
-    // const commentsListStore = useSelector(
-    //     (state) => state.commentsReducer.commentsList
-    // );
+    const commentsListStore = useSelector(
+        (state) => state.commentsReducer.commentsList
+    );
 
     return commentsList.map((commentItem) => {
         return (

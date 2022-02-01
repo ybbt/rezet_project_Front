@@ -7,37 +7,41 @@ const axiosInstance = axios.create({
 
 // let tokenServ = null;
 
-axiosInstance.setToken = (token) => {
-    axiosInstance.defaults.headers.common["authorization"] = `Bearer ${token}`;
+axiosInstance.setToken = function (token) {
+    // axiosInstance.defaults.headers.common["authorization"] = `Bearer ${token}`;
+    this.token = token;
 };
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        console.log(Cookies.get("token_mytweeter"), "Cookies INTERceptor");
+        // try {
+        //     if (Cookies.get("token_mytweeter")) {
+        //         config.headers = {
+        //             ...config.headers,
+        //             Authorization: !!Cookies.get("token_mytweeter")
+        //                 ? `Bearer ${Cookies.get("token_mytweeter")}`
+        //                 : `Bearer  `,
+        //             Accept: "application/json",
+        //         };
+        //         console.log(axiosInstance, "axiosInstance in INTERceptor");
+        //     }
+        //     return config;
+        // } catch (error) {
+        //     console.log(error, "error in interceptors");
+        //     return config;
+        // }
         try {
-            if (Cookies.get("token_mytweeter")) {
-                config.headers = {
-                    ...config.headers,
-                    Authorization: !!Cookies.get("token_mytweeter")
-                        ? `Bearer ${Cookies.get("token_mytweeter")}`
-                        : `Bearer  `,
-                    Accept: "application/json",
-                };
-                console.log(axiosInstance, "axiosInstance in INTERceptor");
-            }
-            return config;
+            // console.log(axiosInstance.token, "axiosInstance.token");
+            config.headers = {
+                ...config.headers,
+                Authorization: axiosInstance.token
+                    ? `Bearer ${axiosInstance.token}`
+                    : `Bearer ${Cookies.get("token_mytweeter")}`,
+            };
         } catch (error) {
             console.log(error, "error in interceptors");
-            return config;
         }
-        // config.headers = {
-        //     ...config.headers,
-        //     Authorization: Cookies.get("token_mytweeter")
-        //         ? `Bearer ${Cookies.get("token_mytweeter")}`
-        //         : `Bearer ${/* tokenServ &&  */ ""}`,
-        //     // Accept: "application/json",
-        // };
-        // return config;
+        return config;
     },
     (error) => {
         console.log(error, "error in axiosInstance END");

@@ -16,14 +16,35 @@ import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
 import { loginRedux } from "../redux/actions/authorizationActions.js";
 
+import Cookies from "js-cookie";
+
+// *****************************
+import { useLoginMutation } from "../redux/api.js";
+import { setLogin } from "../redux/slices/authSlice."; // --- для використаання slice
+// *****************************
+
 export default function Login(errors, touched) {
     const dispatch = useDispatch();
 
     const stateStore = useSelector((state) => state);
     console.log(stateStore, "state in login");
 
+    // **********************************
+    const [getLogin] = useLoginMutation();
+    // **********************************
+
     async function handleSubmitData({ login, password }, { resetForm }) {
-        dispatch(loginRedux(login, password, resetForm));
+        // dispatch(loginRedux(login, password, resetForm));
+        const { error, data } = await getLogin({
+            data: { login, password },
+        });
+
+        if (error) {
+            resetForm();
+        } else {
+            Cookies.set("token_mytweeter", data.token, { secure: true });
+            dispatch(setLogin({ isAuth: true }));
+        }
     }
 
     return (

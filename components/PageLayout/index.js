@@ -19,8 +19,12 @@ import {
 // import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 import { api } from "../../redux/api";
 
-import { authMeRedux } from "../../redux/actions/authorizationActions.js";
+import { setAuth } from "../../redux/slices/authSlice."; // --- для використаання slice
+
+// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 import { useEffect } from "react";
+
+import Cookies from "js-cookie";
 
 export function PageLayout({ children /* , headerContent */ }) {
     const dispatch = useDispatch();
@@ -31,6 +35,8 @@ export function PageLayout({ children /* , headerContent */ }) {
     const stateStore = useSelector((state) => state);
     console.log(stateStore, "state in pageLayout");
 
+    const isSkip = !Cookies.get("token_mytweeter");
+
     const {
         data: dataAuth,
         isError: isErrorAuth,
@@ -39,15 +45,65 @@ export function PageLayout({ children /* , headerContent */ }) {
         isSuccess: isSuccessAuth,
     } = useGetAuthentificationQuery();
 
-    const result = useGetAuthentificationQuery();
-    console.log(result, "result useGetAuthentificationQuery PageLayout");
+    // const result = useGetAuthentificationQuery(undefined, { skip: isSkip });
+    // console.log(result, "result useGetAuthentificationQuery PageLayout");
 
-    useAuthStatus();
+    // useAuthStatus();
 
-    // useEffect(async () => {
-    //     console.log("%c useEffect single ", "color: green");
-    //     await dispatch(authMeRedux());
-    // });
+    useEffect(async () => {
+        console.log(
+            isSuccessAuth,
+            dataAuth && dataAuth.data,
+            errorAuth && errorAuth.status,
+            "%c useEffect single in pageLayout ----------------------"
+            // "color: green"
+        );
+        if (isSuccessAuth) {
+            dispatch(
+                setAuth({
+                    signedUser: /* response. */ dataAuth.data,
+                    isAuth: true,
+                    isLoad: true,
+                })
+            );
+        } else if (errorAuth?.status === 401) {
+            dispatch(
+                setAuth({
+                    signedUser: {},
+                    isAuth: false,
+                    isLoad: true,
+                })
+            );
+        }
+    }, [isSuccessAuth]);
+
+    useEffect(async () => {
+        console.log(
+            isSuccessAuth,
+            dataAuth && dataAuth.data,
+            errorAuth && errorAuth.status,
+            "%c useEffect infin in pageLayout ++++++++++++++++++++"
+            // "color: green"
+        );
+        if (!isSuccessAuth) {
+            if (
+                errorAuth?.status === 401 &&
+                (isAuthStore === true || isAuthStore === null)
+            ) {
+                console.log(
+                    "%c useEffect infin in pageLayout ||||||||||||||||||||"
+                    // "color: green"
+                );
+                dispatch(
+                    setAuth({
+                        signedUser: {},
+                        isAuth: false,
+                        isLoad: true,
+                    })
+                );
+            }
+        }
+    });
 
     const errorStatus = useErrorStore();
     if (errorStatus) {

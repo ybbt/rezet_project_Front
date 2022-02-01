@@ -21,7 +21,12 @@ import {
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
-export default function Settings() {
+import {
+    useUpdateCredentialsMutation,
+    useUpdateAvatarMutation,
+} from "../redux/api.js";
+
+export default function Settings(props) {
     const [file, setFile] = useState("");
     const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
@@ -31,59 +36,74 @@ export default function Settings() {
         (state) => state.authReducer
     );
 
+    console.log(props, "props in Settings !!!!!!!!!!!!!!!!!!!"); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    // *********************
+    const [updateCredentials] = useUpdateCredentialsMutation();
+    const [updateAvatar] = useUpdateAvatarMutation();
+    // *********************
+
     async function handleSubmitData({ firstName, lastName }) {
+        //#region
         // let formData = new FormData();
         // formData.append("avatar", file);
         // formData.append("first_name", firstName);
         // formData.append("last_name", lastName);
-        try {
-            const result = await axiosConfigured.post(
-                "/me",
-                // formData
-                {
-                    first_name: firstName,
-                    last_name: lastName,
-                    // avatar: file,
-                }
-            );
+        //     try {
+        //         const result = await axiosConfigured.post(
+        //             "/me",
+        //             {
+        //                 first_name: firstName,
+        //                 last_name: lastName,
+        //             }
+        //         );
+        //         // const response = result.data;
+        //         console.log(result, "response result");
+        //         // Router.push("/");
+        //         alert("submit");
+        //     } catch (error) {
+        //         // message.error(`${error.response.data.errors[0]}`);
+        //         console.log(error.response, "error catch");
+        //     }
+        //#endregion
 
-            // const response = result.data;
-
-            console.log(result, "response result");
-
-            // Router.push("/");
-            alert("submit");
-        } catch (error) {
-            // message.error(`${error.response.data.errors[0]}`);
-            console.log(error.response, "error catch");
-        }
+        await updateCredentials({
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+            },
+        });
     }
 
     async function handleImageChange(e) {
-        console.log("handleImageChange");
+        // console.log("handleImageChange");
         e.preventDefault();
 
         let formFile = e.target.files[0];
 
         // setFile(formFile);
 
-        console.log(formFile, "formFile in input");
+        // console.log(formFile, "formFile in input");
 
         let formData = new FormData();
         formData.append("avatar", formFile /* file */);
 
-        try {
-            const result = await axiosConfigured.post("/me/avatar", formData);
+        // console.log(formData, "formDATA -----------------");
 
-            // const response = result.data;
+        // try {
+        //     const result = await axiosConfigured.post("/me/avatar", formData);
 
-            console.log(result, "response result");
+        //     // const response = result.data;
 
-            alert("submit");
-        } catch (error) {
-            // message.error(`${error.response.data.errors[0]}`);
-            console.log(error.response, "error catch");
-        }
+        //     console.log(result, "response result");
+
+        //     alert("submit");
+        // } catch (error) {
+        //     // message.error(`${error.response.data.errors[0]}`);
+        //     console.log(error.response, "error catch");
+        // }
+
+        updateAvatar({ data: formData });
     }
 
     function handleUploadImageChange({ file }) {
@@ -127,57 +147,78 @@ export default function Settings() {
                         </div>
                     </Form>
                 </Formik>
-                <div className="border border-t-[#949494]">
-                    <label className="flex justify-center cursor-pointer bg-[#54C1FF] border-[#54C1FF] border text-white p-1 m-1 h-7 text-xs">
-                        <input
-                            className="hidden"
-                            type="file"
-                            name="avatar"
-                            onChange={(e) => handleImageChange(e)}
-                        />
-                        Upload avatar
-                    </label>
-
-                    <button
-                        className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
-                        // type="primary"
-                        onClick={() => setModalVisible(true)}
-                    >
-                        Preview
-                    </button>
-                    <Modal
-                        /* title="Vertically centered modal dialog" */
-                        centered
-                        keyboard
-                        footer={null}
-                        visible={modalVisible}
-                        // onOk={() => this.setModal2Visible(false)}
-                        onCancel={() => setModalVisible(false)}
-                        width={848}
-                        closable={false}
-                    >
-                        <UserWrapper user={signedUserStore} />
-                    </Modal>
-                    <button
-                        className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-24 h-7 text-xs"
-                        // type="primary"
-                        onClick={() => setModalVisibleMap(true)}
-                    >
-                        Set location
-                    </button>
-                    <Modal
-                        /* title="Vertically centered modal dialog" */
-                        centered
-                        keyboard
-                        footer={null}
-                        visible={modalVisibleMap}
-                        // onOk={() => this.setModal2Visible(false)}
-                        onCancel={() => setModalVisibleMap(false)}
-                        width={848}
-                        closable={false}
-                    >
-                        <Map />
-                    </Modal>
+                <div className="border border-t-[#949494] grid grid-cols-4 gap-4 ">
+                    <div>
+                        <label className="flex justify-center cursor-pointer bg-[#54C1FF] border-[#54C1FF] border text-white w-full p-1 m-1 h-7 text-xs">
+                            <input
+                                className="hidden"
+                                type="file"
+                                name="avatar"
+                                onChange={(e) => handleImageChange(e)}
+                            />
+                            Upload avatar
+                        </label>
+                        <button
+                            className="bg-[#FF5757] border-[#FF5757] border text-white p-1 m-1 w-full h-7 text-xs"
+                            // type="primary"
+                            // onClick={() => setModalVisibleMap(true)}
+                        >
+                            Remove avatar
+                        </button>
+                    </div>
+                    <div>
+                        <div>
+                            <button
+                                className="bg-[#54C1FF] border-[#54C1FF] text-white border p-1 m-1 h-7 w-full text-xs"
+                                // type="primary"
+                                onClick={() => setModalVisibleMap(true)}
+                            >
+                                Set location
+                            </button>
+                            <Modal
+                                /* title="Vertically centered modal dialog" */
+                                centered
+                                keyboard
+                                footer={null}
+                                visible={modalVisibleMap}
+                                // onOk={() => this.setModal2Visible(false)}
+                                onCancel={() => setModalVisibleMap(false)}
+                                width={848}
+                                closable={false}
+                            >
+                                <Map />
+                            </Modal>
+                        </div>
+                        <button
+                            className="bg-[#FF5757] border-[#FF5757] border text-white p-1 m-1 w-full h-7 text-xs"
+                            // type="primary"
+                            // onClick={() => setModalVisibleMap(true)}
+                        >
+                            Remove location
+                        </button>
+                    </div>
+                    <div>
+                        <button
+                            className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-full h-7 text-xs"
+                            // type="primary"
+                            onClick={() => setModalVisible(true)}
+                        >
+                            Preview
+                        </button>
+                        <Modal
+                            /* title="Vertically centered modal dialog" */
+                            centered
+                            keyboard
+                            footer={null}
+                            visible={modalVisible}
+                            // onOk={() => this.setModal2Visible(false)}
+                            onCancel={() => setModalVisible(false)}
+                            width={848}
+                            closable={false}
+                        >
+                            <UserWrapper user={signedUserStore} />
+                        </Modal>
+                    </div>
                 </div>
             </div>
         </>
@@ -252,6 +293,8 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
     }
 };
 
+import { setAuth } from "../redux/slices/authSlice."; // --- для використаання slice
+
 export const getServerSideProps = withRedux(
     withoutAuth(async (context, store) => {
         console.log("start in getServerSideProps");
@@ -269,6 +312,23 @@ export const getServerSideProps = withRedux(
                         destination: `/`,
                     },
                 };
+            }
+            if (result.isSuccess) {
+                store.dispatch(
+                    setAuth({
+                        signedUser: /* response. */ result.data.data,
+                        isAuth: true,
+                        isLoad: true,
+                    })
+                );
+            } else if (result.error?.status === 401) {
+                store.dispatch(
+                    setAuth({
+                        signedUser: {},
+                        isAuth: false,
+                        isLoad: true,
+                    })
+                );
             }
 
             return {

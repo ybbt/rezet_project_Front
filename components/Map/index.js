@@ -30,73 +30,74 @@ export const mapContainerStyle = {
     width: "100%",
 };
 
-function getCity(addressArray) {
-    let city = "";
+//#region
+// function getCity(addressArray) {
+//     let city = "";
 
-    for (let i = 0; i < addressArray.length; i++) {
-        if (
-            addressArray[i].types[0] &&
-            addressArray[i].types[0] === "locality"
-        ) {
-            city = addressArray[i].long_name;
+//     for (let i = 0; i < addressArray.length; i++) {
+//         if (
+//             addressArray[i].types[0] &&
+//             addressArray[i].types[0] === "locality"
+//         ) {
+//             city = addressArray[i].long_name;
 
-            return city;
-        }
-    }
+//             return city;
+//         }
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
-function getCountry(addressArray) {
-    let country = "";
+// function getCountry(addressArray) {
+//     let country = "";
 
-    for (let i = 0; i < addressArray.length; i++) {
-        if (
-            addressArray[i].types[0] &&
-            addressArray[i].types[0] === "country"
-        ) {
-            country = addressArray[i].long_name;
+//     for (let i = 0; i < addressArray.length; i++) {
+//         if (
+//             addressArray[i].types[0] &&
+//             addressArray[i].types[0] === "country"
+//         ) {
+//             country = addressArray[i].long_name;
 
-            return country;
-        }
-    }
+//             return country;
+//         }
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
-function getArea(addressArray) {
-    let area = "";
-    for (let i = 0; i < addressArray.length; i++) {
-        if (addressArray[i].types[0]) {
-            for (let j = 0; j < addressArray[i].types.length; j++) {
-                if (
-                    addressArray[i].types[j] === "sublocality_level_1" ||
-                    addressArray[i].types[j] === "locality"
-                ) {
-                    area = addressArray[i].long_name;
-                    return area;
-                }
-            }
-        }
-    }
-    return false;
-}
+// function getArea(addressArray) {
+//     let area = "";
+//     for (let i = 0; i < addressArray.length; i++) {
+//         if (addressArray[i].types[0]) {
+//             for (let j = 0; j < addressArray[i].types.length; j++) {
+//                 if (
+//                     addressArray[i].types[j] === "sublocality_level_1" ||
+//                     addressArray[i].types[j] === "locality"
+//                 ) {
+//                     area = addressArray[i].long_name;
+//                     return area;
+//                 }
+//             }
+//         }
+//     }
+//     return false;
+// }
 
-function getState(addressArray) {
-    let state = "";
-    for (let i = 0; i < addressArray.length; i++) {
-        for (i = 0; i < addressArray.length; i++) {
-            if (
-                addressArray[i].types[0] &&
-                addressArray[i].types[0] === "administrative_area_level_1"
-            ) {
-                state = addressArray[i].long_name;
-                return state;
-            }
-        }
-    }
-    return false;
-}
+// function getState(addressArray) {
+//     let state = "";
+//     for (let i = 0; i < addressArray.length; i++) {
+//         for (i = 0; i < addressArray.length; i++) {
+//             if (
+//                 addressArray[i].types[0] &&
+//                 addressArray[i].types[0] === "administrative_area_level_1"
+//             ) {
+//                 state = addressArray[i].long_name;
+//                 return state;
+//             }
+//         }
+//     }
+//     return false;
+// }
 
 // const AutocompleteTest = ({ onPlaceSelected }) => {
 //     return (
@@ -111,18 +112,21 @@ function getState(addressArray) {
 // const libraries = ["places"];
 
 // const AutocompleteMemo = /* React.memo */ useMemo(AutocompleteTest);
+//#endregion
 
 function Map({ onMarkerDragEnd }) {
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
 
+    console.log(signedUserStore, "signedUserStore ------------------------");
+
     const [state, setState] = /* React. */ useState({
-        address: "",
-        city: "",
-        area: "",
-        state: "",
-        country: "",
+        // address: "",
+        // city: "",
+        // area: "",
+        // state: "",
+        // country: "",
         mapPositionLat: signedUserStore.lat,
         mapPositionLng: signedUserStore.lng,
         markerPositionLat: signedUserStore.lat,
@@ -132,7 +136,7 @@ function Map({ onMarkerDragEnd }) {
     const [map, setMap] = useState(null);
 
     const onMapLoad = (map) => {
-        console.log("map: ", map);
+        // console.log("map: ", map);
         setMap(map);
     };
 
@@ -151,38 +155,40 @@ function Map({ onMarkerDragEnd }) {
             };
         });
 
-        try {
-            const response = await Geocode.fromLatLng(
-                args[0].latLng.lat(),
-                args[0].latLng.lng()
-            );
-            console.log(response, "response");
+        //#region
+        // try {
+        //     const response = await Geocode.fromLatLng(
+        //         args[0].latLng.lat(),
+        //         args[0].latLng.lng()
+        //     );
+        //     console.log(response, "response");
 
-            const address = response.results[0].formatted_address;
-            console.log(address);
+        //     const address = response.results[0].formatted_address;
+        //     console.log(address);
 
-            const addressArray = response.results[0].address_components;
+        //     const addressArray = response.results[0].address_components;
 
-            const city = getCity(addressArray);
+        //     const city = getCity(addressArray);
 
-            const area = getArea(addressArray);
+        //     const area = getArea(addressArray);
 
-            const state = getState(addressArray);
+        //     const state = getState(addressArray);
 
-            const country = getCountry(addressArray);
+        //     const country = getCountry(addressArray);
 
-            setState(function set(prevState) {
-                return Object.assign({}, prevState, {
-                    address: address || "",
-                    area: area || "",
-                    city: city || "",
-                    state: state || "",
-                    country: country || "",
-                });
-            });
-        } catch (error) {
-            console.log(error);
-        }
+        //     setState(function set(prevState) {
+        //         return Object.assign({}, prevState, {
+        //             address: address || "",
+        //             area: area || "",
+        //             city: city || "",
+        //             state: state || "",
+        //             country: country || "",
+        //         });
+        //     });
+        // } catch (error) {
+        //     console.log(error);
+        // }
+        //#endregion
 
         const result = await axiosConfigured.put(
             "/me/location",
@@ -200,6 +206,8 @@ function Map({ onMarkerDragEnd }) {
         googleMapsApiKey: API_KEY,
         // libraries,
     });
+
+    //#region
 
     // console.log(
     //     "isLoaded: ",
@@ -230,10 +238,11 @@ function Map({ onMarkerDragEnd }) {
     //         mapPositionLng: lngValue,
     //     });
     // }, []);
+    //#endregion
 
     const center = {
-        lat: state.markerPositionLat,
-        lng: state.markerPositionLng,
+        lat: state./* marker */ mapPositionLat,
+        lng: state./* marker */ mapPositionLng,
     };
 
     // const center = /* React. */ useMemo(
@@ -247,9 +256,9 @@ function Map({ onMarkerDragEnd }) {
     // );
 
     useEffect(() => {
-        console.log("popal");
+        console.log(state, "popal");
         if (map) {
-            console.log(map.panTo, "if");
+            // console.log(map.panTo, "if");
             map.panTo({
                 lat: state.markerPositionLat,
                 lng: state.markerPositionLng,
@@ -260,7 +269,7 @@ function Map({ onMarkerDragEnd }) {
     return isLoaded ? (
         <div>
             <GoogleMap
-                id="bicycling-example"
+                id="user-location"
                 mapContainerStyle={mapContainerStyle}
                 zoom={15}
                 center={center}

@@ -15,17 +15,18 @@ const authorizationSlice = createSlice({
             state.isLoad = action.payload.isLoad;
         },
         setLogin(state, action) {
-            console.log("setLogin");
-            console.log(state.signedUser, "state in logIN -> slice");
-            console.log(action.payload.signedUser, "action in logIN-> slice");
+            // console.log("setLogin");
+            // console.log(state.signedUser, "state in logIN -> slice");
+            // console.log(action.payload.signedUser, "action in logIN-> slice");
             state.isAuth = action.payload.isAuth;
         },
         setLogout(state, action) {
-            console.log("setLogout");
-            console.log(state.signedUser, "state in logOUT -> slice");
-            console.log(action.payload, "action in logOUT -> slice");
+            console.log("%c setLogout", "color:yellow; background-color:green");
             state.signedUser = action.payload.signedUser;
             state.isAuth = action.payload.isAuth;
+            state.isLoad = action.payload.isLoad;
+            console.log(state.signedUser, "state in logOUT -> slice");
+            console.log(action.payload, "action in logOUT -> slice");
         },
     },
 });

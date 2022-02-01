@@ -17,8 +17,19 @@ import { useDispatch } from "react-redux";
 
 import { registerRedux } from "../redux/actions/authorizationActions.js";
 
+import Cookies from "js-cookie";
+
+// *****************************
+import { useRegisterMutation } from "../redux/api.js";
+import { setLogin } from "../redux/slices/authSlice."; // --- для використаання slice
+// *****************************
+
 export default function Register() {
     const dispatch = useDispatch();
+
+    // **********************************
+    const [getRegister] = useRegisterMutation();
+    // **********************************
 
     async function handleSubmitData(
         {
@@ -31,17 +42,34 @@ export default function Register() {
         },
         { resetForm }
     ) {
-        dispatch(
-            registerRedux(
-                firstName,
-                lastName,
-                userName,
+        // dispatch(
+        //     registerRedux(
+        //         firstName,
+        //         lastName,
+        //         userName,
+        //         email,
+        //         password,
+        //         passwordConfirmation,
+        //         resetForm
+        //     )
+        // );
+        const { error, data } = await getRegister({
+            data: {
+                first_name: firstName,
+                last_name: lastName,
+                name: userName,
                 email,
                 password,
-                passwordConfirmation,
-                resetForm
-            )
-        );
+                password_confirmation: passwordConfirmation,
+            },
+        });
+
+        if (error) {
+            resetForm();
+        } else {
+            Cookies.set("token_mytweeter", data.token, { secure: true });
+            dispatch(setLogin({ isAuth: true }));
+        }
     }
 
     return (

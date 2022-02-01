@@ -51,7 +51,7 @@ export const api = createApi({
                 url: `posts/${id}`,
                 method: "GET",
             }),
-            providesTags: (result, error, id) => [{ type: "Post", id }],
+            providesTags: (result, error, id) => [{ type: "SinglePost", id }],
         }),
         updatePostById: build.mutation({
             query: ({ id, data, name }) => ({
@@ -96,31 +96,34 @@ export const api = createApi({
                         }
                     )
                 );
-                const patchResultUserPost = dispatch(
-                    api.util.updateQueryData(
-                        "getPostById",
-                        `${id}`,
-                        (draft) => {
-                            console.log(
-                                JSON.stringify(draft.data),
-                                "DRAFT_DATA"
-                            );
-                            const newPost = { ...draft.data, ...data };
-                            draft.data = newPost;
-                        }
-                    )
-                );
+                // const patchResultUserPost = dispatch(
+                //     api.util.updateQueryData(
+                //         "getPostById",
+                //         `${id}`,
+                //         (draft) => {
+                //             console.log(
+                //                 JSON.stringify(draft.data),
+                //                 "DRAFT_DATA"
+                //             );
+                //             const newPost = { ...draft.data, ...data };
+                //             draft.data = newPost;
+                //         }
+                //     )
+                // );
                 try {
                     await queryFulfilled;
                 } catch {
                     patchResultAllPosts.undo();
                     patchResultUserPosts.undo();
-                    patchResultUserPost.undo();
+                    // patchResultUserPost.undo();
                 }
             },
-            // invalidatesTags: (result, error, arg) => [
-            //     { type: "Post", id: arg.id },
-            // ],
+            invalidatesTags: (result, error, arg) => [
+                /* { type: "Post", id: arg.id }, */ {
+                    type: "SinglePost",
+                    id: arg.id,
+                },
+            ],
         }),
         deletePostById: build.mutation({
             query: ({ id, name }) => ({
@@ -361,6 +364,49 @@ export const api = createApi({
                 url: `me`,
                 method: "GET",
             }),
+            providesTags: ["Me"],
+        }),
+        login: build.mutation({
+            // query: () => `/login`,
+            query: ({ data }) => ({
+                url: `login`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+        }),
+        register: build.mutation({
+            // query: () => `/register`,
+            query: ({ data }) => ({
+                url: `register`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+        }),
+        logout: build.mutation({
+            // query: () => `/logout`,
+            query: ({ data }) => ({
+                url: `logout`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+        }),
+        updateCredentials: build.mutation({
+            // query: () => `/me`,
+            query: ({ data }) => ({
+                url: `me`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+            invalidatesTags: ["Me"],
+        }),
+        updateAvatar: build.mutation({
+            // query: () => `/me/avatar`,
+            query: ({ data }) => ({
+                url: `me/avatar`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+            invalidatesTags: ["Me"],
         }),
     }),
 });
@@ -380,6 +426,11 @@ export const {
     useGetUserByUsernameQuery,
     useGetActiveUserByToken,
     useGetAuthentificationQuery,
+    useLoginMutation,
+    useRegisterMutation,
+    useLogoutMutation,
+    useUpdateCredentialsMutation,
+    useUpdateAvatarMutation,
     util: { getRunningOperationPromises },
 } = api;
 
