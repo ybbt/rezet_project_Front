@@ -37,7 +37,7 @@ export const api = createApi({
         //     return headers;
         // },
     }),
-    tagTypes: ["Post", "Comment", "User"],
+    tagTypes: ["Post", "Comment", "User", "Me"],
     reducerPath: "tweetterAPI",
     extractRehydrationInfo(action, { reducerPath }) {
         if (action.type === HYDRATE) {
@@ -391,9 +391,9 @@ export const api = createApi({
             }),
         }),
         updateCredentials: build.mutation({
-            // query: () => `/me`,
+            // query: () => `/me/credentials`,
             query: ({ data }) => ({
-                url: `me`,
+                url: `me/credentials`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -404,6 +404,15 @@ export const api = createApi({
             query: ({ data }) => ({
                 url: `me/avatar`,
                 method: "POST",
+                /* body:  */ data,
+            }),
+            invalidatesTags: ["Me"],
+        }),
+        updateLocation: build.mutation({
+            // query: () => `/me/location`,
+            query: ({ data }) => ({
+                url: `me/location`,
+                method: "PUT",
                 /* body:  */ data,
             }),
             invalidatesTags: ["Me"],
@@ -431,6 +440,7 @@ export const {
     useLogoutMutation,
     useUpdateCredentialsMutation,
     useUpdateAvatarMutation,
+    useUpdateLocationMutation,
     util: { getRunningOperationPromises },
 } = api;
 

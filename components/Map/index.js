@@ -11,6 +11,8 @@ import axiosConfigured from "../../libs/axiosInstance"; //! прибрати
 
 import { useSelector /* , useDispatch */ } from "react-redux";
 
+import { useUpdateLocationMutation } from "../../redux/api.js";
+
 const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
 
 Geocode.setApiKey(API_KEY);
@@ -119,9 +121,11 @@ function Map({ onMarkerDragEnd }) {
         (state) => state.authReducer.signedUser
     );
 
-    console.log(signedUserStore, "signedUserStore ------------------------");
+    // console.log(signedUserStore, "signedUserStore ------------------------");
 
-    const [state, setState] = /* React. */ useState({
+    const [updateLocation] = useUpdateLocationMutation();
+
+    const [mapState, setMapState] = /* React. */ useState({
         // address: "",
         // city: "",
         // area: "",
@@ -129,23 +133,34 @@ function Map({ onMarkerDragEnd }) {
         // country: "",
         mapPositionLat: signedUserStore.lat,
         mapPositionLng: signedUserStore.lng,
+    });
+
+    const [markerState, setMarkerState] = /* React. */ useState({
         markerPositionLat: signedUserStore.lat,
         markerPositionLng: signedUserStore.lng,
     });
 
     const [map, setMap] = useState(null);
+    const startCenter = {
+        lat: mapState.mapPositionLat /* marker */,
+        lng: mapState.mapPositionLng /* marker */,
+    };
+    // const [center, setCenter] = useState({
+    //     lat: state.mapPositionLat,
+    //     lng: state.mapPositionLng,
+    // });
 
     const onMapLoad = (map) => {
         // console.log("map: ", map);
         setMap(map);
     };
 
-    console.log(state, "state start");
+    // console.log(state, "state start");
 
     // const AutocompleteMemo = useMemo(AutocompleteTest);
 
     const onClick = async (...args) => {
-        setState(function set(prevState) {
+        setMarkerState(function set(prevState) {
             return {
                 ...prevState,
                 ...{
@@ -190,15 +205,19 @@ function Map({ onMarkerDragEnd }) {
         // }
         //#endregion
 
-        const result = await axiosConfigured.put(
-            "/me/location",
-            // formData
-            {
-                lat: args[0].latLng.lat(),
-                lng: args[0].latLng.lng(),
-                // avatar: file,
-            }
-        );
+        // const result = await axiosConfigured.put(
+        //     "/me/location",
+        //     // formData
+        //     {
+        // lat: args[0].latLng.lat(),
+        // lng: args[0].latLng.lng(),
+        //         // avatar: file,
+        //     }
+        // );
+
+        updateLocation({
+            data: { lat: args[0].latLng.lat(), lng: args[0].latLng.lng() },
+        });
     };
 
     const { isLoaded, loadError, url } = useLoadScript({
@@ -240,11 +259,6 @@ function Map({ onMarkerDragEnd }) {
     // }, []);
     //#endregion
 
-    const center = {
-        lat: state./* marker */ mapPositionLat,
-        lng: state./* marker */ mapPositionLng,
-    };
-
     // const center = /* React. */ useMemo(
     //     function memo() {
     //         return {
@@ -256,15 +270,32 @@ function Map({ onMarkerDragEnd }) {
     // );
 
     useEffect(() => {
-        console.log(state, "popal");
+        console.log(
+            markerState,
+            mapState,
+            "popal            -----------------------            STATE"
+        );
         if (map) {
-            // console.log(map.panTo, "if");
+            const newCenter = {
+                lat: markerState.markerPositionLat,
+                lng: markerState.markerPositionLng,
+            };
+            // console.log(newCenter, "newCenter");
             map.panTo({
-                lat: state.markerPositionLat,
-                lng: state.markerPositionLng,
+                lat: markerState.markerPositionLat,
+                lng: markerState.markerPositionLng,
             });
+            // setState(function set(prevState) {
+            //     return {
+            //         ...prevState,
+            //         ...{
+            //             mapPositionLat: prevState.markerPositionLat,
+            //             mapPositionLng: prevState.markerPositionLng,
+            //         },
+            //     };
+            // });
         }
-    }, [state.markerPositionLat, state.markerPositionLng]);
+    }, [markerState.markerPositionLat, markerState.markerPositionLng]);
 
     return isLoaded ? (
         <div>
@@ -272,14 +303,18 @@ function Map({ onMarkerDragEnd }) {
                 id="user-location"
                 mapContainerStyle={mapContainerStyle}
                 zoom={15}
-                center={center}
+                center={startCenter}
                 onClick={(e) => onClick(e)}
                 onLoad={onMapLoad}
             >
                 <Marker
-                    draggable
+                    icon={"marker.png"}
+                    draggable={false}
                     onDragEnd={onMarkerDragEnd}
-                    position={center}
+                    position={{
+                        lat: markerState.markerPositionLat,
+                        lng: markerState.markerPositionLng,
+                    }}
                 />
             </GoogleMap>
 
