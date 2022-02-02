@@ -9,7 +9,7 @@ const axiosBaseQuery =
     async ({ url, method, data }) => {
         try {
             const result = await axiosInstance({
-                url: baseUrl + url,
+                url, //: baseUrl + url,
                 method,
                 data,
             });
@@ -27,7 +27,7 @@ const axiosBaseQuery =
 
 export const api = createApi({
     baseQuery: /* fetchBaseQuery */ axiosBaseQuery({
-        baseUrl: "http://127.0.0.1:8000/api/",
+        // baseUrl: `${process.env.NEXT_PUBLIC_SERV_URL}/api`,
         // prepareHeaders: (headers, { getState }) => {
         //     const token = Cookies.get("token_mytweeter");
         //     if (token) {
@@ -48,14 +48,14 @@ export const api = createApi({
         getPostById: build.query({
             // query: (id) => `/posts/${id}`,
             query: (id) => ({
-                url: `posts/${id}`,
+                url: `/posts/${id}`,
                 method: "GET",
             }),
             providesTags: (result, error, id) => [{ type: "SinglePost", id }],
         }),
         updatePostById: build.mutation({
             query: ({ id, data, name }) => ({
-                url: `posts/${id}`,
+                url: `/posts/${id}`,
                 method: "PUT",
 
                 /* body: */ data,
@@ -127,7 +127,7 @@ export const api = createApi({
         }),
         deletePostById: build.mutation({
             query: ({ id, name }) => ({
-                url: `posts/${id}`,
+                url: `/posts/${id}`,
                 method: "DELETE",
             }),
             async onQueryStarted(
@@ -173,7 +173,7 @@ export const api = createApi({
         }),
         addPost: build.mutation({
             query: ({ data }) => ({
-                url: `posts`,
+                url: `/posts`,
                 method: "POST",
                 /* body: */ data,
             }),
@@ -211,7 +211,7 @@ export const api = createApi({
         getPostsList: build.query({
             // query: () => `/posts`,
             query: () => ({
-                url: `posts`,
+                url: `/posts`,
                 method: "GET",
             }),
             // providesTags: ["Post"],
@@ -229,7 +229,7 @@ export const api = createApi({
         getPostsListByUsername: build.query({
             // query: (name) => `/users/${name}/posts`,
             query: (name) => ({
-                url: `users/${name}/posts`,
+                url: `/users/${name}/posts`,
                 method: "GET",
             }),
             providesTags: (result, error, arg) =>
@@ -246,7 +246,7 @@ export const api = createApi({
         getCommentsListByPostid: build.query({
             // query: (id) => `/posts/${id}/comments`,
             query: (id) => ({
-                url: `posts/${id}/comments`,
+                url: `/posts/${id}/comments`,
                 method: "GET",
             }),
             // providesTags: ["Comment"],
@@ -263,7 +263,7 @@ export const api = createApi({
         }),
         addCommentByPostid: build.mutation({
             query: ({ postId, data }) => ({
-                url: `posts/${postId}/comments`,
+                url: `/posts/${postId}/comments`,
                 method: "POST",
                 /* body: */ data,
             }),
@@ -286,7 +286,7 @@ export const api = createApi({
         }),
         updateCommentById: build.mutation({
             query: ({ id, data, postId }) => ({
-                url: `comments/${id}`,
+                url: `/comments/${id}`,
                 method: "PUT",
                 /* body:  */ data,
             }),
@@ -322,7 +322,7 @@ export const api = createApi({
         }),
         deleteCommentById: build.mutation({
             query: ({ id, postId }) => ({
-                url: `comments/${id}`,
+                url: `/comments/${id}`,
                 method: "DELETE",
             }),
             async onQueryStarted(
@@ -353,7 +353,7 @@ export const api = createApi({
         getUserByUsername: build.query({
             // query: (name) => `/users/${name}`,
             query: (name) => ({
-                url: `users/${name}`,
+                url: `/users/${name}`,
                 method: "GET",
             }),
             providesTags: ["User"],
@@ -361,7 +361,7 @@ export const api = createApi({
         getAuthentification: build.query({
             // query: () => `/me`,
             query: () => ({
-                url: `me`,
+                url: `/me`,
                 method: "GET",
             }),
             providesTags: ["Me"],
@@ -369,7 +369,7 @@ export const api = createApi({
         login: build.mutation({
             // query: () => `/login`,
             query: ({ data }) => ({
-                url: `login`,
+                url: `/login`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -377,7 +377,7 @@ export const api = createApi({
         register: build.mutation({
             // query: () => `/register`,
             query: ({ data }) => ({
-                url: `register`,
+                url: `/register`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -385,7 +385,7 @@ export const api = createApi({
         logout: build.mutation({
             // query: () => `/logout`,
             query: ({ data }) => ({
-                url: `logout`,
+                url: `/logout`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -393,7 +393,7 @@ export const api = createApi({
         updateCredentials: build.mutation({
             // query: () => `/me/credentials`,
             query: ({ data }) => ({
-                url: `me/credentials`,
+                url: `/me/credentials`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -402,7 +402,7 @@ export const api = createApi({
         updateAvatar: build.mutation({
             // query: () => `/me/avatar`,
             query: ({ data }) => ({
-                url: `me/avatar`,
+                url: `/me/avatar`,
                 method: "POST",
                 /* body:  */ data,
             }),
@@ -411,7 +411,7 @@ export const api = createApi({
         updateLocation: build.mutation({
             // query: () => `/me/location`,
             query: ({ data }) => ({
-                url: `me/location`,
+                url: `/me/location`,
                 method: "PUT",
                 /* body:  */ data,
             }),

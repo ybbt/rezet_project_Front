@@ -5,26 +5,20 @@ import { useState, useEffect } from "react";
 import Geocode from "react-geocode";
 
 export function UserWrapper({ user }) {
-    const [address, setAddress] = useState("");
+    const [address, setAddress] = useState("no location");
 
     const avatarPath = user.avatar_path ?? "/avatar.png";
 
-    //TODO винести в ХУК
     useEffect(async () => {
-        console.log(user);
-        const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
-        Geocode.setApiKey(API_KEY);
+        Geocode.setApiKey(process.env.NEXT_PUBLIC_API_KEY);
 
-        // TODO - перевірка на наявність кооординат
         let address;
         if (user.lat && user.lng) {
             const response = await Geocode.fromLatLng(user.lat, user.lng);
-            console.log(response, "response");
+
             address = response.results[0].formatted_address;
-        } else {
-            address = "no adress";
+            setAddress(address);
         }
-        setAddress(address);
     }, [user]);
 
     return (

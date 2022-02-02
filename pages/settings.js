@@ -9,7 +9,7 @@ import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
 
 import { Modal, Upload, Button } from "antd";
-import { Popconfirm } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { /*  useEffect,  */ useState } from "react";
 
@@ -26,6 +26,7 @@ import {
     useGetAuthentificationQuery,
     useUpdateCredentialsMutation,
     useUpdateAvatarMutation,
+    useUpdateLocationMutation,
 } from "../redux/api.js";
 
 export default function Settings(props) {
@@ -33,6 +34,8 @@ export default function Settings(props) {
     const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleMap, setModalVisibleMap] = useState(false);
+
+    // const
 
     const { signedUser: signedUserStore } = useSelector(
         (state) => state.authReducer
@@ -43,6 +46,7 @@ export default function Settings(props) {
     // *********************
     const [updateCredentials] = useUpdateCredentialsMutation();
     const [updateAvatar] = useUpdateAvatarMutation();
+    const [updateLocation] = useUpdateLocationMutation();
     const { data: dataAuth } = useGetAuthentificationQuery();
     // *********************
 
@@ -85,14 +89,38 @@ export default function Settings(props) {
         //     console.log(error.response, "error catch");
         // }
 
-        updateAvatar({ data: formData });
+        showConfirmAvatar(formData);
+
+        // updateAvatar({ data: formData });
     }
 
     async function handleAvatarDelete({ firstName, lastName }) {
-        await updateAvatar({
-            data: {
-                avatar: null,
+        showConfirmAvatar({ avatar: null });
+        // await updateAvatar({
+        // data: {
+        //     avatar: null,
+        // },
+        // });
+    }
+
+    function showConfirmAvatar(file) {
+        Modal.confirm({
+            title: "Change avatar",
+            icon: <ExclamationCircleOutlined />,
+            content: "Do you Want change Avatar in Profile?",
+            onOk() {
+                console.log("OK");
+                updateAvatar({ data: file });
             },
+            onCancel() {
+                console.log("Cancel");
+            },
+        });
+    }
+
+    async function handleLocationDelete() {
+        await updateLocation({
+            data: { lat: null, lng: null },
         });
     }
 
@@ -111,9 +139,9 @@ export default function Settings(props) {
             <div className=" border border-[#949494] border-t-0">
                 <Formik
                     initialValues={{
-                        firstName: dataAuth.data.first_name,
+                        firstName: dataAuth ? dataAuth.data.first_name : "",
 
-                        lastName: dataAuth.data.last_name,
+                        lastName: dataAuth ? dataAuth.data.last_name : "",
                     }}
                     // validationSchema={signinSchema}
                     onSubmit={handleSubmitData}
@@ -193,6 +221,7 @@ export default function Settings(props) {
                                 onCancel={() => setModalVisibleMap(false)}
                                 width={848}
                                 closable={false}
+                                destroyOnClose
                             >
                                 <Map />
                             </Modal>
@@ -200,7 +229,7 @@ export default function Settings(props) {
                         <button
                             className="bg-[#FF5757] border-[#FF5757] border text-white p-1 m-1 w-full h-7 text-xs"
                             // type="primary"
-                            // onClick={() => setModalVisibleMap(true)}
+                            onClick={(e) => handleLocationDelete(e)}
                         >
                             Remove location
                         </button>
@@ -226,7 +255,10 @@ export default function Settings(props) {
                             closable={false}
                         >
                             <UserWrapper
-                                user={/* signedUserStore */ dataAuth.data}
+                                user={
+                                    /* signedUserStore */ dataAuth &&
+                                    dataAuth.data
+                                }
                             />
                         </Modal>
                     </div>
