@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
 
 // *****************************
 import { useRegisterMutation } from "../redux/api.js";
-import { setLogin } from "../redux/slices/authSlice."; // --- для використаання slice
+import { setLogin } from "../redux/slices/authSlice"; // --- для використаання slice
 // *****************************
 
 export default function Register() {

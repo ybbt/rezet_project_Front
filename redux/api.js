@@ -397,7 +397,7 @@ export const api = createApi({
                 method: "POST",
                 /* body:  */ data,
             }),
-            invalidatesTags: ["Me"],
+            // invalidatesTags: ["Me"],
         }),
         updateAvatar: build.mutation({
             // query: () => `/me/avatar`,
@@ -406,7 +406,16 @@ export const api = createApi({
                 method: "POST",
                 /* body:  */ data,
             }),
-            invalidatesTags: ["Me"],
+            // invalidatesTags: ["Me"],
+        }),
+        updateBackground: build.mutation({
+            // query: () => `/me/background`,
+            query: ({ data }) => ({
+                url: `/me/background`,
+                method: "POST",
+                /* body:  */ data,
+            }),
+            // invalidatesTags: ["Me"],
         }),
         updateLocation: build.mutation({
             // query: () => `/me/location`,
@@ -415,7 +424,7 @@ export const api = createApi({
                 method: "PUT",
                 /* body:  */ data,
             }),
-            invalidatesTags: ["Me"],
+            // invalidatesTags: ["Me"],
         }),
     }),
 });
@@ -440,6 +449,7 @@ export const {
     useLogoutMutation,
     useUpdateCredentialsMutation,
     useUpdateAvatarMutation,
+    useUpdateBackgroundMutation,
     useUpdateLocationMutation,
     util: { getRunningOperationPromises },
 } = api;

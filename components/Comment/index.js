@@ -4,7 +4,6 @@ import Image from "next/image";
 
 import { useSelector } from "react-redux";
 
-// import moment from "moment";
 import { DateTime } from "luxon";
 import useFormatDate from "../../hooks/useFormatDate";
 
@@ -14,17 +13,9 @@ import { MessageOutlined, EditOutlined } from "@ant-design/icons";
 import { EditPostForm } from "../EditPostForm";
 import { DropdownPostMenu } from "../DropdownPostMenu";
 
-export function Comment({
-    /* post */ comment,
-    onDeleteComment,
-    onUpdateComment,
-    // signedUserName,
-}) {
+export function Comment({ comment, onDeleteComment, onUpdateComment }) {
     const [componentEditCondition, setComponentEditCondition] = useState(false);
 
-    // const commentsListStore = useSelector(
-    //     (state) => state.commentsReducer.commentsList
-    // );
     const signedUserStore = useSelector(
         (state) => state.authReducer.signedUser
     );
@@ -60,16 +51,15 @@ export function Comment({
     );
 
     //! до повернення авторизації
-    const dropdownMenu = /* signedUserName */ signedUserStore.name ===
-        comment.author.name && (
+    const dropdownMenu = signedUserStore.name === comment.author.name && (
         <DropdownPostMenu
             onDeletePost={() => onDeleteComment(/* post */ comment)}
             onEditPost={handleEdit}
         />
     );
 
-    const createdAt = useFormatDate(comment.created_at, "dd MMM y"); //moment(comment.created_at).format("D MMM YYYY");
-    const updatedAt = useFormatDate(comment.updated_at, "dd MMM y"); //moment(comment.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(comment.created_at, "dd MMM y");
+    const updatedAt = useFormatDate(comment.updated_at, "dd MMM y");
 
     const updatedAtComponent = comment.created_at !== comment.updated_at && (
         <Tooltip

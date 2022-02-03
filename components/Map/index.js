@@ -10,12 +10,14 @@ import { DirectionsRenderer } from "@react-google-maps/api";
 
 import axiosConfigured from "../../libs/axiosInstance"; //! прибрати
 
-import { useSelector /* , useDispatch */ } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useUpdateLocationMutation } from "../../redux/api.js";
 
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
+
+import { changeLocation } from "../../redux/slices/authSlice";
 
 // const API_KEY = "AIzaSyB_aINHPQ0-Z4SI_nYOUSzbAYeJ_auuSwE";
 
@@ -270,19 +272,21 @@ function Map({ onMarkerDragEnd }) {
         (state) => state.authReducer.signedUser
     );
 
-    const { signedUser } = useGetAuthentificationQuery(undefined, {
-        selectFromResult: ({ data }) => ({
-            signedUser: data.data,
-        }),
-    });
+    const dispatch = useDispatch();
+
+    // const { signedUser } = useGetAuthentificationQuery(undefined, {
+    //     selectFromResult: ({ data }) => ({
+    //         signedUser: data.data,
+    //     }),
+    // });
 
     const [updateLocation] = useUpdateLocationMutation();
 
     const [positionState, setPositionState] = /* React. */ useState({
         // mapPositionLat: signedUserStore.lat,
         // mapPositionLng: signedUserStore.lng,
-        markerPositionLat: /*signedUser Store */ signedUser.lat,
-        markerPositionLng: /*signedUser Store */ signedUser.lng,
+        markerPositionLat: signedUserStore.lat /* signedUser.lat */,
+        markerPositionLng: signedUserStore.lng /* signedUser.lng */,
     });
 
     const [map, setMap] = useState(null);
@@ -339,11 +343,15 @@ function Map({ onMarkerDragEnd }) {
             title: "Save location",
             icon: <ExclamationCircleOutlined />,
             content: "Do you Want Save this location in Profile?",
-            onOk() {
+            async onOk() {
                 console.log("OK");
-                updateLocation({
-                    data: location,
-                });
+                const { isError: isErrorLocation, data: dataLocation } =
+                    await updateLocation({
+                        data: location,
+                    });
+                if (!isErrorLocation) {
+                    dispatch(changeLocation(location));
+                }
             },
             onCancel() {
                 console.log("Cancel");

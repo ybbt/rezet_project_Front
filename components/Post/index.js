@@ -65,8 +65,8 @@ export function Post({
         />
     );
 
-    const createdAt = useFormatDate(post.created_at, "dd LLL y"); //moment(post.created_at).format("D MMM YYYY");
-    const updatedAt = useFormatDate(post.updated_at, "dd LLL y"); //moment(post.updated_at).format("D MMM YYYY HH:mm");
+    const createdAt = useFormatDate(post.created_at, "dd LLL y");
+    const updatedAt = useFormatDate(post.updated_at, "dd LLL y");
 
     const updatedAtComponent = post.created_at !== post.updated_at && (
         <Tooltip
@@ -84,8 +84,6 @@ export function Post({
 
     // TODO в ХУК
     const avatarPath = post.author.avatar_path ?? "/avatar.png";
-
-    // console.log(avatarPath, "avatarPath");
 
     return (
         <div className="border border-[#949494] border-t-0 first:border-t-2 py-3 h-full min-h-[7rem] max-h-48 w-full flex justify-between box-border">

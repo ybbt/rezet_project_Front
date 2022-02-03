@@ -1,10 +1,9 @@
 import { SignBanner } from "../../components/SignBanner";
 import { MainMenu } from "../../components/MainMenu";
-// import { UserBanner } from "../../components/UserBanner";
+
 import { DropdownUserMenu } from "../../components/DropdownUserMenu";
 
 import { useSelector, useDispatch } from "react-redux";
-// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 
 import ErrorPage from "next/error";
 
@@ -16,12 +15,10 @@ import {
     getRunningOperationPromises,
 } from "../../redux/api.js";
 
-// import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 import { api } from "../../redux/api";
 
-import { setAuth } from "../../redux/slices/authSlice."; // --- для використаання slice
+import { setAuth } from "../../redux/slices/authSlice"; // --- для використаання slice
 
-// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
 import { useEffect } from "react";
 
 import Cookies from "js-cookie";
@@ -37,91 +34,20 @@ export function PageLayout({ children /* , headerContent */ }) {
 
     const isSkip = !Cookies.get("token_mytweeter");
 
-    // const {
-    //     data: dataAuth,
-    //     isError: isErrorAuth,
-    //     error: errorAuth,
-    //     isLoading: isLoadingAuth,
-    //     isSuccess: isSuccessAuth,
-    // } = useGetAuthentificationQuery();
-
-    // const result = useGetAuthentificationQuery(undefined, { skip: isSkip });
-    // console.log(result, "result useGetAuthentificationQuery PageLayout");
-
     useAuthStatus();
-
-    // useEffect(async () => {
-    //     console.log(
-    //         isSuccessAuth,
-    //         dataAuth && dataAuth.data,
-    //         errorAuth && errorAuth.status,
-    //         "%c useEffect single in pageLayout ----------------------"
-    //         // "color: green"
-    //     );
-    //     if (isSuccessAuth) {
-    //         dispatch(
-    //             setAuth({
-    //                 signedUser: /* response. */ dataAuth.data,
-    //                 isAuth: true,
-    //                 isLoad: true,
-    //             })
-    //         );
-    //     } else if (errorAuth?.status === 401) {
-    //         dispatch(
-    //             setAuth({
-    //                 signedUser: {},
-    //                 isAuth: false,
-    //                 isLoad: true,
-    //             })
-    //         );
-    //     }
-    // }, [isSuccessAuth]);
-
-    // useEffect(async () => {
-    //     console.log(
-    //         isSuccessAuth,
-    //         dataAuth && dataAuth.data,
-    //         errorAuth && errorAuth.status,
-    //         "%c useEffect infin in pageLayout ++++++++++++++++++++"
-    //         // "color: green"
-    //     );
-    //     if (!isSuccessAuth) {
-    //         if (
-    //             errorAuth?.status === 401 &&
-    //             (isAuthStore === true || isAuthStore === null)
-    //         ) {
-    //             console.log(
-    //                 "%c useEffect infin in pageLayout ||||||||||||||||||||"
-    //                 // "color: green"
-    //             );
-    //             dispatch(
-    //                 setAuth({
-    //                     signedUser: {},
-    //                     isAuth: false,
-    //                     isLoad: true,
-    //                 })
-    //             );
-    //         }
-    //     }
-    // });
 
     const errorStatus = useErrorStore();
     if (errorStatus) {
         return <ErrorPage statusCode={errorStatus} />;
     }
 
-    const signBanner =
-        /* !isSuccessAuth */ !isAuthStore /* dataAuth && !dataAuth.data */ &&
-            /* !isLoadingAuth */ isLoadStore /* isLoadingAuth */ && (
-                <SignBanner />
-            );
+    const signBanner = !isAuthStore && isLoadStore && <SignBanner />;
 
-    const userBannerDropdown =
-        /* isSuccessAuth */ isAuthStore /* dataAuth && dataAuth?.data */ && (
-            <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
-                <DropdownUserMenu />
-            </div>
-        );
+    const userBannerDropdown = isAuthStore && (
+        <div className="w-32 fixed bottom-0 -translate-x-[calc(100%_+_2rem)] -translate-y-4 border border-gray">
+            <DropdownUserMenu />
+        </div>
+    );
 
     return (
         <div className="w-full flex flex-col items-center">
@@ -131,9 +57,7 @@ export function PageLayout({ children /* , headerContent */ }) {
                         <MainMenu />
                     </div>
                     {userBannerDropdown}
-                    {/* <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
-                        {headerContent}
-                    </header> */}
+
                     {children}
                 </div>
             </div>

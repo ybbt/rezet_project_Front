@@ -4,16 +4,7 @@ import { useSelector } from "react-redux";
 
 // import { useGetPostsListQuery } from "../../redux/api";
 
-export function PostsList({
-    postsList,
-    onDeletePost,
-    onUpdatePost,
-    // signedUser,
-}) {
-    // const postsListStore = useSelector((state) => state.postsReducer.postsList);
-
-    // const { data, isError, error, isLoading } = useGetPostsListQuery();
-
+export function PostsList({ postsList, onDeletePost, onUpdatePost }) {
     return postsList ? (
         postsList.map((postItem) => {
             return (
@@ -22,7 +13,6 @@ export function PostsList({
                     key={postItem.id}
                     onDeletePost={onDeletePost}
                     onUpdatePost={onUpdatePost}
-                    // signedUserName={signedUser.name}
                 />
             );
         })

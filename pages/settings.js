@@ -1,9 +1,7 @@
-// import axiosInstance from "../libs/axiosInstance";
 import { PageLayout } from "../components/PageLayout";
 import { UserWrapper } from "../components/UserWrapper";
 import Map from "../components/Map";
 import "antd/dist/antd.css";
-import axiosConfigured from "../libs/axiosInstance"; //! прибрати
 
 import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
@@ -13,21 +11,24 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 
 import { /*  useEffect,  */ useState } from "react";
 
-import { useSelector /* , useDispatch */ } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-import {
-    // getAuthentification,
-    getRunningOperationPromises,
-} from "../redux/api.js";
+import { getRunningOperationPromises } from "../redux/api.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
 import { authMeRedux } from "../redux/actions/authorizationActions.js";
+import {
+    changeAvatar,
+    changeBackground,
+    changeCredentials,
+    changeLocation,
+} from "../redux/slices/authSlice";
 
 import {
-    // useGetAuthentificationQuery,
     useUpdateCredentialsMutation,
     useUpdateAvatarMutation,
+    useUpdateBackgroundMutation,
     useUpdateLocationMutation,
 } from "../redux/api.js";
 
@@ -42,67 +43,48 @@ export default function Settings(props) {
     const { signedUser: signedUserStore } = useSelector(
         (state) => state.authReducer
     );
-
-    console.log(props, "props in Settings !!!!!!!!!!!!!!!!!!!"); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    const dispatch = useDispatch();
 
     // *********************
     const [updateCredentials] = useUpdateCredentialsMutation();
     const [updateAvatar] = useUpdateAvatarMutation();
+    const [updateBackground] = useUpdateBackgroundMutation();
     const [updateLocation] = useUpdateLocationMutation();
-    // const { data: dataAuth } = useGetAuthentificationQuery();
+
     // *********************
 
     async function handleSubmitData({ firstName, lastName }) {
-        await updateCredentials({
-            data: {
-                first_name: firstName,
-                last_name: lastName,
-            },
-        });
+        const { isError: IsErrorCredentials, data: dataCredentials } =
+            await updateCredentials({
+                data: {
+                    first_name: firstName,
+                    last_name: lastName,
+                },
+            });
+        if (!IsErrorCredentials) {
+            dispatch(
+                changeCredentials({
+                    firstName,
+                    lastName,
+                })
+            );
+        }
     }
 
     async function handleAvatarChange(e) {
         console.log(e, "handleImageChange");
         e.preventDefault();
 
-        // console.log(e.target.files);
-        // return;
         let formFile = e.target.files[0];
 
-        // setFile(formFile);
-
-        // console.log(formFile, "formFile in input");
-
         let formData = new FormData();
-        formData.append("avatar", formFile /* file */);
-
-        // console.log(formData, "formDATA -----------------");
-
-        // try {
-        //     const result = await axiosConfigured.post("/me/avatar", formData);
-
-        //     // const response = result.data;
-
-        //     console.log(result, "response result");
-
-        //     alert("submit");
-        // } catch (error) {
-        //     // message.error(`${error.response.data.errors[0]}`);
-        //     console.log(error.response, "error catch");
-        // }
+        formData.append("avatar", formFile);
 
         showConfirmAvatar(formData);
-
-        // updateAvatar({ data: formData });
     }
 
-    async function handleAvatarDelete({ firstName, lastName }) {
+    async function handleAvatarDelete() {
         showConfirmAvatar({ avatar: null });
-        // await updateAvatar({
-        // data: {
-        //     avatar: null,
-        // },
-        // });
     }
 
     function showConfirmAvatar(file) {
@@ -110,9 +92,17 @@ export default function Settings(props) {
             title: "Change avatar",
             icon: <ExclamationCircleOutlined />,
             content: "Do you Want change Avatar in Profile?",
-            onOk() {
+            async onOk() {
                 console.log("OK");
-                updateAvatar({ data: file });
+                const { isError: isErrorAvatar, data: dataAvatar } =
+                    await updateAvatar({ data: file });
+                if (!isErrorAvatar) {
+                    dispatch(
+                        changeAvatar({
+                            avatar_path: dataAvatar.data.avatar_path,
+                        })
+                    );
+                }
             },
             onCancel() {
                 console.log("Cancel");
@@ -120,18 +110,61 @@ export default function Settings(props) {
         });
     }
 
-    async function handleLocationDelete() {
-        await updateLocation({
-            data: { lat: null, lng: null },
-        });
+    //************************************
+    async function handleBackgroundChange(e) {
+        console.log(e, "handleImageChange");
+        e.preventDefault();
+
+        let formFile = e.target.files[0];
+
+        let formData = new FormData();
+        formData.append("background", formFile);
+
+        showConfirmBackground(formData);
     }
 
-    // function handleUploadImageChange({ file }) {
-    //     // console.log(file.originFileObj, "file.originFileObj in Upload");
-    //     // let formFile = file.originFileObj;
+    async function handleBackgroundDelete() {
+        showConfirmBackground({ background: null });
+    }
 
-    //     setFile(file.originFileObj);
-    // }
+    function showConfirmBackground(file) {
+        Modal.confirm({
+            title: "Change background",
+            icon: <ExclamationCircleOutlined />,
+            content: "Do you Want change Background in Profile?",
+            async onOk() {
+                console.log("OK");
+                const { isError: isErrorBackground, data: dataBackground } =
+                    await updateBackground({ data: file });
+                if (!isErrorBackground) {
+                    dispatch(
+                        changeBackground({
+                            background_path:
+                                dataBackground.data.background_path,
+                        })
+                    );
+                }
+            },
+            onCancel() {
+                console.log("Cancel");
+            },
+        });
+    }
+    //************************************
+
+    async function handleLocationDelete() {
+        const { isError: isErrorLocation, data: dataLocation } =
+            await updateLocation({
+                data: { lat: null, lng: null },
+            });
+        if (!isErrorLocation) {
+            dispatch(changeLocation({ lat: false, lng: false }));
+            console.log(
+                signedUserStore,
+                "signedUserStore in handleLocationDelete"
+            );
+        }
+    }
 
     return (
         <>
@@ -141,13 +174,11 @@ export default function Settings(props) {
             <div className=" border border-[#949494] border-t-0">
                 <Formik
                     initialValues={{
-                        firstName:
-                            /* dataAuth ? dataAuth.data */ signedUserStore.first_name,
+                        firstName: signedUserStore.first_name,
 
-                        lastName:
-                            /* dataAuth ? dataAuth.data */ signedUserStore.last_name
-                                ? signedUserStore.last_name
-                                : "",
+                        lastName: signedUserStore.last_name
+                            ? signedUserStore.last_name
+                            : "",
                     }}
                     validationSchema={changeCredentialsSchema}
                     onSubmit={handleSubmitData}
@@ -196,15 +227,14 @@ export default function Settings(props) {
                             <input
                                 className="hidden"
                                 type="file"
-                                name="avatar"
-                                onChange={(e) => handleBacgroundChange(e)}
+                                name="background"
+                                onChange={(e) => handleBackgroundChange(e)}
                             />
                             Upload background
                         </label>
                         <button
                             className="bg-[#FF5757] border-[#FF5757] border text-white p-1 m-1 w-full h-7 text-xs"
-                            // type="primary"
-                            // onClick={() => setModalVisibleMap(true)}
+                            onClick={(e) => handleBackgroundDelete(e)}
                         >
                             Remove background
                         </button>
@@ -219,12 +249,10 @@ export default function Settings(props) {
                                 Set location
                             </button>
                             <Modal
-                                /* title="Vertically centered modal dialog" */
                                 centered
                                 keyboard
                                 footer={null}
                                 visible={modalVisibleMap}
-                                // onOk={() => this.setModal2Visible(false)}
                                 onCancel={() => setModalVisibleMap(false)}
                                 width={848}
                                 closable={false}
@@ -235,7 +263,6 @@ export default function Settings(props) {
                         </div>
                         <button
                             className="bg-[#FF5757] border-[#FF5757] border text-white p-1 m-1 w-full h-7 text-xs"
-                            // type="primary"
                             onClick={(e) => handleLocationDelete(e)}
                         >
                             Remove location
@@ -244,29 +271,22 @@ export default function Settings(props) {
                     <div className="flex justify-end">
                         <button
                             className="bg-[#00BB13] text-white border-[#00BB13] border p-1 m-1 w-[80px] h-7 text-xs"
-                            // type="primary"
                             onClick={() => setModalVisible(true)}
                         >
                             Preview
                         </button>
 
                         <Modal
-                            /* title="Vertically centered modal dialog" */
                             centered
                             keyboard
                             footer={null}
                             visible={modalVisible}
-                            // onOk={() => this.setModal2Visible(false)}
                             onCancel={() => setModalVisible(false)}
                             width={848}
                             closable={false}
+                            destroyOnClose
                         >
-                            <UserWrapper
-                                user={
-                                    signedUserStore /* dataAuth &&
-                                    dataAuth.data */
-                                }
-                            />
+                            <UserWrapper user={signedUserStore} />
                         </Modal>
                     </div>
                 </div>
@@ -276,11 +296,7 @@ export default function Settings(props) {
 }
 
 Settings.getLayout = function getLayout(page) {
-    return (
-        <>
-            <PageLayout>{page}</PageLayout>
-        </>
-    );
+    return <PageLayout>{page}</PageLayout>;
 };
 
 export const withoutAuth = (getServerSidePropsFunc) => {
@@ -297,24 +313,17 @@ export const withoutAuth = (getServerSidePropsFunc) => {
                 : { props: {} };
         } else {
             try {
-                // console.log("try in withoutAuth");
                 return {
                     redirect: {
                         destination: `/`,
                     },
                 };
             } catch (e) {
-                // console.log("catch in withoutAuth");
                 return getServerSidePropsFunc
                     ? await getServerSidePropsFunc(ctx, ...args)
                     : { props: {} };
             }
         }
-
-        // return getServerSidePropsFunc
-        //     ? await getServerSidePropsFunc(ctx, ...args)
-        //     : { props: {} };
-        // return await getServerSidePropsFunc(null, ...args);
     };
 };
 
@@ -343,44 +352,18 @@ export const withRedux = (getServerSideProps) => async (ctx) => {
     }
 };
 
-import { setAuth } from "../redux/slices/authSlice."; // --- для використаання slice
+import { setAuth } from "../redux/slices/authSlice"; // --- для використаання slice
 
 export const getServerSideProps = withRedux(
     withoutAuth(async (context, store) => {
         console.log("start in getServerSideProps");
         try {
-            // const result = await store.dispatch(getAuthentification.initiate());
             const result = await store.dispatch(authMeRedux());
             console.log(
                 result,
                 "RESULT  from getServerSideProps in SETTING page"
             );
             await Promise.all(getRunningOperationPromises());
-
-            // if (result.isError) {
-            //     return {
-            //         redirect: {
-            //             destination: `/`,
-            //         },
-            //     };
-            // }
-            // if (result.isSuccess) {
-            //     store.dispatch(
-            //         setAuth({
-            //             signedUser: /* response. */ result.data.data,
-            //             isAuth: true,
-            //             isLoad: true,
-            //         })
-            //     );
-            // } else if (result.error?.status === 401) {
-            //     store.dispatch(
-            //         setAuth({
-            //             signedUser: {},
-            //             isAuth: false,
-            //             isLoad: true,
-            //         })
-            //     );
-            // }
 
             return {
                 props: {

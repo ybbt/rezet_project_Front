@@ -15,18 +15,26 @@ const authorizationSlice = createSlice({
             state.isLoad = action.payload.isLoad;
         },
         setLogin(state, action) {
-            // console.log("setLogin");
-            // console.log(state.signedUser, "state in logIN -> slice");
-            // console.log(action.payload.signedUser, "action in logIN-> slice");
             state.isAuth = action.payload.isAuth;
         },
         setLogout(state, action) {
-            console.log("%c setLogout", "color:yellow; background-color:green");
             state.signedUser = action.payload.signedUser;
             state.isAuth = action.payload.isAuth;
             state.isLoad = action.payload.isLoad;
-            console.log(state.signedUser, "state in logOUT -> slice");
-            console.log(action.payload, "action in logOUT -> slice");
+        },
+        changeCredentials(state, action) {
+            state.signedUser.first_name = action.payload.firstName;
+            state.signedUser.last_name = action.payload.lastName;
+        },
+        changeLocation(state, action) {
+            state.signedUser.lat = action.payload.lat;
+            state.signedUser.lng = action.payload.lng;
+        },
+        changeAvatar(state, action) {
+            state.signedUser.avatar_path = action.payload.avatar_path;
+        },
+        changeBackground(state, action) {
+            state.signedUser.background_path = action.payload.background_path;
         },
     },
 });
@@ -35,11 +43,15 @@ const authorizationSlice = createSlice({
 const { actions, reducer } = authorizationSlice;
 
 // Извлекаем и экспортируем каждого создателя по названию
-export const { setAuth, setLogin, setLogout } = actions;
+export const {
+    setAuth,
+    setLogin,
+    setLogout,
+    changeAvatar,
+    changeBackground,
+    changeCredentials,
+    changeLocation,
+} = actions;
 
 // Экпортируем редуктор по умолчанию или по названию
-export { /* default */ reducer };
-
-// signedUser: payload.signedUser,
-// isAuth: payload.isAuth,
-// isLoad: payload.isLoad,
+export { reducer };

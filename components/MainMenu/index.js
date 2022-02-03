@@ -1,7 +1,5 @@
 import Link from "next/link";
-// import { useContext } from "react";
 
-// import signedUserContext from "../../context/signedUserContext";
 import {
     HomeOutlined,
     MailOutlined,
@@ -14,9 +12,6 @@ import { Space } from "antd";
 import { useSelector } from "react-redux";
 
 export function MainMenu(/* { isAuth } */) {
-    // const [signedUserAppContext, setSignedUserAppContext] =
-    //     useContext(signedUserContext);
-
     const { signedUser: signedUserStore, isAuth: isAuthStore } = useSelector(
         (state) => state.authReducer
     );
@@ -39,7 +34,7 @@ export function MainMenu(/* { isAuth } */) {
                     </Space>
                 </a>
             </Link>
-            <Link href={`/${/* signedUserAppContext */ signedUserStore.name}`}>
+            <Link href={`/${signedUserStore.name}`}>
                 <a className="text-black">
                     <Space>
                         <UserOutlined />

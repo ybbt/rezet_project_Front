@@ -14,7 +14,7 @@ import {
     useLogoutMutation,
     useGetAuthentificationQuery,
 } from "../../redux/api.js";
-import { setLogout } from "../../redux/slices/authSlice."; // --- для використаання slice
+import { setLogout } from "../../redux/slices/authSlice"; // --- для використаання slice
 // ********************
 
 export function DropdownUserMenu(/* { children } */) {
@@ -25,14 +25,6 @@ export function DropdownUserMenu(/* { children } */) {
 
     const [getLogout] = useLogoutMutation();
 
-    // const {
-    //     data: dataAuth,
-    //     /*         isError: isErrorAuth,
-    //     error: errorAuth,
-    //     isLoading: isLoadingAuth,
-    //     isSuccess: isSuccessAuth, */
-    // } = useGetAuthentificationQuery();
-
     const menuKey = {
         profile: "1",
         logout: "2",
@@ -41,29 +33,26 @@ export function DropdownUserMenu(/* { children } */) {
     async function handleMenuClick({ key }) {
         switch (key) {
             case menuKey.profile:
-                Router.push(`/${/* signedUserStore */ dataAuth.data.name}`);
+                Router.push(`/${signedUserStore.name}`);
                 break;
             case menuKey.logout:
-                // dispatch(logoutRedux());
-                /* const { error } =  */ await getLogout({});
-
-                // if (!error) {
-                Cookies.remove("token_mytweeter");
-
-                dispatch(
-                    setLogout({
-                        signedUser: {},
-                        isAuth: false,
-                        isLoad: true,
-                    })
-                );
+                const { isError } = await getLogout({});
+                if (!isError) {
+                    Cookies.remove("token_mytweeter");
+                    dispatch(
+                        setLogout({
+                            signedUser: {},
+                            isAuth: false,
+                            isLoad: true,
+                        })
+                    );
+                }
 
                 break;
         }
     }
 
-    const avatarPath =
-        /* dataAuth.data.*/ signedUserStore.avatar_path ?? "/avatar.png";
+    const avatarPath = signedUserStore.avatar_path ?? "/avatar.png";
 
     const menu = (
         <Menu
@@ -91,7 +80,6 @@ export function DropdownUserMenu(/* { children } */) {
                 <Button
                     style={{ borderWidth: "0", padding: "4px", width: "100%" }}
                 >
-                    {/* {children} */}
                     <div className="flex w-full">
                         <div className="pr-4 ">
                             <Image
@@ -102,12 +90,8 @@ export function DropdownUserMenu(/* { children } */) {
                             />
                         </div>
                         <div className="">
-                            <div className="font-medium text-xs">{`${
-                                signedUserStore.first_name /* dataAuth.data.first_name */
-                            }`}</div>
-                            <div className="text-[#949494] text-[0.625rem]">{`@${
-                                signedUserStore.name /* dataAuth.data.name */
-                            }`}</div>
+                            <div className="font-medium text-xs">{`${signedUserStore.first_name}`}</div>
+                            <div className="text-[#949494] text-[0.625rem]">{`@${signedUserStore.name}`}</div>
                         </div>
                     </div>
                 </Button>

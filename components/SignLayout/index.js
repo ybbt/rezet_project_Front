@@ -14,7 +14,7 @@ import {
 // import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 import { api } from "../../redux/api";
 
-import { setAuth } from "../../redux/slices/authSlice."; // --- для використаання slice
+import { setAuth } from "../../redux/slices/authSlice"; // --- для використаання slice
 
 export default function SignLayout({ children, title }) {
     const dispatch = useDispatch();

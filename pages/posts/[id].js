@@ -31,8 +31,6 @@ import {
     deleteCommentRedux,
 } from "../../redux/actions/commentsListActions.js";
 
-// import { authMeRedux } from "../../redux/actions/authorizationActions.js";
-
 import { initializeStore } from "../../redux/store"; // ---  для серверного запросу
 
 // **********************************
@@ -48,7 +46,7 @@ import {
     getCommentsListByPostid,
     getRunningOperationPromises,
 } from "../../redux/api";
-// import { skipToken } from "@reduxjs/toolkit/query";
+
 import { wrapper } from "../../redux/store";
 
 import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
@@ -56,16 +54,7 @@ import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
 
 export default function userPost() {
     const dispatch = useDispatch();
-    // const commentsListStore = useSelector(
-    //     (state) => state.commentsReducer.commentsList
-    // );
-    // const postStore = useSelector((state) => state.postReducer.activePost);
 
-    // const {
-    //     signedUser: signedUserStore,
-    //     isAuth: isAuthStore,
-    //     isLoad: isLoadStore,
-    // } = useSelector((state) => state.authReducer);
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
     // ****************************************
@@ -82,22 +71,17 @@ export default function userPost() {
     const resultPost = useGetPostByIdQuery(postId);
     const resultCommensList = useGetCommentsListByPostidQuery(postId);
 
-    const {
-        /* isLoading: isLoadingPost, */ isError: isErrorPost,
-        data: dataPost,
-    } = resultPost;
-    const { /* isLoading, isError, */ data: dataComments } = resultCommensList;
-    // console.log(dataPost.data.id, "data");
+    const { isError: isErrorPost, data: dataPost } = resultPost;
+    const { data: dataComments } = resultCommensList;
+
     // ****************************************
 
     async function handleDeletePost(post) {
-        // await dispatch(deleteActivePostRedux(post));
         const { error } = await deletePost({ id: post.id });
         !error && router.push("/");
     }
 
     async function handleUpdatePost(updatedData) {
-        // await dispatch(updateActivePostRedux(updatedData));
         updatePost({
             id: updatedData.id,
             data: { content: updatedData.content },
@@ -105,7 +89,6 @@ export default function userPost() {
     }
 
     async function handleAddComment(commentContent) {
-        // await dispatch(sendCommentRedux(postStore.id, commentContent));
         addComment({
             postId: dataPost.data.id,
             data: { content: commentContent },
@@ -114,7 +97,7 @@ export default function userPost() {
 
     async function handleUpdateComment(updatedData) {
         console.log(updatedData, "updatedData");
-        // await dispatch(updateCommentRedux(updatedData));
+
         updateComment({
             id: updatedData.id,
             data: { content: updatedData.content },
@@ -123,7 +106,6 @@ export default function userPost() {
     }
 
     async function handleDeleteComment(comment) {
-        // await dispatch(deleteCommentRedux(comment));
         deleteComment({ id: comment.id, postId });
     }
 
@@ -169,13 +151,6 @@ export default function userPost() {
         />
     );
 
-    // const headerContent = (
-    //     <>
-    //         <div>Thread</div>
-    //         <div className="text-xs text-[#949494]">{`${postStore.comments_count} replies`}</div>
-    //     </>
-    // );
-
     return (
         <>
             <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
@@ -191,24 +166,6 @@ export default function userPost() {
     );
 }
 
-// *****************************
-// export const getServerSideProps = wrapper.getStaticProps(
-//     (store) => async (context) => {
-//         const id = context.params?.id;
-//         // const id = "1";
-//         if (typeof id === "string") {
-//             // console.log(getPostById, "getPostById");
-//             store.dispatch(getPostById.initiate(id));
-//             store.dispatch(getCommentsListByPostid.initiate(id));
-//         }
-
-//         await Promise.all(getRunningOperationPromises());
-
-//         return {
-//             props: {},
-//         };
-//     }
-// );
 // *****************************
 
 userPost.getLayout = function getLayout(page) {

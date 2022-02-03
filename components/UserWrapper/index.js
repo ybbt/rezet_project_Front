@@ -8,6 +8,9 @@ export function UserWrapper({ user }) {
     const [address, setAddress] = useState("no location");
 
     const avatarPath = user.avatar_path ?? "/avatar.png";
+    const backgroundPath = user.background_path ?? "/cover.png";
+
+    console.log(backgroundPath, "backgroundPath");
 
     useEffect(async () => {
         Geocode.setApiKey(process.env.NEXT_PUBLIC_API_KEY);
@@ -23,7 +26,7 @@ export function UserWrapper({ user }) {
 
     return (
         <div className="flex flex-col relative">
-            <Image src="/cover.png" width="720" height="120" />
+            <Image src={backgroundPath} width="720" height="120" />
             <div className="w-[140px] h-[140px] absolute left-[50%] ml-[-70px] top-[50px] bg-white rounded-full">
                 <Image
                     src={avatarPath}

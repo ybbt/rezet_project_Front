@@ -19,7 +19,6 @@ export function CommentsList({
                 key={commentItem.id}
                 onDeleteComment={onDeleteComment}
                 onUpdateComment={onUpdateComment}
-                // signedUserName={signedUser.name}
             />
         );
     });

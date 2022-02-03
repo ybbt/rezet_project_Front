@@ -5,7 +5,7 @@ import {
     fetchSignOut,
 } from "../../libs/authorizeService";
 
-import { setAuth, setLogin, setLogout } from "../slices/authSlice."; // --- для використаання slice
+import { setAuth, setLogin, setLogout } from "../slices/authSlice"; // --- для використаання slice
 
 import * as types from "../actionsTypes";
 
@@ -17,16 +17,7 @@ export const authMeRedux = () => async (dispatch) => {
     console.log("authMe in action before fetch");
     try {
         const response = await fetchAuth();
-        // dispatch({
-        //     type: types.AUTH_ME,
-        //     payload: {
-        //         signedUser: response.data.data,
-        //         isAuth: true,
-        //         isLoad: true,
-        //     },
-        // });
-        // console.log(setAuth, "setAuth in authMeRedux");
-        // console.log(
+
         dispatch(
             setAuth({
                 signedUser: response.data.data,
@@ -44,14 +35,6 @@ export const authMeRedux = () => async (dispatch) => {
                 isAuth: false,
                 isLoad: true,
             })
-            // {
-            //     type: types.AUTH_ME,
-            //     payload: {
-            //         signedUser: {},
-            //         isAuth: false,
-            //         isLoad: true,
-            //     },
-            // }
         );
         if (error.response && error.response.status === 401) {
             Cookies.remove("token_mytweeter");
@@ -84,16 +67,9 @@ export const registerRedux =
             Cookies.set("token_mytweeter", response.token, {
                 secure: true,
             });
-            // Router.push("/");
-            dispatch(
-                setLogin({ isAuth: true })
-                /*             {
-                type: types.LOGIN,
-                payload: { isAuth: true },
-            } */
-            );
+
+            dispatch(setLogin({ isAuth: true }));
         } catch (error) {
-            // message.error(`${error.response}`);
             console.log(error.request, "error in registerRedux");
             dispatch({
                 type: types.SET_ERROR,
@@ -114,16 +90,9 @@ export const loginRedux = (login, password, resetForm) => async (dispatch) => {
         Cookies.set("token_mytweeter", response.token, {
             secure: true,
         });
-        // Router.push("/");
-        // dispatch({
-        //     type: types.LOGIN,
-        //     payload: { isAuth: true },
-        // });
-        console.log("logon in action");
+
         dispatch(setLogin({ isAuth: true }));
     } catch (error) {
-        // message.error(`${error.response}`);
-
         console.log(error, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
@@ -140,13 +109,7 @@ export const logoutRedux = () => async (dispatch) => {
     console.log("logout in action before fetch");
     try {
         const response = await fetchSignOut();
-        // dispatch({
-        //     type: types.LOGOUT,
-        //     payload: {
-        //         signedUser: {},
-        //         isAuth: false,
-        //     },
-        // });
+
         console.log("before dispatch in logoutRedux");
         dispatch(
             setLogout({
@@ -156,7 +119,6 @@ export const logoutRedux = () => async (dispatch) => {
         );
         Cookies.remove("token_mytweeter");
     } catch (error) {
-        // message.error(`${error.response}`);
         console.log(error, "error in logoutRedux");
         dispatch({
             type: types.SET_ERROR,
@@ -167,10 +129,3 @@ export const logoutRedux = () => async (dispatch) => {
         });
     }
 };
-
-// export const setLoad = (value) => ({
-//     type: types.SET_LOADED,
-//     payload: {
-//         isLoad: value,
-//     },
-// });

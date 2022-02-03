@@ -15,15 +15,12 @@ export default function useErrorStore() {
 
     // const dispatch = useDispatch();
 
-    useEffect(
-        () => {
-            errorStore &&
-                message.error({
-                    content: `${serverResponseStore || errorMessageStore}`,
-                    duration: 5,
-                });
-            // dispatch(clearErrorRedux());
-        } /* [errorStore] */
-    );
+    useEffect(() => {
+        errorStore &&
+            message.error({
+                content: `${serverResponseStore || errorMessageStore}`,
+                duration: 5,
+            });
+    });
     return statusStore;
 }
