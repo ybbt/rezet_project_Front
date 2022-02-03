@@ -3,10 +3,21 @@ import useAuthStatus from "../../hooks/useAuthStatus";
 import useErrorStore from "../../hooks/useErrorStore";
 
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Router from "next/router";
 
+import {
+    useGetAuthentificationQuery,
+    getRunningOperationPromises,
+} from "../../redux/api.js";
+
+// import { useRouter } from "next/dist/client/router"; //? ХЗ нафіга
+import { api } from "../../redux/api";
+
+import { setAuth } from "../../redux/slices/authSlice."; // --- для використаання slice
+
 export default function SignLayout({ children, title }) {
+    const dispatch = useDispatch();
     // const state = useSelector((state) => state);
     // console.log(state, "state in SignLayout");
     const isAuthStore = useSelector((state) => state.authReducer.isAuth);
@@ -14,8 +25,72 @@ export default function SignLayout({ children, title }) {
 
     useAuthStatus();
 
+    // const {
+    //     data: dataAuth,
+    //     isError: isErrorAuth,
+    //     error: errorAuth,
+    //     isLoading: isLoadingAuth,
+    //     isSuccess: isSuccessAuth,
+    // } = useGetAuthentificationQuery();
+
+    // useEffect(async () => {
+    //     console.log(
+    //         isSuccessAuth,
+    //         dataAuth && dataAuth.data,
+    //         errorAuth && errorAuth.status,
+    //         "%c useEffect single in sign_Layout ----------------------"
+    //         // "color: green"
+    //     );
+    //     if (isSuccessAuth) {
+    //         dispatch(
+    //             setAuth({
+    //                 signedUser: /* response. */ dataAuth.data,
+    //                 isAuth: true,
+    //                 isLoad: true,
+    //             })
+    //         );
+    //     } else if (errorAuth?.status === 401) {
+    //         dispatch(
+    //             setAuth({
+    //                 signedUser: {},
+    //                 isAuth: false,
+    //                 isLoad: true,
+    //             })
+    //         );
+    //     }
+    // }, [isSuccessAuth]);
+
+    // useEffect(async () => {
+    //     console.log(
+    //         isSuccessAuth,
+    //         dataAuth && dataAuth.data,
+    //         errorAuth && errorAuth.status,
+    //         "%c useEffect infin in sign_Layout ++++++++++++++++++++"
+    //         // "color: green"
+    //     );
+    //     if (!isSuccessAuth) {
+    //         if (
+    //             errorAuth?.status === 401 &&
+    //             (isAuthStore === true || isAuthStore === null)
+    //         ) {
+    //             console.log(
+    //                 "%c useEffect infin in pageLayout ||||||||||||||||||||"
+    //                 // "color: green"
+    //             );
+    //             dispatch(
+    //                 setAuth({
+    //                     signedUser: {},
+    //                     isAuth: false,
+    //                     isLoad: true,
+    //                 })
+    //             );
+    //         }
+    //     }
+    // });
+
     useEffect(() => {
         if (isAuthStore) {
+            console.log(isAuthStore, "isAuthStore in sign_layout");
             Router.push("/");
         }
     }, [isAuthStore]);

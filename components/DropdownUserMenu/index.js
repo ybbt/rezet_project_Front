@@ -25,13 +25,13 @@ export function DropdownUserMenu(/* { children } */) {
 
     const [getLogout] = useLogoutMutation();
 
-    const {
-        data: dataAuth,
-        /*         isError: isErrorAuth,
-        error: errorAuth,
-        isLoading: isLoadingAuth,
-        isSuccess: isSuccessAuth, */
-    } = useGetAuthentificationQuery();
+    // const {
+    //     data: dataAuth,
+    //     /*         isError: isErrorAuth,
+    //     error: errorAuth,
+    //     isLoading: isLoadingAuth,
+    //     isSuccess: isSuccessAuth, */
+    // } = useGetAuthentificationQuery();
 
     const menuKey = {
         profile: "1",
@@ -49,7 +49,8 @@ export function DropdownUserMenu(/* { children } */) {
 
                 // if (!error) {
                 Cookies.remove("token_mytweeter");
-                await dispatch(
+
+                dispatch(
                     setLogout({
                         signedUser: {},
                         isAuth: false,
@@ -62,7 +63,7 @@ export function DropdownUserMenu(/* { children } */) {
     }
 
     const avatarPath =
-        /* signedUserStore */ dataAuth.data.avatar_path ?? "/avatar.png";
+        /* dataAuth.data.*/ signedUserStore.avatar_path ?? "/avatar.png";
 
     const menu = (
         <Menu
@@ -102,10 +103,10 @@ export function DropdownUserMenu(/* { children } */) {
                         </div>
                         <div className="">
                             <div className="font-medium text-xs">{`${
-                                /* signedUserStore */ dataAuth.data.first_name
+                                signedUserStore.first_name /* dataAuth.data.first_name */
                             }`}</div>
                             <div className="text-[#949494] text-[0.625rem]">{`@${
-                                /* signedUserStore */ dataAuth.data.name
+                                signedUserStore.name /* dataAuth.data.name */
                             }`}</div>
                         </div>
                     </div>

@@ -358,14 +358,14 @@ export const api = createApi({
             }),
             providesTags: ["User"],
         }),
-        getAuthentification: build.query({
-            // query: () => `/me`,
-            query: () => ({
-                url: `/me`,
-                method: "GET",
-            }),
-            providesTags: ["Me"],
-        }),
+        // getAuthentification: build.query({
+        //     // query: () => `/me`,
+        //     query: () => ({
+        //         url: `/me`,
+        //         method: "GET",
+        //     }),
+        //     providesTags: ["Me"],
+        // }),
         login: build.mutation({
             // query: () => `/login`,
             query: ({ data }) => ({

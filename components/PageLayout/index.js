@@ -37,73 +37,73 @@ export function PageLayout({ children /* , headerContent */ }) {
 
     const isSkip = !Cookies.get("token_mytweeter");
 
-    const {
-        data: dataAuth,
-        isError: isErrorAuth,
-        error: errorAuth,
-        isLoading: isLoadingAuth,
-        isSuccess: isSuccessAuth,
-    } = useGetAuthentificationQuery();
+    // const {
+    //     data: dataAuth,
+    //     isError: isErrorAuth,
+    //     error: errorAuth,
+    //     isLoading: isLoadingAuth,
+    //     isSuccess: isSuccessAuth,
+    // } = useGetAuthentificationQuery();
 
     // const result = useGetAuthentificationQuery(undefined, { skip: isSkip });
     // console.log(result, "result useGetAuthentificationQuery PageLayout");
 
-    // useAuthStatus();
+    useAuthStatus();
 
-    useEffect(async () => {
-        console.log(
-            isSuccessAuth,
-            dataAuth && dataAuth.data,
-            errorAuth && errorAuth.status,
-            "%c useEffect single in pageLayout ----------------------"
-            // "color: green"
-        );
-        if (isSuccessAuth) {
-            dispatch(
-                setAuth({
-                    signedUser: /* response. */ dataAuth.data,
-                    isAuth: true,
-                    isLoad: true,
-                })
-            );
-        } else if (errorAuth?.status === 401) {
-            dispatch(
-                setAuth({
-                    signedUser: {},
-                    isAuth: false,
-                    isLoad: true,
-                })
-            );
-        }
-    }, [isSuccessAuth]);
+    // useEffect(async () => {
+    //     console.log(
+    //         isSuccessAuth,
+    //         dataAuth && dataAuth.data,
+    //         errorAuth && errorAuth.status,
+    //         "%c useEffect single in pageLayout ----------------------"
+    //         // "color: green"
+    //     );
+    //     if (isSuccessAuth) {
+    //         dispatch(
+    //             setAuth({
+    //                 signedUser: /* response. */ dataAuth.data,
+    //                 isAuth: true,
+    //                 isLoad: true,
+    //             })
+    //         );
+    //     } else if (errorAuth?.status === 401) {
+    //         dispatch(
+    //             setAuth({
+    //                 signedUser: {},
+    //                 isAuth: false,
+    //                 isLoad: true,
+    //             })
+    //         );
+    //     }
+    // }, [isSuccessAuth]);
 
-    useEffect(async () => {
-        console.log(
-            isSuccessAuth,
-            dataAuth && dataAuth.data,
-            errorAuth && errorAuth.status,
-            "%c useEffect infin in pageLayout ++++++++++++++++++++"
-            // "color: green"
-        );
-        if (!isSuccessAuth) {
-            if (
-                errorAuth?.status === 401 &&
-                (isAuthStore === true || isAuthStore === null)
-            ) {
-                console.log(
-                    "%c useEffect infin in pageLayout ||||||||||||||||||||"
-                    // "color: green"
-                );
-                dispatch(
-                    setAuth({
-                        signedUser: {},
-                        isAuth: false,
-                        isLoad: true,
-                    })
-                );
-            }
-        }
-    });
+    // useEffect(async () => {
+    //     console.log(
+    //         isSuccessAuth,
+    //         dataAuth && dataAuth.data,
+    //         errorAuth && errorAuth.status,
+    //         "%c useEffect infin in pageLayout ++++++++++++++++++++"
+    //         // "color: green"
+    //     );
+    //     if (!isSuccessAuth) {
+    //         if (
+    //             errorAuth?.status === 401 &&
+    //             (isAuthStore === true || isAuthStore === null)
+    //         ) {
+    //             console.log(
+    //                 "%c useEffect infin in pageLayout ||||||||||||||||||||"
+    //                 // "color: green"
+    //             );
+    //             dispatch(
+    //                 setAuth({
+    //                     signedUser: {},
+    //                     isAuth: false,
+    //                     isLoad: true,
+    //                 })
+    //             );
+    //         }
+    //     }
+    // });
 
     const errorStatus = useErrorStore();
     if (errorStatus) {

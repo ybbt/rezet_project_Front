@@ -16,26 +16,28 @@ import { /*  useEffect,  */ useState } from "react";
 import { useSelector /* , useDispatch */ } from "react-redux";
 
 import {
-    getAuthentification,
+    // getAuthentification,
     getRunningOperationPromises,
 } from "../redux/api.js";
 
 import { initializeStore } from "../redux/store"; // ---  для серверного запросу
 
+import { authMeRedux } from "../redux/actions/authorizationActions.js";
+
 import {
-    useGetAuthentificationQuery,
+    // useGetAuthentificationQuery,
     useUpdateCredentialsMutation,
     useUpdateAvatarMutation,
     useUpdateLocationMutation,
 } from "../redux/api.js";
+
+import { changeCredentialsSchema } from "../schemas/changeCredentialsSchema";
 
 export default function Settings(props) {
     const [file, setFile] = useState("");
     const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleMap, setModalVisibleMap] = useState(false);
-
-    // const
 
     const { signedUser: signedUserStore } = useSelector(
         (state) => state.authReducer
@@ -47,7 +49,7 @@ export default function Settings(props) {
     const [updateCredentials] = useUpdateCredentialsMutation();
     const [updateAvatar] = useUpdateAvatarMutation();
     const [updateLocation] = useUpdateLocationMutation();
-    const { data: dataAuth } = useGetAuthentificationQuery();
+    // const { data: dataAuth } = useGetAuthentificationQuery();
     // *********************
 
     async function handleSubmitData({ firstName, lastName }) {
@@ -60,7 +62,7 @@ export default function Settings(props) {
     }
 
     async function handleAvatarChange(e) {
-        // console.log("handleImageChange");
+        console.log(e, "handleImageChange");
         e.preventDefault();
 
         // console.log(e.target.files);
@@ -139,11 +141,15 @@ export default function Settings(props) {
             <div className=" border border-[#949494] border-t-0">
                 <Formik
                     initialValues={{
-                        firstName: dataAuth ? dataAuth.data.first_name : "",
+                        firstName:
+                            /* dataAuth ? dataAuth.data */ signedUserStore.first_name,
 
-                        lastName: dataAuth ? dataAuth.data.last_name : "",
+                        lastName:
+                            /* dataAuth ? dataAuth.data */ signedUserStore.last_name
+                                ? signedUserStore.last_name
+                                : "",
                     }}
-                    // validationSchema={signinSchema}
+                    validationSchema={changeCredentialsSchema}
                     onSubmit={handleSubmitData}
                 >
                     <Form>
@@ -171,6 +177,7 @@ export default function Settings(props) {
                             <input
                                 className="hidden"
                                 type="file"
+                                accept="image/jpeg, image/png"
                                 name="avatar"
                                 onChange={(e) => handleAvatarChange(e)}
                             />
@@ -256,8 +263,8 @@ export default function Settings(props) {
                         >
                             <UserWrapper
                                 user={
-                                    /* signedUserStore */ dataAuth &&
-                                    dataAuth.data
+                                    signedUserStore /* dataAuth &&
+                                    dataAuth.data */
                                 }
                             />
                         </Modal>
@@ -342,37 +349,38 @@ export const getServerSideProps = withRedux(
     withoutAuth(async (context, store) => {
         console.log("start in getServerSideProps");
         try {
-            const result = await store.dispatch(getAuthentification.initiate());
+            // const result = await store.dispatch(getAuthentification.initiate());
+            const result = await store.dispatch(authMeRedux());
             console.log(
                 result,
                 "RESULT  from getServerSideProps in SETTING page"
             );
             await Promise.all(getRunningOperationPromises());
 
-            if (result.isError) {
-                return {
-                    redirect: {
-                        destination: `/`,
-                    },
-                };
-            }
-            if (result.isSuccess) {
-                store.dispatch(
-                    setAuth({
-                        signedUser: /* response. */ result.data.data,
-                        isAuth: true,
-                        isLoad: true,
-                    })
-                );
-            } else if (result.error?.status === 401) {
-                store.dispatch(
-                    setAuth({
-                        signedUser: {},
-                        isAuth: false,
-                        isLoad: true,
-                    })
-                );
-            }
+            // if (result.isError) {
+            //     return {
+            //         redirect: {
+            //             destination: `/`,
+            //         },
+            //     };
+            // }
+            // if (result.isSuccess) {
+            //     store.dispatch(
+            //         setAuth({
+            //             signedUser: /* response. */ result.data.data,
+            //             isAuth: true,
+            //             isLoad: true,
+            //         })
+            //     );
+            // } else if (result.error?.status === 401) {
+            //     store.dispatch(
+            //         setAuth({
+            //             signedUser: {},
+            //             isAuth: false,
+            //             isLoad: true,
+            //         })
+            //     );
+            // }
 
             return {
                 props: {
@@ -382,11 +390,11 @@ export const getServerSideProps = withRedux(
         } catch (error) {
             console.log(error, "error in getServerSideProps");
             store.dispatch(setErrorRedux(error.response, error.message));
-            // return {
-            //     props: {
-            //         error: true,
-            //     },
-            // };
+            return {
+                redirect: {
+                    destination: `/`,
+                },
+            };
         }
     })
 );
