@@ -50,7 +50,6 @@ export function Comment({ comment, onDeleteComment, onUpdateComment }) {
         <div className="max-w-2xl min-w-[32rem]">{comment.content}</div>
     );
 
-    //! до повернення авторизації
     const dropdownMenu = signedUserStore.name === comment.author.name && (
         <DropdownPostMenu
             onDeletePost={() => onDeleteComment(/* post */ comment)}

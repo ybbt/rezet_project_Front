@@ -3,13 +3,15 @@ import { UserWrapper } from "../components/UserWrapper";
 import Map from "../components/Map";
 import "antd/dist/antd.css";
 
+import Router from "next/router";
+
 import AuthorizationElement from "../components/AuthorizationElement";
 import { Formik, Form } from "formik";
 
 import { Modal, Upload, Button } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 
-import { /*  useEffect,  */ useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 
@@ -40,9 +42,11 @@ export default function Settings(props) {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisibleMap, setModalVisibleMap] = useState(false);
 
-    const { signedUser: signedUserStore } = useSelector(
-        (state) => state.authReducer
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
     );
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
+
     const dispatch = useDispatch();
 
     // *********************
@@ -52,6 +56,13 @@ export default function Settings(props) {
     const [updateLocation] = useUpdateLocationMutation();
 
     // *********************
+
+    useEffect(() => {
+        if (!isAuthStore) {
+            console.log(isAuthStore, "isAuthStore in sign_layout");
+            Router.push("/");
+        }
+    }, [isAuthStore]);
 
     async function handleSubmitData({ firstName, lastName }) {
         const { isError: IsErrorCredentials, data: dataCredentials } =
@@ -79,12 +90,13 @@ export default function Settings(props) {
 
         let formData = new FormData();
         formData.append("avatar", formFile);
+        // formData.append("delete", 0);
 
         showConfirmAvatar(formData);
     }
 
     async function handleAvatarDelete() {
-        showConfirmAvatar({ avatar: null });
+        showConfirmAvatar({ delete: 1 });
     }
 
     function showConfirmAvatar(file) {
@@ -124,7 +136,7 @@ export default function Settings(props) {
     }
 
     async function handleBackgroundDelete() {
-        showConfirmBackground({ background: null });
+        showConfirmBackground({ delete: 1 });
     }
 
     function showConfirmBackground(file) {

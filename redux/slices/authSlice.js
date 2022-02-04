@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { current } from "@reduxjs/toolkit";
 
 const authorizationSlice = createSlice({
     name: "authorization",
@@ -9,7 +10,6 @@ const authorizationSlice = createSlice({
     },
     reducers: {
         setAuth(state, action) {
-            console.log("%c setAuth", "color:green, background-color:yellow");
             state.signedUser = action.payload.signedUser;
             state.isAuth = action.payload.isAuth;
             state.isLoad = action.payload.isLoad;
@@ -35,6 +35,7 @@ const authorizationSlice = createSlice({
         },
         changeBackground(state, action) {
             state.signedUser.background_path = action.payload.background_path;
+            console.log(current(state), "state in changeBackground");
         },
     },
 });

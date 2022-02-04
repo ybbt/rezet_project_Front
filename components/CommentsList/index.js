@@ -6,7 +6,6 @@ export function CommentsList({
     commentsList,
     onDeleteComment,
     onUpdateComment,
-    signedUser,
 }) {
     const commentsListStore = useSelector(
         (state) => state.commentsReducer.commentsList

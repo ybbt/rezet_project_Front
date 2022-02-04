@@ -29,8 +29,8 @@ export function PageLayout({ children /* , headerContent */ }) {
         (state) => state.authReducer
     );
 
-    const stateStore = useSelector((state) => state);
-    console.log(stateStore, "state in pageLayout");
+    // const stateStore = useSelector((state) => state);
+    // console.log(stateStore, "state in pageLayout");
 
     const isSkip = !Cookies.get("token_mytweeter");
 
