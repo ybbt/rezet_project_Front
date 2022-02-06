@@ -426,6 +426,13 @@ export const api = createApi({
             }),
             // invalidatesTags: ["Me"],
         }),
+        updateProfile: build.mutation({
+            query: ({ data }) => ({
+                url: `/me/update`,
+                method: "POST",
+                data,
+            }),
+        }),
     }),
 });
 
@@ -451,6 +458,7 @@ export const {
     useUpdateAvatarMutation,
     useUpdateBackgroundMutation,
     useUpdateLocationMutation,
+    useUpdateProfileMutation,
     util: { getRunningOperationPromises },
 } = api;
 

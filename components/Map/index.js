@@ -12,7 +12,9 @@ import axiosConfigured from "../../libs/axiosInstance"; //! прибрати
 
 import { useSelector, useDispatch } from "react-redux";
 
-import { useUpdateLocationMutation } from "../../redux/api.js";
+import {
+    /* useUpdateLocationMutation, */ useUpdateProfileMutation,
+} from "../../redux/api.js";
 
 import { Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
@@ -280,7 +282,8 @@ function Map({ onMarkerDragEnd }) {
     //     }),
     // });
 
-    const [updateLocation] = useUpdateLocationMutation();
+    // const [updateLocation] = useUpdateLocationMutation();
+    const [updateProfile] = useUpdateProfileMutation();
 
     const [positionState, setPositionState] = /* React. */ useState({
         // mapPositionLat: signedUserStore.lat,
@@ -346,7 +349,8 @@ function Map({ onMarkerDragEnd }) {
             async onOk() {
                 console.log("OK");
                 const { isError: isErrorLocation, data: dataLocation } =
-                    await updateLocation({
+                    // await updateLocation({
+                    await updateProfile({
                         data: location,
                     });
                 if (!isErrorLocation) {

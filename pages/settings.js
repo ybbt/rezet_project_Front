@@ -32,6 +32,7 @@ import {
     useUpdateAvatarMutation,
     useUpdateBackgroundMutation,
     useUpdateLocationMutation,
+    useUpdateProfileMutation,
 } from "../redux/api.js";
 
 import { changeCredentialsSchema } from "../schemas/changeCredentialsSchema";
@@ -54,6 +55,7 @@ export default function Settings(props) {
     const [updateAvatar] = useUpdateAvatarMutation();
     const [updateBackground] = useUpdateBackgroundMutation();
     const [updateLocation] = useUpdateLocationMutation();
+    const [updateProfile] = useUpdateProfileMutation();
 
     // *********************
 
@@ -66,7 +68,8 @@ export default function Settings(props) {
 
     async function handleSubmitData({ firstName, lastName }) {
         const { isError: IsErrorCredentials, data: dataCredentials } =
-            await updateCredentials({
+            // await updateCredentials({
+            await updateProfile({
                 data: {
                     first_name: firstName,
                     last_name: lastName,
@@ -96,7 +99,7 @@ export default function Settings(props) {
     }
 
     async function handleAvatarDelete() {
-        showConfirmAvatar({ delete: 1 });
+        showConfirmAvatar({ avatar: null } /* { delete: 1 } */);
     }
 
     function showConfirmAvatar(file) {
@@ -107,7 +110,8 @@ export default function Settings(props) {
             async onOk() {
                 console.log("OK");
                 const { isError: isErrorAvatar, data: dataAvatar } =
-                    await updateAvatar({ data: file });
+                    // await updateAvatar({ data: file });
+                    await updateProfile({ data: file });
                 if (!isErrorAvatar) {
                     dispatch(
                         changeAvatar({
@@ -136,7 +140,7 @@ export default function Settings(props) {
     }
 
     async function handleBackgroundDelete() {
-        showConfirmBackground({ delete: 1 });
+        showConfirmBackground({ background: null } /* { delete: 1 } */);
     }
 
     function showConfirmBackground(file) {
@@ -147,7 +151,8 @@ export default function Settings(props) {
             async onOk() {
                 console.log("OK");
                 const { isError: isErrorBackground, data: dataBackground } =
-                    await updateBackground({ data: file });
+                    // await updateBackground({ data: file });
+                    await updateProfile({ data: file });
                 if (!isErrorBackground) {
                     dispatch(
                         changeBackground({
@@ -166,7 +171,8 @@ export default function Settings(props) {
 
     async function handleLocationDelete() {
         const { isError: isErrorLocation, data: dataLocation } =
-            await updateLocation({
+            // await updateLocation({
+            await updateProfile({
                 data: { lat: null, lng: null },
             });
         if (!isErrorLocation) {
