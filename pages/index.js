@@ -1,81 +1,56 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect } from "react";
 
-import {
-    getHomePosts,
-    deletePost,
-    sendPost,
-    updatePost,
-} from "../libs/postService";
+import "antd/dist/antd.css";
 
 import { PostsList } from "../components/PostsList";
 import { EditPostForm } from "../components/EditPostForm";
 
 import { PageLayout } from "../components/PageLayout";
 
-import signedUserContext from "../context/signedUserContext";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    getAllPostsListAsync,
+    newPostAsync,
+    deletePostAsync,
+    updatePostAsync,
+} from "../redux/postsList/postsListActions.js";
 
-export default function Index({ postsList, error }) {
-    const [posts, setPosts] = useState(postsList);
+import useAuthStatus from "../hooks/useAuthStatus";
+import useErrorStore from "../hooks/useErrorStore";
 
-    const [{ signedUser, isLoaded }] = useContext(signedUserContext);
+import { initializeStore } from "../redux/store";
 
-    useEffect(() => {
-        error && message.error(`${error}`);
-    });
+export default function Index() {
+    const dispatch = useDispatch();
+
+    const postsListStore = useSelector((state) => state.postsReducer.postsList);
+
+    const signedUserStore = useSelector(
+        (state) => state.authReducer.signedUser
+    );
+
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
 
     async function handleAddPost(postContent) {
-        try {
-            const response = await sendPost(postContent);
-
-            setPosts([response.data.data, ...posts]);
-        } catch (error) {
-            message.error(`${error}`);
-            console.log(error, "error addpost");
-        }
+        await dispatch(newPostAsync(postContent));
     }
 
     async function handleDeletePost(post) {
-        try {
-            const response = await deletePost(post.id);
-
-            const newPosts = posts.filter(
-                (postItem) => postItem.id !== post.id
-            );
-            setPosts(newPosts);
-        } catch (error) {
-            message.error(`${error.response}`);
-            console.log(error);
-        }
+        await dispatch(deletePostAsync(post));
     }
 
     async function handleUpdatePost(updatedData) {
-        try {
-            const response = await updatePost(
-                updatedData.id,
-                updatedData.content
-            );
-
-            const newPostList = posts.map((postItem) =>
-                postItem.id === updatedData.id
-                    ? { ...postItem, ...updatedData }
-                    : postItem
-            );
-            setPosts(newPostList);
-        } catch (error) {
-            console.log(error, "error");
-            message.error(`${error}`);
-        }
+        await dispatch(updatePostAsync(updatedData));
     }
 
-    const addPostComponent = !!Object.keys(signedUser).length && (
+    const addPostComponent = isAuthStore && (
         <div className="border border-t-0 border-[#949494] p-2">
-            <EditPostForm onSave={handleAddPost} />
+            <EditPostForm onSave={handleAddPost} contentKind="post" />
         </div>
     );
 
-    const postsComponentList = posts && (
+    const postsComponentList = postsListStore && (
         <PostsList
-            postsList={posts}
             onDeletePost={handleDeletePost}
             onUpdatePost={handleUpdatePost}
         />
@@ -83,8 +58,8 @@ export default function Index({ postsList, error }) {
 
     return (
         <>
-            <header className="border border-[#949494] h-12 font-bold text-lg flex items-center pl-4">
-                Explore
+            <header className="border border-[#949494] h-12 font-bold text-lg flex items-start justify-center pl-4 flex-col">
+                <span>Explore</span>
             </header>
             {addPostComponent}
             {postsComponentList}
@@ -96,18 +71,37 @@ Index.getLayout = function getLayout(page) {
     return <PageLayout>{page}</PageLayout>;
 };
 
-export async function getStaticProps() {
+export const withRedux = (getStaticProps) => async () => {
+    const store = initializeStore();
     try {
-        const res = await getHomePosts();
+        const result = await getStaticProps(store);
 
         return {
-            props: { postsList: res.data.data },
+            ...result,
+
+            props: {
+                initialReduxState: store.getState(),
+                ...result.props,
+            },
         };
     } catch (error) {
         return {
             props: {
-                error: error.message,
+                error: true,
             },
         };
     }
-}
+};
+
+export const getStaticProps = withRedux(async (store) => {
+    try {
+        await store.dispatch(getAllPostsListAsync());
+        return {
+            props: {
+                message: "hello world",
+            },
+        };
+    } catch (error) {
+        store.dispatch(setError(error.response, error.message));
+    }
+});

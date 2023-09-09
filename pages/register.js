@@ -1,10 +1,10 @@
-import { Alert, message } from "antd";
+import { useEffect } from "react";
+
+import { Alert, Input /* , message  */ } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
 import { signupSchema } from "../schemas/signupSchema";
-
-import Cookies from "js-cookie";
 
 import Router from "next/router";
 
@@ -12,15 +12,13 @@ import Link from "next/link";
 
 import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { fetchSignUp } from "../libs/authorizeService";
 
-import { useContext } from "react";
-import signedUserContext from "../context/signedUserContext";
+import { useDispatch } from "react-redux";
+
+import { registerAsync } from "../redux/authorization/authorizationActions.js";
 
 export default function Register() {
-    const [auth, setAuth] = useContext(signedUserContext);
-
-    const { isLoaded } = auth;
+    const dispatch = useDispatch();
 
     async function handleSubmitData(
         {
@@ -33,33 +31,17 @@ export default function Register() {
         },
         { resetForm }
     ) {
-        try {
-            const result = await fetchSignUp(
+        dispatch(
+            registerAsync(
                 firstName,
                 lastName,
                 userName,
                 email,
                 password,
-                passwordConfirmation
-            );
-
-            const response = result.data;
-
-            Cookies.set("token_mytweeter", response.token, {
-                secure: true,
-            });
-
-            setAuth({
-                ...auth,
-                ...{ isLoaded: false },
-            });
-
-            Router.push("/");
-        } catch (error) {
-            message.error(`${error.response.data.message}`);
-            console.log(error.response.data.message, "error");
-            resetForm();
-        }
+                passwordConfirmation,
+                resetForm
+            )
+        );
     }
 
     return (
@@ -93,12 +75,14 @@ export default function Register() {
                     <AuthorizationElement
                         formName="password"
                         title="Password"
-                        type="password"
+                        type="assword"
+                        as={Input.Password}
                     />
                     <AuthorizationElement
                         formName="passwordConfirmation"
                         title="Password confirmation"
                         type="password"
+                        as={Input.Password}
                     />
                     <button
                         type="submit"
@@ -121,8 +105,8 @@ export default function Register() {
 
 Register.getLayout = function getLayout(page) {
     return (
-        <div className="w-full h-screen flex justify-center items-center ">
-            <SignLayout title="Sign up">{page}</SignLayout>
+        <div className="w-full h-screen flex justify-center items-center">
+            <SignLayout>{page}</SignLayout>
         </div>
     );
 };

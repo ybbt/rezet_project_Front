@@ -7,7 +7,7 @@ import { postSaveSchema } from "../../schemas/postSaveSchema";
 
 import classNames from "classnames";
 
-export function EditPostForm({ editContent, onSave, onCancel }) {
+export function EditPostForm({ editContent, onSave, onCancel, contentKind }) {
     const buttonCancel = editContent ? (
         <button
             onClick={onCancel}
@@ -17,7 +17,9 @@ export function EditPostForm({ editContent, onSave, onCancel }) {
         </button>
     ) : null;
 
-    const nameSaveButton = editContent ? "Save" : "Tweet";
+    const newContentButtonName = contentKind === "post" ? "Tweet" : "Comment";
+
+    const nameSaveButton = editContent ? "Save" : newContentButtonName;
 
     function handleSave({ postContent }, { resetForm }) {
         onSave(postContent);

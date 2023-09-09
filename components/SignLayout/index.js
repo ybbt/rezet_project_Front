@@ -1,4 +1,35 @@
+import useAuthStatus from "../../hooks/useAuthStatus";
+
+import useErrorStore from "../../hooks/useErrorStore";
+
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import Router from "next/router";
+
 export default function SignLayout({ children, title }) {
+    const isAuthStore = useSelector((state) => state.authReducer.isAuth);
+    const isLoadStore = useSelector((state) => state.authReducer.isLoad);
+
+    useAuthStatus();
+
+    useEffect(() => {
+        if (isAuthStore) {
+            Router.push("/");
+        }
+    }, [isAuthStore]);
+
+    useErrorStore();
+
+    if (!isLoadStore || isAuthStore) {
+        return (
+            <div className="flex items-center justify-center space-x-2 animate-bounce h-screen">
+                <div className="w-8 h-8 bg-orange-400 rounded-full"></div>
+                <div className="w-8 h-8 bg-green-400 rounded-full "></div>
+                <div className="w-8 h-8 bg-black rounded-full"></div>
+            </div>
+        );
+    }
+
     return (
         <div className=" flex justify-center w-96 border-[#949494] border-2">
             <div className="w-52 flex items-center flex-col">

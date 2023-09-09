@@ -1,49 +1,26 @@
-import { Alert, message } from "antd";
+import { useEffect } from "react";
+
+import { Alert, Input /* , message */ /* , Spin */ } from "antd";
 import "antd/dist/antd.css";
 
 import { Formik, Form } from "formik";
 import { signinSchema } from "../schemas/signinSchema";
 
-import Cookies from "js-cookie";
-
 import Router from "next/router";
 
 import Link from "next/link";
 
+import { useDispatch } from "react-redux";
+
 import SignLayout from "../components/SignLayout";
 import AuthorizationElement from "../components/AuthorizationElement";
-import { fetchSignIn } from "../libs/authorizeService";
-
-import { useContext } from "react";
-import signedUserContext from "../context/signedUserContext";
+import { loginAsync } from "../redux/authorization/authorizationActions.js";
 
 export default function Login(errors, touched) {
-    const [auth, setAuth] = useContext(signedUserContext);
-    const { isLoaded } = auth;
+    const dispatch = useDispatch();
 
     async function handleSubmitData({ login, password }, { resetForm }) {
-        try {
-            const result = await fetchSignIn(login, password);
-
-            const response = result.data;
-
-            console.log(result, "response result");
-
-            Cookies.set("token_mytweeter", response.token, {
-                secure: true,
-            });
-
-            setAuth({
-                ...auth,
-                ...{ isLoaded: false },
-            });
-
-            Router.push("/");
-        } catch (error) {
-            message.error(`${error.response.data.errors[0]}`);
-            console.log(error.response.data.errors[0], "error catch");
-            resetForm();
-        }
+        dispatch(loginAsync(login, password, resetForm));
     }
 
     return (
@@ -65,7 +42,8 @@ export default function Login(errors, touched) {
                     <AuthorizationElement
                         formName="password"
                         title="Password"
-                        type="password"
+                        // type="password"
+                        as={Input.Password}
                     />
                     <button
                         type="submit"
@@ -88,8 +66,8 @@ export default function Login(errors, touched) {
 
 Login.getLayout = function getLayout(page) {
     return (
-        <div className="w-full h-screen flex justify-center items-center ">
-            <SignLayout title="Sign in">{page}</SignLayout>
+        <div className="w-full h-screen flex justify-center items-center">
+            <SignLayout>{page}</SignLayout>
         </div>
     );
 };

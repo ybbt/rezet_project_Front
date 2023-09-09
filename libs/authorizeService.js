@@ -1,7 +1,7 @@
 import axiosConfigured from "../libs/axiosInstance";
 import { AUTHORIZE_ROUTES } from "../libs/routes";
 
-export const fetchSignUp = (
+export const fetchSignUpService = (
     first_name,
     last_name,
     name,
@@ -19,14 +19,14 @@ export const fetchSignUp = (
     });
 };
 
-export const fetchSignIn = (login, password) => {
+export const fetchSignInService = (login, password) => {
     return axiosConfigured.post(AUTHORIZE_ROUTES.SIGN_IN, { login, password });
 };
 
-export const fetchSignOut = () => {
+export const fetchSignOutService = () => {
     return axiosConfigured.post(AUTHORIZE_ROUTES.SIGN_OUT);
 };
 
-export const fetchAuth = () => {
+export const fetchAuthService = () => {
     return axiosConfigured.get(AUTHORIZE_ROUTES.AUTH_ME);
 };
